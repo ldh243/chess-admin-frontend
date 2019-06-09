@@ -31,7 +31,8 @@
 
           <v-list-tile-action>
             <v-btn icon @click.stop.prevent="mini = !mini">
-              <v-icon>chevron_left</v-icon>
+              <v-icon>mdi-chevron-left</v-icon>
+              <!-- <font-awesome-icon icon="chevron-left" -->
             </v-btn>
           </v-list-tile-action>
         </v-list-tile>
@@ -52,7 +53,7 @@
       </v-list-tile>
       <v-list-tile @click.stop="dialog = true">
         <v-list-tile-action>
-          <v-icon>input</v-icon>
+          <v-icon>fa-sign-out-alt</v-icon>
         </v-list-tile-action>
 
         <v-list-tile-content>
@@ -94,31 +95,24 @@ export default {
     Loader
   },
   created() {
-    if (localStorage.getItem('user') == null) {
-      let method = 'GET'
-      let url = this.$store.state.api.getCurrentUserDetail
-      this.loader++
-      this.callAxios(method, url)
-        .then(result => {
-          let obj = result.data.data
+    this.loader++
+    let method = 'GET'
+    let url = this.$store.state.api.getCurrentUserDetail
+    this.callAxios(method, url).then(result => {
+      let obj = result.data.data
 
-          obj.roleName =  this.getRoleName(obj.roleId)
-          obj.status = this.getStatus(obj.active)
+      obj.roleName = this.getRoleName(obj.roleId)
+      obj.status = this.getStatusUser(obj.active)
 
-          this.user = obj
+      this.user = obj
 
-          this.$store.commit('changeUser', obj)
+      this.$store.commit('changeUser', obj)
 
-          let data = JSON.stringify(obj)
-          localStorage.setItem('user', data)
+      let data = JSON.stringify(obj)
+      localStorage.setItem('user', data)
 
-          this.loader--
-        })
-        .catch(error => {
-          console.error(error)
-          this.loader--
-        })
-    }
+      this.loader--
+    })
   },
   data() {
     return {
@@ -128,18 +122,23 @@ export default {
       items: [
         {
           title: 'Thống kê',
-          icon: 'mdi-view-dashboard',
+          icon: 'fa-chart-line',
           path: '/dashboard/statistics'
         },
         {
-          title: 'Khóa học',
-          icon: 'mdi-file-document-box-outline',
+          title: 'Quản lý khóa học',
+          icon: 'fa-book',
           path: '/dashboard/courses'
         },
         {
           title: 'Quản lý tài khoản',
-          icon: 'mdi-account',
+          icon: 'fa-user',
           path: '/dashboard/accounts'
+        },
+        {
+          title: 'Xét duyệt giảng viên',
+          icon: 'fa-chalkboard-teacher',
+          path: '/dashboard/instructorRequest'
         }
       ],
       mini: true,

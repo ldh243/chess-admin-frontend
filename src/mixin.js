@@ -6,6 +6,22 @@ export default Vue.mixin({
       //get token from localStorage
       var token = this.getTokenFromLocalStorage()
 
+      axios.interceptors.response.use(
+        function(response) {
+          return response
+        },
+        function(error) {
+          if (
+            error.response.status &&
+            (error.response.status === 403 || error.response.status === 401)
+          ) {
+            localStorage.removeItem('access-token')
+            localStorage.removeItem('user')
+            window.location.reload()
+          }
+        }
+      )
+
       //set config for axios
       let config = {
         method: method,
@@ -36,12 +52,49 @@ export default Vue.mixin({
           return 'Thành viên mới'
       }
     },
-    getStatus(active) {
+    getStatusUser(active) {
       if (active) {
         return 'Kích hoạt'
       } else {
         return 'Vô hiệu hóa'
       }
+    },
+
+    formatListUser(users) {
+      users.forEach(user => {
+        user.roleName = this.getRoleName(user.roleId)
+        user.status = this.getStatusUser(user.isActive)
+      })
+      return users
+    },
+
+    getStatusCourse(statusId) {
+      switch (statusId) {
+        case 1:
+          return 'Đang soạn thảo'
+        case 2:
+          return 'Công khai'
+        case 3:
+          return 'Đã xóa'
+        case 4:
+          return 'Chờ duyệt'
+        case 5:
+          return 'Từ chối'
+      }
+    },
+
+    getDateTimeFormat(datetime) {
+      const date = new Date(Date.parse(datetime))
+      return date.toLocaleString()
+    },
+    formatListCourse(courses) {
+      courses.forEach(course => {
+        course.statusName = this.getStatusCourse(course.statusId)
+        course.courseCreatedDate = this.getDateTimeFormat(
+          course.courseCreatedDate
+        )
+      })
+      return courses
     }
   }
 })

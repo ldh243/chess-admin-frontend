@@ -9,7 +9,7 @@
       </router-link>
     </v-flex>
     <v-flex xs6 v-if="$store.state.user">
-      <v-text-field label="Search" prepend-inner-icon="search"></v-text-field>
+      <v-text-field label="Search" prepend-inner-icon="fa-search"></v-text-field>
     </v-flex>
   </v-toolbar>
 </template>

@@ -4,7 +4,6 @@ import router from './router'
 import store from './store'
 import mixin from './mixin'
 import './plugins/index'
-const axios = require('axios')
 Vue.config.productionTip = false
 
 function getTokenFromHeader() {
