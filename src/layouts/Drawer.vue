@@ -34,7 +34,6 @@
           <v-list-tile-action>
             <v-btn icon @click.stop.prevent="mini = !mini">
               <v-icon>mdi-chevron-left</v-icon>
-              <!-- <font-awesome-icon icon="chevron-left" -->
             </v-btn>
           </v-list-tile-action>
         </v-list-tile>

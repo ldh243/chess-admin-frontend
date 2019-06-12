@@ -127,24 +127,11 @@ export default {}
 
 <script>
 import Loader from '@/components/Loader'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+const userRepository = RepositoryFactory.get('user')
 export default {
   components: {
     Loader
-  },
-  created() {
-    let method = 'GET'
-    let url = this.$store.state.api.getUsersPagination
-    let data = {
-      page: '1',
-      pageSize: '500'
-    }
-    this.loader++
-    this.callAxios(method, url, data).then(result => {
-      let obj = result.data.data.content
-      this.listUsers = this.formatListUser(obj)
-
-      this.loader--
-    })
   },
   data() {
     return {
@@ -182,7 +169,17 @@ export default {
       return Math.ceil(totalItems / rowsPerPage)
     }
   },
+  mounted() {
+    this.loader++
+    console.log(this.loader)
+    this.getUsersPagination()
+    this.loader--
+  },
   methods: {
+    async getUsersPagination() {
+      const { data } = await userRepository.getUsersPagination(1, 500)
+      this.listUsers = this.formatListUser(data.data.content)
+    },
     changeStatus() {
       this.loader++
       const method = 'PUT'
