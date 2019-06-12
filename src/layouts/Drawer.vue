@@ -25,7 +25,9 @@
             <img :src="$store.state.user.avatar">
           </v-list-tile-avatar>
           <v-list-tile-content>
-            <v-list-tile-title>{{$store.state.user.fullName}}</v-list-tile-title>
+            <v-list-tile-title>
+              <span class="text-truncate">{{$store.state.user.fullName}}</span>
+            </v-list-tile-title>
             <v-list-tile-sub-title>{{$store.state.user.roleName}}</v-list-tile-sub-title>
           </v-list-tile-content>
 
@@ -110,6 +112,7 @@ export default {
 
       let data = JSON.stringify(obj)
       localStorage.setItem('user', data)
+      localStorage.removeItem('role')
 
       this.loader--
     })
@@ -149,6 +152,7 @@ export default {
     logout() {
       localStorage.removeItem('user')
       localStorage.removeItem('access-token')
+
       this.$store.commit('changeUser', null)
       this.$router.push('/')
     }
@@ -162,5 +166,8 @@ export default {
 }
 .title-header-parent {
   opacity: 1 !important;
+}
+.primary--text {
+  max-width: 300px;
 }
 </style>

@@ -6,39 +6,46 @@ import mixin from './mixin'
 import './plugins/index'
 Vue.config.productionTip = false
 
-function getTokenFromHeader() {
-  let url = new URL(window.location.href)
-  let token = url.searchParams.get('token')
-
-  if (token) {
-    let originUri = url.origin + url.pathname
+function getParamsFromHeader() {
+  const url = new URL(window.location.href)
+  const token = url.searchParams.get('token')
+  const role = url.searchParams.get('role')
+  if (token && role) {
+    const originUri = url.origin + url.pathname
     history.pushState(null, '', originUri)
     localStorage.setItem('access-token', token)
+    localStorage.setItem('role', role)
   }
 }
 
 router.beforeEach((to, from, next) => {
-  getTokenFromHeader()
+  getParamsFromHeader()
 
   const publicPages = ['/']
-  // const roleAccept = ['Instructor', 'Admin']
-
-  // const user = localStorage.getItem('user')
-  // let roleName = ''
-  // if (user) {
-  //   roleName = JSON.parse(localStorage.getItem('user')).roleName
-  // }
+  const roleAccepted = [1, 3]
 
   const authRequired = !publicPages.includes(to.path)
   const loggedIn = localStorage.getItem('access-token') != null
-  // const roleRequired = roleAccept.includes(roleName)
+  let role = ''
+  if (localStorage.getItem('user') != null) {
+    role = JSON.parse(localStorage.getItem('user')).roleId
+  } else {
+    role = parseInt(localStorage.getItem('role'))
+  }
+  const roleRequired = roleAccepted.includes(role)
 
   // if ((authRequired && !loggedIn) || (authRequired && !roleRequired)) {
-  if (authRequired && !loggedIn) {
+
+  if (authRequired && (!loggedIn || !roleRequired)) {
+    return next('/') //chua login -> ve trang login
+  } else if (!authRequired && loggedIn && roleRequired) {
+    return next('/dashboard/profile') //login roi, nhung vao lai login -> qua dashboard
+  } else if (loggedIn && !roleRequired) {
+    localStorage.removeItem('access-token')
+    localStorage.removeItem('role')
     return next('/')
-  } else if (to.path == '/' && loggedIn) {
-    return next('/dashboard/profile')
   }
+
   next()
 })
 
