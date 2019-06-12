@@ -138,7 +138,7 @@ export default {
       dialog: false,
       editDialog: false,
       editedUser: [],
-      loader: 0,
+      loader: false,
       search: '',
       pagination: {
         rowsPerPage: 10
@@ -170,10 +170,9 @@ export default {
     }
   },
   mounted() {
-    this.loader++
-    console.log(this.loader)
+    this.loader = true
     this.getUsersPagination()
-    this.loader--
+    this.loader = false
   },
   methods: {
     async getUsersPagination() {
