@@ -1,7 +1,9 @@
 import UserRepository from '@/repository/UserRepository'
+import CourseRepository from '@/repository/CourseRepository'
 
 const repositories = {
-  user: UserRepository
+  user: UserRepository,
+  course: CourseRepository
 }
 
 export const RepositoryFactory = {

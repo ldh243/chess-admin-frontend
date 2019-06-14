@@ -27,14 +27,13 @@
         <td class="text-xs-center" style="width: 20%">{{ props.item.courseCreatedDate }}</td>
         <td class="text-xs-center" style="width: 15%">
           <v-edit-dialog
-            :return-value.sync="editedCourse"
             large
             lazy
             persistent
             save-text="Lưu"
             cancel-text="Hủy bỏ"
             @open="getEditedCourse(props.item)"
-            @save="changeStatus()"
+            @save="updateCourseStatus()"
           >
             <div>{{ props.item.statusName }}</div>
             <template v-slot:input>
@@ -69,23 +68,11 @@ export default {}
 
 <script>
 import Loader from '@/components/Loader'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+const courseRepository = RepositoryFactory.get('course')
 export default {
   components: {
     Loader
-  },
-  created() {
-    let method = 'GET'
-    let url = this.$store.state.api.getCoursesPagination
-    let params = {
-      page: '1',
-      pageSize: '500'
-    }
-    this.loader++
-    this.callAxios(method, url, params).then(result => {
-      let obj = result.data.data.content
-      this.listCourses = this.formatListCourse(obj)
-      this.loader--
-    })
   },
   data() {
     return {
@@ -95,7 +82,7 @@ export default {
         email: '',
         status: ''
       },
-      loader: 0,
+      loader: false,
       search: '',
       pagination: {
         rowsPerPage: 10
@@ -128,29 +115,33 @@ export default {
       return Math.ceil(totalItems / rowsPerPage)
     }
   },
+  mounted() {
+    this.loader = true
+    this.getCoursesPagination()
+    this.loader = false
+  },
   methods: {
-    changeStatus() {
-      this.loader++
-      const method = 'PUT'
-      const url = this.$store.state.api.updateCourseStatus
-      const data = this.editedCourse
-      console.log(data)
-      this.callAxios(method, url, data).then(result => {
-        if (result.status === 200) {
-          let course = this.listCourses.find(
-            course => course.courseId === course.courseId
-          )
-          course.statusId = this.editedCourse.statusId
-          course.statusName = this.getStatusCourse(course.statusId)
-        }
-      })
-
-      this.loader--
-    },
     getEditedCourse(item) {
       this.editedCourse = {
         courseId: item.courseId,
         statusId: item.statusId
+      }
+    },
+    async getCoursesPagination() {
+      const { data } = await courseRepository.getCoursesPagination(1, 500)
+      this.listCourses = this.formatListCourse(data.data.content)
+    },
+    async updateCourseStatus() {
+      const { data } = await courseRepository.updateCourseStatus(
+        this.editedCourse.courseId,
+        this.editedCourse.statusId
+      )
+      if (data.data) {
+        let course = this.listCourses.find(
+          course => this.editedCourse.courseId === course.courseId
+        )
+        course.statusId = this.editedCourse.statusId
+        course.statusName = this.getStatusCourse(course.statusId)
       }
     }
   }

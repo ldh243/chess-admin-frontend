@@ -95,30 +95,9 @@ export default {
   components: {
     Loader
   },
-  created() {
-    this.loader++
-    let method = 'GET'
-    let url = this.$store.state.api.getCurrentUserDetail
-    this.callAxios(method, url).then(result => {
-      let obj = result.data.data
-
-      obj.roleName = this.getRoleName(obj.roleId)
-      obj.status = this.getStatusUser(obj.active)
-
-      this.user = obj
-
-      this.$store.commit('changeUser', obj)
-
-      let data = JSON.stringify(obj)
-      localStorage.setItem('user', data)
-      localStorage.removeItem('role')
-
-      this.loader--
-    })
-  },
   data() {
     return {
-      loader: 0,
+      loader: false,
       drawer: true,
       accountProfile: '/dashboard/profile',
       items: [
@@ -147,13 +126,35 @@ export default {
       dialog: false
     }
   },
+  mounted() {
+    this.loader = true
+    this.getCurrentUserDetail()
+    this.loader = false
+  },
   methods: {
     logout() {
       localStorage.removeItem('user')
       localStorage.removeItem('access-token')
-
       this.$store.commit('changeUser', null)
       this.$router.push('/')
+    },
+    getCurrentUserDetail() {
+      let method = 'GET'
+      let url = this.$store.state.api.getCurrentUserDetail
+      this.callAxios(method, url).then(result => {
+        let obj = result.data.data
+
+        obj.roleName = this.getRoleName(obj.roleId)
+        obj.status = this.getStatusUser(obj.active)
+
+        this.user = obj
+
+        this.$store.commit('changeUser', obj)
+
+        let data = JSON.stringify(obj)
+        localStorage.setItem('user', data)
+        localStorage.removeItem('role')
+      })
     }
   }
 }
@@ -166,7 +167,7 @@ export default {
 .title-header-parent {
   opacity: 1 !important;
 }
-.primary--text {
+>>> .primary--text {
   max-width: 300px;
 }
 </style>

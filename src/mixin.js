@@ -6,21 +6,21 @@ export default Vue.mixin({
       //get token from localStorage
       var token = this.getTokenFromLocalStorage()
 
-      axios.interceptors.response.use(
-        function(response) {
-          return response
-        },
-        function(error) {
-          if (
-            error.response.status &&
-            (error.response.status === 403 || error.response.status === 401)
-          ) {
-            localStorage.removeItem('access-token')
-            localStorage.removeItem('user')
-            window.location.reload()
-          }
-        }
-      )
+      // axios.interceptors.response.use(
+      //   function(response) {
+      //     return response
+      //   },
+      //   function(error) {
+      //     if (
+      //       error.response.status &&
+      //       (error.response.status === 403 || error.response.status === 401)
+      //     ) {
+      //       localStorage.removeItem('access-token')
+      //       localStorage.removeItem('user')
+      //       window.location.reload()
+      //     }
+      //   }
+      // )
 
       //set config for axios
       let config = {
