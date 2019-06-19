@@ -117,6 +117,16 @@ export default {
           path: '/dashboard/accounts'
         },
         {
+          title: 'Quản lý danh mục',
+          icon: 'fa-th-list',
+          path: '/dashboard/category'
+        },
+        {
+          title: 'Thống kê khóa học',
+          icon: 'fa-address-book',
+          path: '/dashboard/instructorCourse'
+        },
+        {
           title: 'Xét duyệt giảng viên',
           icon: 'fa-chalkboard-teacher',
           path: '/dashboard/instructorRequest'

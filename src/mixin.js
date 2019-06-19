@@ -82,6 +82,16 @@ export default Vue.mixin({
           return 'Từ chối'
       }
     },
+    getCategoryCourse(categoryId) {
+      switch (categoryId) {
+        case 1:
+          return 'Cơ bản'
+        case 2:
+          return 'Nâng cao'
+        case 3:
+          return 'Chuyên nghiệp'
+      }
+    },
 
     getDateTimeFormat(datetime) {
       const date = new Date(Date.parse(datetime))
@@ -93,6 +103,7 @@ export default Vue.mixin({
         course.courseCreatedDate = this.getDateTimeFormat(
           course.courseCreatedDate
         )
+        course.courseCategory = this.getCategoryCourse(course.categoryId)
       })
       return courses
     }

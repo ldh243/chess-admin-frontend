@@ -23,6 +23,7 @@
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.courseName }}</td>
+
         <td class="text-xs-center" style="width: 25%">{{ props.item.authorName }}</td>
         <td class="text-xs-center" style="width: 20%">{{ props.item.courseCreatedDate }}</td>
         <td class="text-xs-center" style="width: 15%">
@@ -118,6 +119,7 @@ export default {
   mounted() {
     this.loader = true
     this.getCoursesPagination()
+    this.getCategoryDetail(1)
     this.loader = false
   },
   methods: {
@@ -126,6 +128,15 @@ export default {
         courseId: item.courseId,
         statusId: item.statusId
       }
+    },
+    // async getCategories() {
+    //   const { xxx } = await courseRepository.getCategories
+    //   console.log(xxx)
+    //   // this.listCourses = this.formatListCourse(data.data.content)
+    // },
+    async getCategoryDetail() {
+      const { data } = await courseRepository.getCategoryDetail(1)
+      console.log(data)
     },
     async getCoursesPagination() {
       const { data } = await courseRepository.getCoursesPagination(1, 500)
