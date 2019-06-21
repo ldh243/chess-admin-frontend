@@ -24,7 +24,7 @@ export default new Router({
       component: Dashboard,
       children: [
         {
-          path: 'createcourse',
+          path: 'instructor/createcourse',
           component: CreateCourse
         },
         { path: 'profile', component: Profile },

@@ -1,52 +1,52 @@
 <template>
-  <v-hover>
-    <v-card class="black--text" slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`">
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-img :src="content.courseImage" height="175px"></v-img>
-        </v-flex>
-        <v-flex xs12>
-          <v-card-title primary-title class="pt-2">
-            <v-flex xs12>
-              <span class="course-title">{{ content.courseName }}</span>
-            </v-flex>
-            <v-flex xs2>
-              <v-avatar :size="50">
-                <img :src="content.authorAvatar">
-              </v-avatar>
-            </v-flex>
-            <v-flex xs9 ml-3>
-              <span class="ml-1 course-author">{{ content.authorName }}</span>
-              <v-layout row>
-                <v-flex xs6>
-                  <v-rating
-                    v-model="content.rating"
-                    readonly
-                    small
-                    empty-icon="$vuetify.icons.ratingFull"
-                    half-increments
-                  ></v-rating>
-                </v-flex>
-                <v-flex>
-                  <v-layout align-center fill-height>
+  <div>
+    <v-hover>
+      <v-card class="black--text" slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`">
+        <v-layout row wrap>
+          <v-flex xs12>
+            <v-img :src="content.courseImage" height="175px"></v-img>
+          </v-flex>
+          <v-flex xs12>
+            <v-card-title primary-title class="pt-2">
+              <v-flex xs12>
+                <span class="course-title">{{ content.courseName }}</span>
+              </v-flex>
+              <v-flex 2>
+                <v-avatar :size="50">
+                  <img :src="content.authorAvatar">
+                </v-avatar>
+              </v-flex>
+              <v-flex xs9 ml-3>
+                <span class="ml-1 course-author">{{ content.authorName }}</span>
+                <v-layout row fill-height>
+                  <v-flex>
+                    <v-rating
+                      v-model="content.rating"
+                      readonly
+                      small
+                      empty-icon="$vuetify.icons.ratingFull"
+                      half-increments
+                    ></v-rating>
+                  </v-flex>
+                  <v-flex fill-height>
                     <span class="course-score">{{ content.rating }}</span>
                     <span class="ml-2 course-total-rate">(1724)</span>
-                  </v-layout>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-flex xs12></v-flex>
-          </v-card-title>
-        </v-flex>
-      </v-layout>
-      <v-divider light></v-divider>
-      <v-card-actions class="px-3">
-        <span class="course-point">{{ content.point }} điểm</span>
-        <v-spacer></v-spacer>
-        <v-btn color="info">Chi tiết</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-hover>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+              <v-flex xs12></v-flex>
+            </v-card-title>
+          </v-flex>
+        </v-layout>
+        <v-divider light></v-divider>
+        <v-card-actions class="px-3">
+          <span class="course-point">{{ content.point }} điểm</span>
+          <v-spacer></v-spacer>
+          <v-btn color="info">Chi tiết</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-hover>
+  </div>
 </template>
 
 <script>
@@ -74,9 +74,9 @@ export default {
 }
 
 .course-score {
-  font-weight: 600;
+  font-weight: 600px;
   color: #505763;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .course-total-rate {

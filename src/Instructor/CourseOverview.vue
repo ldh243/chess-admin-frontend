@@ -1,6 +1,11 @@
 <template>
-  <v-content>
+  <div>
     <v-container>
+      <div class="create-course">
+        <router-link to="/dashboard/instructor/createcourse">
+          <v-btn color="success">Tạo Khóa Học</v-btn>
+        </router-link>
+      </div>
       <v-layout row wrap>
         <v-flex
           v-for="(item, index) in listCourses"
@@ -14,7 +19,7 @@
       </v-layout>
     </v-container>
     <Loader v-if="loader"/>
-  </v-content>
+  </div>
 </template>
 
 
@@ -74,5 +79,8 @@ export default {
   -webkit-box-flex: 0;
   -ms-flex-positive: 0;
   flex-grow: 0;
+}
+.create-course {
+  text-align: left;
 }
 </style>

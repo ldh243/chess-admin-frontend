@@ -23,17 +23,5 @@ export default {
       {},
       { params: data }
     )
-  },
-  getCategories() {
-    return Repository.get(`${resource}/get-categories`)
-  },
-  getCategoryDetail(categoryId) {
-    const data = {
-      params: {
-        categoryId: categoryId
-      }
-    }
-
-    return Repository.get(`${resource}/get-category-detail-by-id`, data)
   }
 }

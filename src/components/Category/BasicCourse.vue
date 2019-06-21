@@ -2,7 +2,6 @@
   <div>
     <h2 class="basic">Các khóa học cơ bản</h2>
     <hr>
-
     <v-card-title>
       <v-text-field
         v-model="search"

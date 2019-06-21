@@ -17,15 +17,17 @@
     </v-data-table>
     <hr>
     <hr>
-    <div class="div1" v-if="categoryId == 1">
-      <BasicCourse/>
-    </div>
-    <div class="div1" v-else-if="categoryId == 2">
-      <ProfessionCourse/>
-    </div>
-    <div class="div1" v-else-if="categoryId == 3">
-      <AmateurCourse/>
-    </div>
+    <v-container>
+      <div v-if="categoryId == 1">
+        <BasicCourse/>
+      </div>
+      <div v-else-if="categoryId == 2">
+        <ProfessionCourse/>
+      </div>
+      <div v-else-if="categoryId == 3">
+        <AmateurCourse/>
+      </div>
+    </v-container>
 
     <Loader v-if="loader"/>
   </div>

@@ -11,11 +11,8 @@
       </v-flex>
       <v-flex xs10>
         <v-layout>
-          <v-flex xs6 mr-4>
+          <v-flex>
             <FixedProfile/>
-          </v-flex>
-          <v-flex xs6>
-            <MutableProfile/>
           </v-flex>
         </v-layout>
       </v-flex>
