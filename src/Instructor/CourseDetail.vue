@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-hover>
+    <v-hover class="hover">
       <v-card class="black--text" slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`">
         <v-layout row wrap>
           <v-flex xs12>
@@ -64,7 +64,7 @@ export default {
 }
 .course-title {
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 32px !important;
   letter-spacing: normal !important;
   font-family: 'Open Sans', sans-serif !important;
@@ -84,10 +84,16 @@ export default {
   font-weight: 400;
   color: #686f7a;
 }
+.bottom {
+  float: bottom;
+}
 .course-point {
   float: left;
   font-size: 18px;
   color: #29303b;
   font-weight: 600;
+}
+.hover {
+  height: 400px;
 }
 </style>
