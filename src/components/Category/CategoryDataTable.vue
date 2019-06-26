@@ -15,7 +15,7 @@
         <td style="width: 50%">{{ props.item.name}}</td>
         <td style="width: 15%">
           <v-btn
-            @click="confirmDetailCategory(props.item), getCategoryDetail(categoryId = props.item.categoryId)"
+            @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
             color="success"
           >Khóa học</v-btn>
         </td>
@@ -125,6 +125,7 @@ import BasicCourse from '@/components/Category/BasicCourse'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const categoryRepository = RepositoryFactory.get('category')
+const courseRepository = RepositoryFactory.get('course')
 export default {
   components: {
     BasicCourse,
@@ -172,6 +173,7 @@ export default {
   mounted() {
     this.loader = true
     this.getCategories()
+
     this.loader = false
   },
   methods: {
@@ -182,18 +184,19 @@ export default {
       const { data } = await categoryRepository.getCategories()
       this.listCategory = this.formatListCourse(data.data)
     },
-    async getCategoryDetail() {
-      const { data } = await categoryRepository.getCategoryDetail(
-        this.categoryId
+    async getCourseByCategoryId() {
+      const { data } = await courseRepository.getCourseByCategoryId(
+        this.categoryId,
+        1,
+        500
       )
-      this.listCourses = this.formatListCourse(data.data.courseDetailViewModels)
+      this.listCourses = this.formatListCourse(data.data.content)
     },
     async createCategory() {
       const { data } = await categoryRepository.createCategory(
         this.createdCategory.name
       )
     },
-
     async updateCategory() {
       const { data } = await categoryRepository.updateCategory(
         this.editedCategory.categoryId,

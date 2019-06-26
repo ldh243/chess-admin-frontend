@@ -20,11 +20,11 @@
       next-icon="mdi-menu-right"
       sort-icon="mdi-menu-down"
     >
-      <template v-slot:items="courseDetailViewModels">
-        <td style="width: 30%">{{ courseDetailViewModels.item.name }}</td>
-        <td class="text-xs-center" style="width: 25%">{{ courseDetailViewModels.item.authorName }}</td>
-        <td class="text-xs-center" style="width: 25%">{{ courseDetailViewModels.item.createdDate }}</td>
-        <td class="text-xs-center" style="width: 20%">{{ courseDetailViewModels.item.statusName }}</td>
+      <template v-slot:items="props">
+        <td style="width: 30%">{{ props.item.courseName }}</td>
+        <td class="text-xs-center" style="width: 25%">{{ props.item.authorName }}</td>
+        <td class="text-xs-center" style="width: 25%">{{ props.item.courseCreatedDate }}</td>
+        <td class="text-xs-center" style="width: 20%">{{ props.item.statusName }}</td>
       </template>
     </v-data-table>
   </div>

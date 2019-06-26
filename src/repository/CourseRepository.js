@@ -13,15 +13,39 @@ export default {
 
     return Repository.get(`${resource}/get-course-pagination`, data)
   },
-  updateCourseStatus(courseId, statusId) {
+  getCourseByCategoryId(categoryId, page, pageSize) {
     const data = {
-      courseId: courseId,
-      statusId: statusId
+      params: {
+        categoryId: categoryId,
+        page: page,
+        pageSize: pageSize
+      }
     }
-    return Repository.put(
-      `${resource}/update-course-status`,
-      {},
-      { params: data }
+    return Repository.get(
+      `${resource}/get-course-paginations-by-category-id`,
+      data
     )
+  },
+  createCourse(name, description, image, point, listCategoryIds) {
+    const data = {
+      name: name,
+      description: description,
+      image: image,
+      point: point,
+      listCategoryIds: listCategoryIds
+    }
+    return Repository.post(`${resource}/create-course`, data)
   }
+
+  // updateCourseStatus(courseId, statusId) {
+  //   const data = {
+  //     courseId: courseId,
+  //     statusId: statusId
+  //   }
+  //   return Repository.put(
+  //     `${resource}/update-course-status`,
+  //     {},
+  //     { params: data }
+  //   )
+  // }
 }
