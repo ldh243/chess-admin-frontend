@@ -68,7 +68,7 @@
     <v-dialog persistent v-model="editDialog" max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">Chỉnh Sửa Danh Mục</span>
+          <span class="headline">CHỈNH SỬA DANH MỤC</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
@@ -95,7 +95,7 @@
     <v-dialog persistent v-model="removeDialog" max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">Chỉnh Sửa Danh Mục</span>
+          <span class="headline">XÓA DANH MỤC</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
@@ -173,7 +173,6 @@ export default {
   mounted() {
     this.loader = true
     this.getCategories()
-
     this.loader = false
   },
   methods: {

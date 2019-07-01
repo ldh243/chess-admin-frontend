@@ -6,17 +6,22 @@
           <v-btn color="success">Tạo Khóa Học</v-btn>
         </router-link>
       </div>
-      <v-layout row wrap>
-        <v-flex
-          v-for="(item, index) in listCourses"
-          :key="index"
-          class="course-item"
-          :style="{ marginRight: index % 3 != 2 ? 'calc(1%)' : '0px' }"
-          mb-3
-        >
-          <CourseDetail :content="item"/>
-        </v-flex>
-      </v-layout>
+      <div>
+        <v-layout row wrap :pagination.sync="pagination">
+          <v-flex
+            v-for="(item, index) in listCourses"
+            :key="index"
+            class="course-item"
+            :style="{ marginRight: index % 3 != 2 ? 'calc(1%)' : '0px' }"
+            mb-3
+          >
+            <CourseDetail :content="item"/>
+          </v-flex>
+        </v-layout>
+        <div class="text-xs-center pt-2">
+          <v-pagination v-model="pagination.pages" :length="pages" circle></v-pagination>
+        </div>
+      </div>
     </v-container>
     <Loader v-if="loader"/>
   </div>
@@ -36,18 +41,14 @@ export default {
   data() {
     return {
       dialog: false,
-      changeStatusDetail: {
-        action: '',
-        email: '',
-        status: ''
-      },
       loader: false,
       search: '',
       pagination: {
-        rowsPerPage: 10
+        rowsPerPage: 4
       },
       listCourses: [],
-      editedCourse: {}
+      editedCourse: {},
+      removedCourse: []
     }
   },
   computed: {
@@ -61,13 +62,22 @@ export default {
   },
   mounted() {
     this.loader = true
-    this.getCoursesPagination()
+    this.getCoursesPaginationCurrentInstructor()
     this.loader = false
   },
   methods: {
-    async getCoursesPagination() {
-      const { data } = await courseRepository.getCoursesPagination(1, 500)
+    async getCoursesPaginationCurrentInstructor() {
+      const {
+        data
+      } = await courseRepository.getCoursesPaginationCurrentInstructor(1, 500)
       this.listCourses = this.formatListCourse(data.data.content)
+      console.log(data)
+    },
+    async removeCourse() {
+      const { data } = await courseRepository.removeCourse(
+        this.listCourses.courseId
+      )
+      console.log(data)
     }
   }
 }

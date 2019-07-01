@@ -78,6 +78,7 @@ export default {
   data() {
     return {
       dialog: false,
+      removeDialog: false,
       changeStatusDetail: {
         action: '',
         email: '',
@@ -131,6 +132,7 @@ export default {
     async getCoursesPagination() {
       const { data } = await courseRepository.getCoursesPagination(1, 500)
       this.listCourses = this.formatListCourse(data.data.content)
+      console.log(data)
     },
     async updateCourseStatus() {
       const { data } = await courseRepository.updateCourseStatus(
@@ -144,6 +146,7 @@ export default {
         course.statusId = this.editedCourse.statusId
         course.statusName = this.getStatusCourse(course.statusId)
       }
+      console.log(data)
     }
   }
 }

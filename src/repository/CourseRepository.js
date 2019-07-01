@@ -35,17 +35,32 @@ export default {
       listCategoryIds: listCategoryIds
     }
     return Repository.post(`${resource}/create-course`, data)
-  }
+  },
+  removeCourse(courseId) {
+    const data = {
+      courseId: courseId
+    }
+    return Repository.put(`${resource}/remove-course`, data)
+  },
 
-  // updateCourseStatus(courseId, statusId) {
-  //   const data = {
-  //     courseId: courseId,
-  //     statusId: statusId
-  //   }
-  //   return Repository.put(
-  //     `${resource}/update-course-status`,
-  //     {},
-  //     { params: data }
-  //   )
-  // }
+  updateCourseStatus(courseId, statusId) {
+    const data = {
+      courseId: courseId,
+      statusId: statusId
+    }
+    return Repository.put(`${resource}/update-course-status`, data)
+  },
+
+  getCoursesPaginationCurrentInstructor(page, pageSize) {
+    const data = {
+      params: {
+        page: page,
+        pageSize: pageSize
+      }
+    }
+    return Repository.get(
+      `${resource}/get-course-paginations-current-instructor`,
+      data
+    )
+  }
 }
