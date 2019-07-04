@@ -6,6 +6,9 @@ export default {
   getUsersPagination(page, pageSize) {
     const data = { params: { page: page, pageSize: pageSize } }
     return Repository.get(`${resource}/get-users-pagination`, data)
+  },
+  updateStatus(data) {
+    return Repository.put(`${resource}/update-status`, data)
   }
 
   // http://cols-be.ml/user/get-current-user-detail

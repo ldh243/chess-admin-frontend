@@ -19,16 +19,16 @@
     </v-toolbar>
     <v-divider></v-divider>
     <v-toolbar flat class="transparent">
-      <v-list class="pa-0" subheader v-if="$store.state.user != null">
+      <v-list class="pa-0" subheader v-if="user != null">
         <v-list-tile avatar :to="accountProfile">
           <v-list-tile-avatar>
-            <img :src="$store.state.user.avatar">
+            <img :src="user.avatar">
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>
-              <span class="text-truncate">{{$store.state.user.fullName}}</span>
+              <span class="text-truncate">{{user.fullName}}</span>
             </v-list-tile-title>
-            <v-list-tile-sub-title>{{$store.state.user.roleName}}</v-list-tile-sub-title>
+            <v-list-tile-sub-title>{{user.roleName}}</v-list-tile-sub-title>
           </v-list-tile-content>
 
           <v-list-tile-action>
@@ -44,7 +44,7 @@
       <v-divider></v-divider>
 
       <v-list-tile
-        v-if="$store.state.user.roleId == 3"
+        v-show="user.roleId == 3"
         v-for="item in items"
         :key="item.title"
         :to="item.path"
@@ -58,7 +58,7 @@
         </v-list-tile-content>
       </v-list-tile>
       <v-list-tile
-        v-if="$store.state.user.roleId == 1"
+        v-show="user.roleId == 1"
         v-for="item in items2"
         :key="item.title"
         :to="item.path"
@@ -156,15 +156,11 @@ export default {
           title: 'Thống kê khóa học',
           icon: 'fa-address-book',
           path: '/dashboard/instructorCourse'
-        },
-        {
-          title: 'Xét duyệt giảng viên',
-          icon: 'fa-chalkboard-teacher',
-          path: '/dashboard/instructorRequest'
         }
       ],
       mini: true,
-      dialog: false
+      dialog: false,
+      user: this.$store.state.user
     }
   },
   mounted() {

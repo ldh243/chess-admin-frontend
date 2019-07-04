@@ -20,7 +20,7 @@
                 :style="btnLoginGoogle"
                 class="mr-0"
                 @click="loginWithGoogle()"
-              >Sign in with Google</v-btn>
+              >Đăng nhập với Gmail</v-btn>
             </v-flex>
           </v-layout>
         </v-card>
