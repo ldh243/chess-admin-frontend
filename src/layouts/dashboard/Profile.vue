@@ -25,13 +25,11 @@
 
 <script>
 import FixedProfile from '@/components/Profile/FixedProfile'
-import MutableProfile from '@/components/Profile/MutableProfile'
 import Certificate from '@/components/Profile/Certificate'
 import { mapState } from 'vuex'
 export default {
   components: {
     FixedProfile,
-    MutableProfile,
     Certificate
   },
   data() {

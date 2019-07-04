@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h2 class="basic">Các khóa học cơ bản</h2>
-    <hr>
     <v-card-title>
       <v-text-field
         v-model="search"
@@ -16,7 +14,6 @@
       :headers="headers"
       :items="listCourses"
       :search="search"
-      hide-actions
       :pagination.sync="pagination"
       class="elevation-1"
       prev-icon="mdi-menu-left"
@@ -24,16 +21,12 @@
       sort-icon="mdi-menu-down"
     >
       <template v-slot:items="props">
-        <td style="width: 30%">{{ props.item.name }}</td>
+        <td style="width: 30%">{{ props.item.courseName }}</td>
         <td class="text-xs-center" style="width: 25%">{{ props.item.authorName }}</td>
-        <td class="text-xs-center" style="width: 25%">{{ props.item.createdDate }}</td>
+        <td class="text-xs-center" style="width: 25%">{{ props.item.courseCreatedDate }}</td>
         <td class="text-xs-center" style="width: 20%">{{ props.item.statusName }}</td>
       </template>
     </v-data-table>
-    <div class="text-xs-center pt-2">
-      <v-pagination v-model="pagination.page" :length="pages" circle></v-pagination>
-    </div>
-    <Loader v-if="loader"/>
   </div>
 </template>
 
@@ -42,21 +35,19 @@ export default {}
 </script>
 
 <script>
-import Loader from '@/components/Loader'
-import { RepositoryFactory } from '@/repository/RepositoryFactory'
-const categoryRepository = RepositoryFactory.get('category')
 export default {
-  components: {
-    Loader
+  props: {
+    listCourses: {
+      type: Array,
+      default: []
+    }
+  },
+  mounted() {
+    console.log(this.listCourses)
   },
   data() {
     return {
       dialog: false,
-      changeStatusDetail: {
-        action: '',
-        email: '',
-        status: ''
-      },
       loader: false,
       search: '',
       pagination: {
@@ -64,11 +55,10 @@ export default {
       },
       headers: [
         { text: 'Tên khóa học', value: 'name', align: 'left' },
-        { text: 'Tên tác giả', value: 'name', align: 'center' },
-        { text: 'Ngày tạo', value: 'name', align: 'center' },
+        { text: 'Tên tác giả', value: 'authorName', align: 'center' },
+        { text: 'Ngày tạo', value: 'createdDate', align: 'center' },
         { text: 'Trạng thái', value: 'status', align: 'center' }
-      ],
-      listCourses: []
+      ]
     }
   },
   computed: {
@@ -78,18 +68,6 @@ export default {
       if (rowsPerPage == null || totalItems == null) return 0
 
       return Math.ceil(totalItems / rowsPerPage)
-    }
-  },
-  mounted() {
-    this.loader = true
-    this.getCategoryDetail(1)
-    this.loader = false
-  },
-  methods: {
-    async getCategoryDetail() {
-      const { data } = await categoryRepository.getCategoryDetail(1)
-      console.log(data)
-      this.listCourses = this.formatListCourse(data.data.courseDetailViewModels)
     }
   }
 }
