@@ -94,7 +94,7 @@ export default {
         { text: 'Tên giảng viên', value: 'authorName', align: 'center' },
         { text: 'Ngày giờ tạo', value: 'courseCreatedDate', align: 'center' },
         { text: 'Trạng thái', value: 'status', align: 'center' },
-        { text: 'Điểm yêu càu', value: 'point', align: 'center' },
+        { text: 'Điểm yêu cầu', value: 'point', align: 'center' },
         { text: '', value: 'action', sortable: false }
       ],
       listCourses: [],

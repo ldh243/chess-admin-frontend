@@ -13,18 +13,16 @@
     >
       <template v-slot:items="props">
         <td style="width: 50%">{{ props.item.name}}</td>
-        <td style="width: 15%">
+        <td>
           <v-btn
             @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
-            color="success"
-          >Khóa học</v-btn>
-        </td>
-        <td>
+            color="" icon small
+          ><v-icon>fa-list</v-icon></v-btn>
           <v-btn icon flat class="btn-active-deactive" @click="confirmEditCategory(props.item)">
             <v-icon>fa-edit</v-icon>
           </v-btn>
           <v-btn icon flat class="btn-active-deactive" @click="confirmRemoveCategory(props.item)">
-            <v-icon>fa-minus-circle</v-icon>
+            <v-icon>fa-trash</v-icon>
           </v-btn>
         </td>
       </template>
@@ -150,8 +148,7 @@ export default {
           align: 'left',
           sortable: false
         },
-        { text: '', value: 'action', sortable: false },
-        { text: '', value: 'edit', sortable: false }
+        { text: '', value: 'action', sortable: false }
       ],
       listCourses: [],
       listCategory: [],

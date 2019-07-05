@@ -148,6 +148,7 @@ export default {
         active: !this.editedUser.isActive
       }
       const {result} = await userRepository.updateStatus(data)
+      this.editedUser.isActive = !this.editedUser.isActive
       this.loader--
     },
     confirmChangeStatus(status, item) {
