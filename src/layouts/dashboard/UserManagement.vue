@@ -12,6 +12,9 @@ import UserDataTable from '@/components/Users/UserDataTable'
 export default {
   components: {
     UserDataTable
+  },
+  created() {
+    console.log(localStorage.getItem("access-token"))
   }
 }
 </script>

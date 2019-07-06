@@ -12,7 +12,7 @@
       class="elevation-1"
     >
       <template v-slot:items="props">
-        <td style="width: 50%">{{ props.item.name}}</td>
+        <td style="width: 70%">{{ props.item.name}}</td>
         <td>
           <v-btn
             @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"

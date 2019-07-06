@@ -15,12 +15,15 @@ function getParamsFromHeader() {
     history.pushState(null, '', originUri)
     localStorage.setItem('access-token', token)
     localStorage.setItem('role', role)
+    //reload to re-create axios
+    location.reload(true)
   }
+  
 }
 
 router.beforeEach((to, from, next) => {
   getParamsFromHeader()
-
+  
   const publicPages = ['/']
   const roleAccepted = [1, 3]
 
@@ -47,6 +50,7 @@ router.beforeEach((to, from, next) => {
   }
 
   next()
+  
 })
 
 new Vue({
