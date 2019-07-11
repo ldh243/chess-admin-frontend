@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import mixin from './mixin'
 import './plugins/index'
+import './assets/style/vue-chessboard.css'
 Vue.config.productionTip = false
 
 function getParamsFromHeader() {
