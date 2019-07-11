@@ -2,7 +2,7 @@
   <div>
     <v-container>
       <div class="create-course">
-        <router-link to="/dashboard/instructor/createcourse">
+        <router-link to="/dashboard/instructorCourse/createcourse">
           <v-btn color="success">Tạo Khóa Học</v-btn>
         </router-link>
       </div>

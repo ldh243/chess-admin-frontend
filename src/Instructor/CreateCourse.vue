@@ -2,7 +2,7 @@
   <div>
     <v-container>
       <h2>TẠO KHÓA HỌC MỚI</h2>
-      <hr>
+      <hr />
       <v-card>
         <v-card-text>
           <v-text-field v-model="createdCourse.name" box label="Tên khóa học" value></v-text-field>
@@ -14,8 +14,8 @@
             <v-divider class="my-2"></v-divider>
           </v-card-text>
         </div>
-        <div class="divvv">
-          <div class="div">
+        <div class="point-category">
+          <div class="point">
             <v-card-text>
               <v-text-field v-model="createdCourse.point" box label="Điểm để học" value></v-text-field>
             </v-card-text>
@@ -38,46 +38,31 @@
         </div>
         <div>
           <v-card-actions>
-            <div>
-              <input type="file" v-on:change="onImageChange" class="form-control">
-            </div>
-            <div v-if="image">
-              <img :src="image" height="150" width="150">
-            </div>
-            <!-- <div class="col-md-3">
-              <button class="btn btn-success btn-block" @click="createdCourse.image">Upload Image</button>
-            </div>-->
-          </v-card-actions>
-          <v-divider class="my-2"></v-divider>
-          <v-card-actions>
-            <v-btn
-              @click="showCreateLesson(1)"
-              block
-              color="blue-grey"
-              class="white--text"
-            >Thêm câu hỏi</v-btn>
-            <v-btn
-              @click="showCreateLesson(2)"
-              block
-              color="blue-grey"
-              class="white--text"
-            >Thêm bài tập</v-btn>
-          </v-card-actions>
-          <v-divider class="my-2"></v-divider>
-          <v-card-actions>
-            <div class="create">
-              <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
-            </div>
+            <img :src="imageUrl" height="150" v-if="imageUrl" />
+            <v-text-field
+              label="Chọn hình ảnh"
+              @click="pickFile"
+              v-model="imageName, createdCourse.image"
+              prepend-icon="fa-paperclip"
+            ></v-text-field>
+            <input
+              type="file"
+              style="display: none"
+              ref="image"
+              accept="image/*"
+              @change="onFilePicked"
+            />
           </v-card-actions>
         </div>
+        <v-divider class="my-2"></v-divider>
+        <v-card-actions>
+          <div class="create">
+            <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
+          </div>
+        </v-card-actions>
       </v-card>
-      <div v-if="createLesson == 2">
-        <v-card-text>
-          <CreateInteractiveLesson/>
-        </v-card-text>
-      </div>
     </v-container>
-    <Loader v-if="loader"/>
+    <Loader v-if="loader" />
   </div>
 </template>
 
@@ -101,7 +86,11 @@ export default {
         listCategoryIds: []
       },
       listCategories: [],
-      createLesson: ''
+      createLesson: '',
+
+      imageName: '',
+      imageUrl: '',
+      imageFile: ''
     }
   },
   mounted() {
@@ -113,18 +102,27 @@ export default {
     showCreateLesson(number) {
       this.createLesson = number
     },
-    onImageChange(e) {
-      let files = e.target.files || e.dataTransfer.files
-      if (!files.length) return
-      this.createImage(files[0])
+    pickFile() {
+      this.$refs.image.click()
     },
-    createImage(file) {
-      let reader = new FileReader()
-      let vm = this
-      reader.onload = e => {
-        vm.image = e.target.result
+    onFilePicked(e) {
+      const files = e.target.files
+      if (files[0] !== undefined) {
+        this.imageName = files[0].name
+        if (this.imageName.lastIndexOf('.') <= 0) {
+          return
+        }
+        const fr = new FileReader()
+        fr.readAsDataURL(files[0])
+        fr.addEventListener('load', () => {
+          this.imageUrl = fr.result
+          this.imageFile = files[0] // this is an image file that can be sent to server...
+        })
+      } else {
+        this.imageName = ''
+        this.imageFile = ''
+        this.imageUrl = ''
       }
-      reader.readAsDataURL(file)
     },
     async getCategories() {
       const { data } = await categoryRepository.getCategories()
@@ -144,23 +142,14 @@ export default {
 </script>
 
 <style>
-.div {
+.point {
   width: 50%;
   float: left;
 }
-.divv {
-  float: right;
-}
-.divvv {
+.point-category {
   height: 150px;
 }
 .create {
   text-align: center;
-}
-.div1 {
-  text-align: center;
-}
-.div2 {
-  padding-top: 50px;
 }
 </style>
