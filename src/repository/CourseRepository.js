@@ -13,6 +13,14 @@ export default {
 
     return Repository.get(`${resource}/get-course-pagination`, data)
   },
+  getById(courseId) {
+    const data = {
+      params: {
+        courseId: courseId
+      }
+    }
+    return Repository.get(`${resource}/get-by-id`, data)
+  },
   getCourseByCategoryId(categoryId, page, pageSize) {
     const data = {
       params: {

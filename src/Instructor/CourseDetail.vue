@@ -13,11 +13,11 @@
               </v-flex>
               <v-flex 2>
                 <v-avatar :size="50">
-                  <img :src="content.authorAvatar">
+                  <img :src="content.author.avatar" />
                 </v-avatar>
               </v-flex>
               <v-flex xs9 ml-3>
-                <span class="ml-1 course-author">{{ content.authorName }}</span>
+                <span class="ml-1 course-author">{{ content.author.fullName }}</span>
                 <v-layout row fill-height>
                   <v-flex>
                     <v-rating
@@ -46,14 +46,14 @@
         </v-card-actions>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="info">Chi tiết</v-btn>
+          <v-btn v-if="content.statusId == 3" disabled color="info">Chi tiết</v-btn>
+          <v-btn v-else @click="goToCourseDetail()" color="info">Chi tiết</v-btn>
           <v-btn v-if="content.statusId == 3" disabled color="red">Xóa</v-btn>
           <v-btn v-else @click="dialog = !dialog" color="red">Xóa</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
     </v-hover>
-
     <!-- Dialog Remove Course-->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
@@ -78,18 +78,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <Loader v-if="loader" />
   </div>
 </template>
 
 <script>
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
+import Loader from '@/components/Loader'
+import { async } from 'q'
 const courseRepository = RepositoryFactory.get('course')
 export default {
   props: {
     content: Object
   },
+  components: {
+    Loader
+  },
   data() {
     return {
+      loader: false,
       dialog: false,
       listCourse: [],
       courseId: ''
@@ -104,6 +111,9 @@ export default {
         this.content.courseId
       )
       console.log(data)
+    },
+    goToCourseDetail() {
+      this.$router.push(`/dashboard/instructorCourse/${this.content.courseId}`)
     }
   }
 }
