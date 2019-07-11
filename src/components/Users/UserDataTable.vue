@@ -149,6 +149,7 @@ export default {
       }
       const {result} = await userRepository.updateStatus(data)
       this.editedUser.isActive = !this.editedUser.isActive
+      this.editedUser.isActive ? this.editedUser.status = 'Kích hoạt' : this.editedUser.status = 'Vô hiệu hóa'
       this.loader--
     },
     confirmChangeStatus(status, item) {
