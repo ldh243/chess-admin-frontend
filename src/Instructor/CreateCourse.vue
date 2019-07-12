@@ -5,7 +5,12 @@
       <hr />
       <v-card>
         <v-card-text>
-          <v-text-field v-model="createdCourse.name" box label="Tên khóa học" value></v-text-field>
+          <v-text-field
+            v-model="createdCourse.name"
+            box
+            label="Tên khóa học"
+            :value="valueName == createdCourse.name"
+          ></v-text-field>
         </v-card-text>
 
         <div>
@@ -17,7 +22,7 @@
         <div class="point-category">
           <div class="point">
             <v-card-text>
-              <v-text-field v-model="createdCourse.point" box label="Điểm để học" value></v-text-field>
+              <v-text-field v-model="createdCourse.point" box label="Điểm để học"></v-text-field>
             </v-card-text>
           </div>
           <div>
@@ -38,11 +43,10 @@
         </div>
         <div>
           <v-card-actions>
-            <img :src="imageUrl" height="150" v-if="imageUrl" />
             <v-text-field
               label="Chọn hình ảnh"
               @click="pickFile"
-              v-model="imageName, createdCourse.image"
+              v-model="imageName"
               prepend-icon="fa-paperclip"
             ></v-text-field>
             <input
@@ -54,10 +58,17 @@
             />
           </v-card-actions>
         </div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <img :src="createdCourse.image" height="200" v-if="createdCourse.image" />
+          <v-spacer></v-spacer>
+        </v-card-actions>
         <v-divider class="my-2"></v-divider>
         <v-card-actions>
           <div class="create">
-            <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
+            <router-link to="/dashboard/instructorCourse">
+              <v-btn @click="createCourse(), refreshPage()" class="text-xs-center" color="success">Hoàn tất</v-btn>
+            </router-link>
           </div>
         </v-card-actions>
       </v-card>
@@ -69,8 +80,10 @@
 <script>
 import CreateInteractiveLesson from '@/Instructor/CreateInteractiveLesson'
 import Loader from '@/components/Loader'
+import { mapState } from 'vuex'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import { async } from 'q'
+import { log } from 'util'
 const categoryRepository = RepositoryFactory.get('category')
 const courseRepository = RepositoryFactory.get('course')
 export default {
@@ -80,14 +93,18 @@ export default {
   },
   data() {
     return {
+      valueName: '',
+      email: this.$store.state.user.email,
       loader: false,
-      image: '',
       createdCourse: {
+        name: '',
+        description: '',
+        image: '',
+        point: '',
         listCategoryIds: []
       },
       listCategories: [],
       createLesson: '',
-
       imageName: '',
       imageUrl: '',
       imageFile: ''
@@ -99,6 +116,9 @@ export default {
     this.loader = false
   },
   methods: {
+        refreshPage() {
+      window.location.reload()
+    },
     showCreateLesson(number) {
       this.createLesson = number
     },
@@ -115,13 +135,13 @@ export default {
         const fr = new FileReader()
         fr.readAsDataURL(files[0])
         fr.addEventListener('load', () => {
-          this.imageUrl = fr.result
-          this.imageFile = files[0] // this is an image file that can be sent to server...
+          this.createdCourse.image = fr.result
+          this.imageFile = files[0]
         })
       } else {
         this.imageName = ''
         this.imageFile = ''
-        this.imageUrl = ''
+        this.createdCourse.image = ''
       }
     },
     async getCategories() {
@@ -129,13 +149,22 @@ export default {
       this.listCategories = data.data
     },
     async createCourse() {
+      let image = '',
+        nameCourse = this.createdCourse.name
+      let match = this.$store.state.user.email.match(/^([^@]*)/)
+      image = await this.uploadImageByDataURL(
+        this.createdCourse.image,
+        nameCourse,
+        `courses/${match[0]}`
+      )
       const { data } = await courseRepository.createCourse(
         this.createdCourse.name,
         this.createdCourse.description,
-        this.createdCourse.image,
+        image,
         this.createdCourse.point,
         this.createdCourse.listCategoryIds
       )
+      console.log(data)
     }
   }
 }

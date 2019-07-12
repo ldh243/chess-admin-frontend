@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import firebase from 'firebase'
 const axios = require('axios')
 export default Vue.mixin({
   methods: {
@@ -95,6 +96,26 @@ export default Vue.mixin({
         )
       })
       return courses
+    },
+    async uploadImageByDataURL(image, imageName, directory) {
+      const uploadTask = firebase
+        .storage()
+        .ref(`images/${directory}/${imageName}`)
+      const link = await uploadTask
+        .putString(image, 'data_url')
+        .then(async () => {
+          const imageLink = await firebase
+            .storage()
+            .ref(`images/${directory}`)
+            .child(`${imageName}`)
+            .getDownloadURL()
+            .then(url => {
+              console.log(url)
+              return url
+            })
+          return imageLink
+        })
+      return link
     }
   }
 })
