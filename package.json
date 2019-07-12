@@ -12,11 +12,11 @@
   },
   "dependencies": {
     "axios": "^0.18.1",
+    "chess.js": "^0.10.2",
+    "chessground": "^7.2.10",
     "core-js": "^2.6.5",
     "firebase": "^6.2.4",
     "vue": "^2.6.10",
-    "vue-chessboard": "git+https://github.com/nganphtgit/vue-chessboard.git",
-    "vue-firebase": "^1.0.8",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.3",
     "vue-upload-multiple-image": "^1.1.4",

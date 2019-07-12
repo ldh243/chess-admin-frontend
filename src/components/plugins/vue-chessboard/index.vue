@@ -211,8 +211,8 @@ export default {
     },
     loadPosition() {
       // set a default value for the configuration object itself to allow call to loadPosition()
-      console.log('load pos')
       this.game.load(this.fen)
+      console.log(this.fen)
       this.hisMoves = ''
       this.board = Chessground(this.$refs.board, {
         fen: this.game.fen(),

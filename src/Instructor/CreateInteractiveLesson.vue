@@ -75,7 +75,11 @@
 </template>
 
 <script>
+import Chessboard from '@/components/plugins/vue-chessboard'
 export default {
+  components: {
+    Chessboard
+  },
   data() {
     return {
       dialog: false,
@@ -154,14 +158,10 @@ export default {
       }
     },
     showInfo(data) {
-      console.log(data)
       const black = 'black'
       let moveHistory = this.moveHistory
-      console.log(this.moveHistory)
       //Lấy nước đi mới
       let newMove = data.history[data.history.length - 1]
-      console.log(newMove)
-      console.log(data.history)
       //Lấy nước đi cuối cùng
       let lastMove = moveHistory[moveHistory.length - 1]
       if (newMove === undefined || !this.currentFen) return

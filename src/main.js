@@ -4,7 +4,11 @@ import router from './router'
 import store from './store'
 import mixin from './mixin'
 import './plugins/index'
+<<<<<<< HEAD
 import firebase from 'firebase'
+=======
+import './assets/style/vue-chessboard.css'
+>>>>>>> c16c1419a0f99af96d4a15980bc22cff22fa063b
 Vue.config.productionTip = false
 
 //connect firebase
