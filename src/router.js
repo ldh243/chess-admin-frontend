@@ -11,7 +11,9 @@ import Login from '@/pages/Login'
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import CreateCourse from '@/Instructor/CreateCourse'
+//instructor
+import CreateCourse from '@/components/Instructor/CreateCourse'
+import DetailCourseById from '@/components/Instructor/DetailCourseById'
 
 Vue.use(Router)
 export default new Router({
@@ -24,8 +26,12 @@ export default new Router({
       component: Dashboard,
       children: [
         {
-          path: 'instructor/createcourse',
+          path: 'createcourse',
           component: CreateCourse
+        },
+        {
+          path: 'instructorCourse/:courseId',
+          component: DetailCourseById
         },
         { path: 'profile', component: Profile },
         { path: 'statistics', component: Statistics },

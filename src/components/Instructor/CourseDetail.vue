@@ -9,48 +9,45 @@
           <v-flex xs12>
             <v-card-title primary-title class="pt-2">
               <v-flex xs12>
-                <span class="course-title">{{ content.courseName }}</span>
-              </v-flex>
-              <v-flex 2>
-                <v-avatar :size="50">
-                  <img :src="content.author.avatar" />
-                </v-avatar>
-              </v-flex>
-              <v-flex xs9 ml-3>
-                <span class="ml-1 course-author">{{ content.author.fullName }}</span>
-                <v-layout row fill-height>
-                  <v-flex>
-                    <v-rating
+                <p class="mb-0 course-title">{{ content.courseName }}</p>
+                  <p class="mb-0 course-author">{{ content.author.fullName }}</p>
+                  <v-card-actions class="px-0">
+                    <v-rating dense
                       v-model="content.rating"
                       readonly
                       small
                       empty-icon="$vuetify.icons.ratingFull"
                       half-increments
                     ></v-rating>
-                  </v-flex>
-                  <v-flex fill-height>
                     <span class="course-score">{{ content.rating }}</span>
                     <span class="ml-2 course-total-rate">(1724)</span>
-                  </v-flex>
-                </v-layout>
+                  </v-card-actions>
               </v-flex>
               <v-flex xs12></v-flex>
             </v-card-title>
           </v-flex>
+          <v-expand-transition>
+          <div
+            v-if="hover"
+            class="d-flex transition-fast-in-fast-out white darken-4 v-card--reveal display-3 white--text"
+            style="height: 100%;"
+          >
+              <v-flex class="align-center justify-center">
+                <v-btn @click="goToCourseDetail()" class="ma-0" flat fab dark color="grey">
+      <v-icon dark>fa-edit</v-icon>
+    </v-btn>
+            <v-btn @click="dialog = !dialog" fab flat dark color="grey">
+      <v-icon dark>fa-trash</v-icon>
+    </v-btn>
+              </v-flex>
+          </div>
+        </v-expand-transition>
         </v-layout>
         <v-divider light></v-divider>
         <v-card-actions class="px-3">
           <span class="course-point">{{ content.point }} điểm</span>
           <v-spacer></v-spacer>
           <span class="course-status">Trạng thái: {{ content.statusName }}</span>
-        </v-card-actions>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn v-if="content.statusId == 3" disabled color="info">Chi tiết</v-btn>
-          <v-btn v-else @click="goToCourseDetail()" color="info">Chi tiết</v-btn>
-          <v-btn v-if="content.statusId == 3" disabled color="red">Xóa</v-btn>
-          <v-btn v-else @click="dialog = !dialog" color="red">Xóa</v-btn>
-          <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
     </v-hover>
@@ -161,7 +158,19 @@ export default {
   color: red;
   font-weight: 600;
 }
-.hover {
-  height: 430px;
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: .8;
+  position: absolute;
+  width: 100%;
+}
+.v-card--reveal .flex {
+  position: absolute;
+  opacity: 1;
+}
+.v-card--reveal .flex .v-btn {
+  opacity: 1;
 }
 </style>

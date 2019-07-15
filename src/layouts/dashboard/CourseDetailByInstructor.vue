@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import CourseOverview from '@/Instructor/CourseOverview'
+import CourseOverview from '@/components/Instructor/CourseOverview'
 export default {
   components: {
     CourseOverview

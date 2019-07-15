@@ -4,7 +4,23 @@ import router from './router'
 import store from './store'
 import mixin from './mixin'
 import './plugins/index'
+import firebase from 'firebase'
+import './assets/style/vue-chessboard.css'
+import './assets/style/chessboard-0.3.0.css'
 Vue.config.productionTip = false
+
+//connect firebase
+var firebaseConfig = {
+  apiKey: 'AIzaSyDBz72G-L_nG1s2CgXHx0pPKc8tQLNyyS0',
+  authDomain: 'cols-fpt.firebaseapp.com',
+  databaseURL: 'https://cols-fpt.firebaseio.com',
+  projectId: 'cols-fpt',
+  storageBucket: 'cols-fpt.appspot.com',
+  messagingSenderId: '1082474123206',
+  appId: '1:1082474123206:web:79a9804e9ccc5382'
+}
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig)
 
 function getParamsFromHeader() {
   const url = new URL(window.location.href)

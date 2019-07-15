@@ -24,7 +24,7 @@
 
 
 <script>
-import CourseDetail from '@/Instructor/CourseDetail'
+import CourseDetail from '@/components/Instructor/CourseDetail'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const courseRepository = RepositoryFactory.get('course')

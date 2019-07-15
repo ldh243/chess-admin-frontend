@@ -1,6 +1,6 @@
 <template>
-  <v-footer height="auto">
-    <v-layout row class="bg-dark white--text text-xs-center" wrap py-2>
+  <v-footer height="auto" style="border-top: 1px solid #e2e2e2">
+    <v-layout row class="grey--text text-xs-center" wrap py-3>
       <v-flex xs4 offset-xs8>
         <span class="px-3 body-2">
           &copy; {{ new Date().getFullYear() }} Copyright
@@ -13,11 +13,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      logoFPT: require("@/assets/images/fpt-university-logo.png")
-    };
-  }
 };
 </script>
 
