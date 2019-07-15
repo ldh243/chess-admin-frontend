@@ -6,6 +6,7 @@ import mixin from './mixin'
 import './plugins/index'
 import firebase from 'firebase'
 import './assets/style/vue-chessboard.css'
+import './assets/style/chessboard-0.3.0.css'
 Vue.config.productionTip = false
 
 //connect firebase

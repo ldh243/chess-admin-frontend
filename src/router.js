@@ -12,8 +12,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 //instructor
-import CreateCourse from '@/Instructor/CreateCourse'
-import DetailCourseById from '@/Instructor/DetailCourseById'
+import CreateCourse from '@/components/Instructor/CreateCourse'
+import DetailCourseById from '@/components/Instructor/DetailCourseById'
 
 Vue.use(Router)
 export default new Router({
@@ -26,7 +26,7 @@ export default new Router({
       component: Dashboard,
       children: [
         {
-          path: 'instructorCourse/createcourse',
+          path: 'createcourse',
           component: CreateCourse
         },
         {

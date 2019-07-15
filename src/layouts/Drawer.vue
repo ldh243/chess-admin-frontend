@@ -10,41 +10,26 @@
   >
     <v-toolbar flat class="transparent">
       <v-list class="pa-0">
-        <v-list-tile>
-          <v-list-tile-content class="title-header-parent">
-            <v-list-tile-title class="title-header">COLS</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-toolbar>
-    <v-divider></v-divider>
-    <v-toolbar flat class="transparent">
-      <v-list class="pa-0" subheader v-if="$store.state.user != null">
-        <v-list-tile avatar :to="accountProfile">
-          <v-list-tile-avatar>
-            <img :src="$store.state.user.avatar">
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <span class="text-truncate">{{$store.state.user.fullName}}</span>
+        <v-list-tile :to="'/'">
+        <v-list-tile-action>
+          <img :src="chessLogo" width="40" height="40"/>
+        </v-list-tile-action>
+            <v-list-tile-content>
+      <v-list-tile-title>
+              <span class="font-weight-black">COLS</span>
             </v-list-tile-title>
-            <v-list-tile-sub-title>{{$store.state.user.roleName}}</v-list-tile-sub-title>
-          </v-list-tile-content>
-
-          <v-list-tile-action>
+            </v-list-tile-content>
             <v-btn icon @click.stop.prevent="mini = !mini">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-          </v-list-tile-action>
         </v-list-tile>
       </v-list>
     </v-toolbar>
 
     <v-list class="pt-0" dense>
-      <v-divider></v-divider>
 
       <v-list-tile
-        v-if="$store.state.user.roleId == 3"
+        v-if="user.roleId == 3"
         v-for="item in items"
         :key="item.title"
         :to="item.path"
@@ -58,10 +43,9 @@
         </v-list-tile-content>
       </v-list-tile>
       <v-list-tile
-        v-if="$store.state.user.roleId == 1"
-        v-for="item in items2"
-        :key="item.title"
+        v-if="user.roleId == 1"
         :to="item.path"
+        v-for="item in items2" :key="item.path"
       >
         <v-list-tile-action>
           <v-icon>{{ item.icon }}</v-icon>
@@ -75,7 +59,7 @@
         <v-list-tile-action>
           <v-icon>fa-sign-out-alt</v-icon>
         </v-list-tile-action>
-
+      
         <v-list-tile-content>
           <v-list-tile-title>Đăng xuất</v-list-tile-title>
         </v-list-tile-content>
@@ -116,6 +100,7 @@ export default {
   },
   data() {
     return {
+      chessLogo: require('@/assets/images/chess.png'),
       loader: false,
       drawer: true,
       accountProfile: '/dashboard/profile',
@@ -126,7 +111,7 @@ export default {
           path: '/dashboard/statistics'
         },
         {
-          title: 'Quản lý khóa học',
+          title: 'Thống kê khóa học',
           icon: 'fa-book',
           path: '/dashboard/courses'
         },
@@ -153,18 +138,19 @@ export default {
           path: '/dashboard/statistics'
         },
         {
-          title: 'Thống kê khóa học',
+          title: 'Danh sách khóa học',
           icon: 'fa-address-book',
-          path: '/dashboard/instructorCourse'
+          path: '/dashboard/instructorCourse',
         },
         {
-          title: 'Xét duyệt giảng viên',
-          icon: 'fa-chalkboard-teacher',
-          path: '/dashboard/instructorRequest'
+          title: 'Thêm khóa học',
+          icon: 'fa-plus-circle',
+          path: '/dashboard/createcourse',
         }
       ],
       mini: true,
-      dialog: false
+      dialog: false,
+      user: this.$store.state.user
     }
   },
   mounted() {
@@ -211,4 +197,5 @@ export default {
 >>> .primary--text {
   max-width: 300px;
 }
+
 </style>

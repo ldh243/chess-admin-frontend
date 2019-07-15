@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import Chessboard from '@/components/plugins/vue-chessboard/index.vue'
+import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
 import { constants } from 'crypto'
 export default {
   components: {
