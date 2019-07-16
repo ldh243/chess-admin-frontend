@@ -10,38 +10,42 @@
             <v-card-title primary-title class="pt-2">
               <v-flex xs12>
                 <p class="mb-0 course-title">{{ content.courseName }}</p>
-                  <p class="mb-0 course-author">{{ content.author.fullName }}</p>
-                  <v-card-actions class="px-0">
-                    <v-rating dense
-                      v-model="content.rating"
-                      readonly
-                      small
-                      empty-icon="$vuetify.icons.ratingFull"
-                      half-increments
-                    ></v-rating>
-                    <span class="course-score">{{ content.rating }}</span>
-                    <span class="ml-2 course-total-rate">(1724)</span>
-                  </v-card-actions>
+                <p class="mb-0 course-author">{{ content.author.fullName }}</p>
+                <v-card-actions class="px-0">
+                  <v-rating
+                    dense
+                    v-model="content.rating"
+                    readonly
+                    small
+                    empty-icon="$vuetify.icons.ratingFull"
+                    half-increments
+                  ></v-rating>
+                  <span class="course-score">{{ content.rating }}</span>
+                  <span class="ml-2 course-total-rate">(1724)</span>
+                </v-card-actions>
               </v-flex>
               <v-flex xs12></v-flex>
             </v-card-title>
           </v-flex>
           <v-expand-transition>
-          <div
-            v-if="hover"
-            class="d-flex transition-fast-in-fast-out white darken-4 v-card--reveal display-3 white--text"
-            style="height: 100%;"
-          >
+            <div
+              v-if="hover"
+              class="d-flex transition-fast-in-fast-out white darken-4 v-card--reveal display-3 white--text"
+              style="height: 100%;"
+            >
               <v-flex class="align-center justify-center">
                 <v-btn @click="goToCourseDetail()" class="ma-0" flat fab dark color="grey">
-      <v-icon dark>fa-edit</v-icon>
-    </v-btn>
-            <v-btn @click="dialog = !dialog" fab flat dark color="grey">
-      <v-icon dark>fa-trash</v-icon>
-    </v-btn>
+                  <v-icon dark>fa-edit</v-icon>
+                </v-btn>
+                <v-btn v-if="content.statusId == 3" fab flat dark color="grey">
+                  <v-icon dark>fa-trash</v-icon>
+                </v-btn>
+                <v-btn v-else @click="dialog = !dialog" fab flat dark color="grey">
+                  <v-icon dark>fa-trash</v-icon>
+                </v-btn>
               </v-flex>
-          </div>
-        </v-expand-transition>
+            </div>
+          </v-expand-transition>
         </v-layout>
         <v-divider light></v-divider>
         <v-card-actions class="px-3">
@@ -162,7 +166,7 @@ export default {
   align-items: center;
   bottom: 0;
   justify-content: center;
-  opacity: .8;
+  opacity: 0.8;
   position: absolute;
   width: 100%;
 }

@@ -9,20 +9,40 @@
             v-model="createdCourse.name"
             box
             label="Tên khóa học"
-            :value="valueName == createdCourse.name"
+            :error-messages="nameErrors"
+            required
+            @input="$v.createdCourse.name.$touch()"
+            @blur="$v.createdCourse.name.$touch()"
           ></v-text-field>
         </v-card-text>
 
         <div>
           <v-card-text>
-            <v-textarea v-model="createdCourse.description" box label="Mô tả: " value></v-textarea>
+            <v-textarea
+              v-model="createdCourse.description"
+              box
+              label="Mô tả: "
+              value
+              :error-messages="decriptonErrors"
+              required
+              @input="$v.createdCourse.description.$touch()"
+              @blur="$v.createdCourse.description.$touch()"
+            ></v-textarea>
             <v-divider class="my-2"></v-divider>
           </v-card-text>
         </div>
         <div class="point-category">
           <div class="point">
             <v-card-text>
-              <v-text-field v-model="createdCourse.point" box label="Điểm để học"></v-text-field>
+              <v-text-field
+                v-model="createdCourse.point"
+                box
+                label="Điểm để học"
+                :error-messages="pointErros"
+                required
+                @input="$v.createdCourse.point.$touch()"
+                @blur="$v.createdCourse.point.$touch()"
+              ></v-text-field>
             </v-card-text>
           </div>
           <div>
@@ -36,6 +56,10 @@
                   multiple
                   chips
                   label="Danh mục"
+                  :error-messages="listCategoryErrors"
+                  required
+                  @input="$v.createdCourse.listCategoryIds.$touch()"
+                  @blur="$v.createdCourse.listCategoryIds.$touch()"
                 ></v-select>
               </v-flex>
             </v-card-text>
@@ -66,9 +90,9 @@
         <v-divider class="my-2"></v-divider>
         <v-card-actions>
           <div class="create">
-            <router-link to="/dashboard/instructorCourse">
-              <v-btn @click="createCourse(), refreshPage()" class="text-xs-center" color="success">Hoàn tất</v-btn>
-            </router-link>
+            <!-- <router-link to="/dashboard/instructorCourse"> -->
+            <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
+            <!-- </router-link> -->
           </div>
         </v-card-actions>
       </v-card>
@@ -78,6 +102,8 @@
 </template>
 
 <script>
+import { validationMixin } from 'vuelidate'
+import { required, integer } from 'vuelidate/lib/validators'
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
 import Loader from '@/components/Loader'
 import { mapState } from 'vuex'
@@ -87,9 +113,19 @@ import { log } from 'util'
 const categoryRepository = RepositoryFactory.get('category')
 const courseRepository = RepositoryFactory.get('course')
 export default {
+  mixins: [validationMixin],
   components: {
     CreateInteractiveLesson,
     Loader
+  },
+  validations: {
+    createdCourse: {
+      name: { required },
+      description: { required },
+      listCategoryIds: { required },
+      image: { required },
+      point: { required, integer }
+    }
   },
   data() {
     return {
@@ -115,8 +151,47 @@ export default {
     this.getCategories()
     this.loader = false
   },
+  computed: {
+    nameErrors() {
+      const errors = []
+      if (!this.$v.createdCourse.name.$dirty) return errors
+      !this.$v.createdCourse.name.required &&
+        errors.push('Tên khóa học không được để trống !')
+      return errors
+    },
+    decriptonErrors() {
+      const errors = []
+      if (!this.$v.createdCourse.description.$dirty) return errors
+      !this.$v.createdCourse.description.required &&
+        errors.push('Bạn phải mô tả khóa học !')
+      return errors
+    },
+    listCategoryErrors() {
+      const errors = []
+      if (!this.$v.createdCourse.listCategoryIds.$dirty) return errors
+      !this.$v.createdCourse.listCategoryIds.required &&
+        errors.push('Chọn tên danh mục.')
+      return errors
+    },
+    pointErros() {
+      const errors = []
+      if (!this.$v.createdCourse.point.$dirty) return errors
+      !this.$v.createdCourse.point.integer &&
+        errors.push('Nhập đúng số điểm của khóa học.')
+      !this.$v.createdCourse.point.required &&
+        errors.push('Vui lòng nhập số điểm.')
+      return errors
+    },
+    imageErros() {
+      const errors = []
+      if (!this.$v.createdCourse.image.$dirty) return errors
+      !this.$v.createdCourse.image.required &&
+        errors.push('Hình ảnh không được để trống')
+      return errors
+    }
+  },
   methods: {
-        refreshPage() {
+    refreshPage() {
       window.location.reload()
     },
     showCreateLesson(number) {
@@ -149,6 +224,7 @@ export default {
       this.listCategories = data.data
     },
     async createCourse() {
+      this.$v.createdCourse.$touch()
       let image = '',
         nameCourse = this.createdCourse.name
       let match = this.$store.state.user.email.match(/^([^@]*)/)
