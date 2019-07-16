@@ -29,11 +29,7 @@
     <v-list class="pt-0" dense>
 
       <v-list-tile
-<<<<<<< HEAD
-        v-show="user.roleId == 3"
-=======
         v-if="user.roleId == 3"
->>>>>>> TungLT
         v-for="item in items"
         :key="item.title"
         :to="item.path"
@@ -47,13 +43,7 @@
         </v-list-tile-content>
       </v-list-tile>
       <v-list-tile
-<<<<<<< HEAD
-        v-show="user.roleId == 1"
-        v-for="item in items2"
-        :key="item.title"
-=======
         v-if="user.roleId == 1"
->>>>>>> TungLT
         :to="item.path"
         v-for="item in items2" :key="item.path"
       >
@@ -150,16 +140,12 @@ export default {
         {
           title: 'Danh sách khóa học',
           icon: 'fa-address-book',
-<<<<<<< HEAD
-          path: '/dashboard/instructorCourse'
-=======
           path: '/dashboard/instructorCourse',
         },
         {
           title: 'Thêm khóa học',
           icon: 'fa-plus-circle',
           path: '/dashboard/createcourse',
->>>>>>> TungLT
         }
       ],
       mini: true,
