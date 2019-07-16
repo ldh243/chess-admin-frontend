@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-card class="mt-3">
-      <v-toolbar color="green">
-        <v-toolbar-title id="scrolling-techniques">Bài tập 1</v-toolbar-title>
+      <v-toolbar color="#E6E6E6">
+        <v-text-field v-model="lessonViewModel.name" label="Bài Tập 1" single-line></v-text-field>
       </v-toolbar>
-      <v-layout row>
+      <v-layout>
         <v-flex xs6>
           <v-card-text>
             <v-flex class="move-history">
@@ -26,11 +26,12 @@
             </v-flex>
           </v-card-text>
           <v-card-text>
-            <v-textarea
-              :value="lessonViewModel.interactiveLesson.initCode"
-              solo
-              label="Thế cờ"
-            ></v-textarea>
+            <v-textarea v-model="this.content" box label="Nội dung:  "></v-textarea>
+            <v-btn color="blue-grey" class="white--text">Cập nhật</v-btn>
+            <!-- <v-btn color="blue-grey" class="white--text">Xóa</v-btn> -->
+          </v-card-text>
+          <v-card-text>
+            <v-textarea :value="lessonViewModel.interactiveLesson.initCode" solo label="Thế cờ"></v-textarea>
             <v-btn
               @click="exampleChess(exampleFen,currentStep)"
               color="blue-grey"
@@ -38,35 +39,18 @@
             >Bắt Đầu</v-btn>
             <v-divider class="my-2"></v-divider>
           </v-card-text>
-          <v-card-text>
-            <v-textarea v-model="this.content" box label="Nội dung:  "></v-textarea>
-            <v-btn color="blue-grey" class="white--text">Cập nhật</v-btn>
-            <!-- <v-btn color="blue-grey" class="white--text">Xóa</v-btn> -->
-          </v-card-text>
         </v-flex>
-        <v-flex xs5 pa-3 style="margin: auto">
-          <chessboard :fen="currentFen" @onMove="showInfo" />
-          <div>
-            <v-radio-group v-model="chessColor" row>
-              <template v-slot:label>
-                <strong>Chọn màu quân đi: &ensp;</strong>
-              </template>
-              <v-radio color="#000000" value="w">
-                <template v-slot:label>
-                  <div>
-                    <strong>Trắng</strong>
-                  </div>
-                </template>
-              </v-radio>
-              <v-radio color="#000000" value="b">
-                <template v-slot:label>
-                  <div>
-                    <strong>Đen</strong>
-                  </div>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </div>
+        <v-flex xs5 pa-1 style="margin: auto">
+          <v-layout row>
+            <v-flex xs12>
+              <chessboard :fen="currentFen" :orientation="chessColor" @onMove="showInfo" />
+            </v-flex>
+            <v-flex xs2 pa-4 style="margin: auto">
+              <v-btn @click="userColor(userColors,indexColor)" color="#6E6E6E" flat icon>
+                <v-icon large>fa-redo-alt</v-icon>
+              </v-btn>
+            </v-flex>
+          </v-layout>
           <div class="option_2">
             <strong>Nhập thành:</strong>
           </div>
@@ -74,30 +58,22 @@
             <v-layout row wrap>
               <v-checkbox v-model="selectCastling" color="#000000" value="K">
                 <template v-slot:label>
-                  <div>
-                    <strong>Cánh vua trắng</strong>
-                  </div>
+                  <v-btn style="width: 120px" class="white king pick-color"></v-btn>
                 </template>
               </v-checkbox>
               <v-checkbox v-model="selectCastling" color="#000000" value="Q">
                 <template v-slot:label>
-                  <div>
-                    <strong>Cánh hậu trắng</strong>
-                  </div>
+                  <v-btn style="width: 120px" class="queen white pick-color"></v-btn>
                 </template>
               </v-checkbox>
               <v-checkbox v-model="selectCastling" color="#000000" value="k">
                 <template v-slot:label>
-                  <div>
-                    <strong>Cánh vua đen</strong>
-                  </div>
+                  <v-btn style="width: 120px" class="king black pick-color pa-1"></v-btn>
                 </template>
               </v-checkbox>
               <v-checkbox v-model="selectCastling" color="#000000" value="q">
                 <template v-slot:label>
-                  <div>
-                    <strong>Cánh hậu đen</strong>
-                  </div>
+                  <v-btn style="width: 120px" class="queen black pick-color"></v-btn>
                 </template>
               </v-checkbox>
             </v-layout>
@@ -123,13 +99,18 @@
 <script>
 import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
 import { constants } from 'crypto'
+import { Transform } from 'stream'
 export default {
   components: {
     Chessboard
   },
   data() {
     return {
-      chessColor: '',
+      repeat: require('@/assets/images/repe.png'),
+      userColors: ['black', 'white'],
+      chessColor: 'white',
+      chessColors: '',
+      indexColor: 0,
       selectCastling: [],
       select: '',
       dialog: false,
@@ -170,6 +151,20 @@ export default {
     this.currentFen = this.defaultFen
   },
   methods: {
+    userColor(userColors) {
+      this.resetBoard()
+      this.chessColor = userColors[this.indexColor++]
+      if (this.indexColor > userColors.length) {
+        return (this.indexColor = 0)
+      }
+      if (this.chessColor == 'white') {
+        this.chessColors = 'w'
+      } else {
+        this.chessColors = 'b'
+      }
+      console.log(this.chessColor)
+      console.log(this.chessColors)
+    },
     exampleChess(exampleFen) {
       this.currentFen = exampleFen[this.currentStep]
       this.lessonViewModel.interactiveLesson.initCode =
@@ -179,7 +174,14 @@ export default {
       }
       console.log(this.currentStep)
     },
-    test() {},
+    resetBoard() {
+      this.moveHistory = []
+      this.moves = ''
+      this.updateMove = true
+      this.currentFen = this.defaultFen
+      this.currentMove = 0
+      this.totalMove = 0
+    },
     loadFen(fen, event) {
       this.updateMove = false
       this.currentFen = fen
@@ -336,7 +338,7 @@ export default {
 }
 </script>
 
-<style scoped >
+<style scoped src="@/assets/style/chessboard.css" >
 >>> piece,
 .blue {
   background-color: transparent !important;
@@ -348,43 +350,7 @@ export default {
   color: dimgray;
   font-size: 17px;
 }
-.move-history-content {
-  background-color: #fff;
-  border-color: #fff;
-  color: rgba(0, 0, 0, 0.87);
-  border-radius: 2px;
-  height: 150px;
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  overflow: auto;
-}
-.move-history-content div {
-  flex-wrap: wrap;
-  display: flex;
-}
-.chess-move-history {
-  min-width: 50%;
-}
-.move {
-  flex: 0 0 43%;
-  font-size: 1.185em;
-  padding-left: 10px;
-  height: 30px;
-  align-content: center;
-  font-size: 18px;
-}
-.move:hover {
-  cursor: pointer;
-  background-color: #1b83e4;
-  color: white;
-}
-.index {
-  flex: 0 0 14%;
-  border-right: 1px solid #d9d9d9;
-  background: #f7f6f5;
-  color: #b3b3b3;
-  justify-content: center;
-  align-content: center;
-  font-size: 15px;
+.btn {
+  font-size: 20px;
 }
 </style>
