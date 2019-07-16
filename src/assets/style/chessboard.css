@@ -73,6 +73,7 @@
 .black,
 .white {
   background-color: transparent !important;
+  border: unset !important;
 }
 .pick-color {
   width: 50px;
@@ -102,4 +103,11 @@
 /*for create exercise page ==========================*/
 .left-chess-info {
   padding: 30px;
+}
+/*for create lesson page ============================*/
+.btn-castling-group {
+  width: 100%;
+}
+.btn-castling {
+  width: 100px;
 }

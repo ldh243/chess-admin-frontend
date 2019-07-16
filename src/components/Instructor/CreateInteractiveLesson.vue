@@ -41,48 +41,7 @@
           </v-card-text>
         </v-flex>
         <v-flex xs5 pa-1 style="margin: auto">
-          <v-layout row>
-            <v-flex xs12>
-              <chessboard :fen="currentFen" :orientation="chessColor" @onMove="showInfo" />
-            </v-flex>
-            <v-flex xs2 pa-4 style="margin: auto">
-              <v-btn @click="userColor(userColors,indexColor)" color="#6E6E6E" flat icon>
-                <v-icon large>fa-redo-alt</v-icon>
-              </v-btn>
-            </v-flex>
-          </v-layout>
-          <div class="option_2">
-            <strong>Nhập thành:</strong>
-          </div>
-          <div>
-            <v-layout row wrap>
-              <v-checkbox v-model="selectCastling" color="#000000" value="K">
-                <template v-slot:label>
-                  <v-btn style="width: 120px" class="white king pick-color"></v-btn>
-                </template>
-              </v-checkbox>
-              <v-checkbox v-model="selectCastling" color="#000000" value="Q">
-                <template v-slot:label>
-                  <v-btn style="width: 120px" class="queen white pick-color"></v-btn>
-                </template>
-              </v-checkbox>
-              <v-checkbox v-model="selectCastling" color="#000000" value="k">
-                <template v-slot:label>
-                  <v-btn style="width: 120px" class="king black pick-color pa-1"></v-btn>
-                </template>
-              </v-checkbox>
-              <v-checkbox v-model="selectCastling" color="#000000" value="q">
-                <template v-slot:label>
-                  <v-btn style="width: 120px" class="queen black pick-color"></v-btn>
-                </template>
-              </v-checkbox>
-            </v-layout>
-            <div>
-              <v-flex xs9>
-                <v-text-field outline label="Nước đi trước đó"></v-text-field>
-              </v-flex>
-            </div>
-          </div>
+          <CreateChessPuzzle/>
         </v-flex>
       </v-layout>
       <v-card-actions>
@@ -97,12 +56,12 @@
 </template>
 
 <script>
-import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
+import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle'
 import { constants } from 'crypto'
 import { Transform } from 'stream'
 export default {
   components: {
-    Chessboard
+    CreateChessPuzzle
   },
   data() {
     return {
