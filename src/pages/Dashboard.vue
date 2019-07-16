@@ -2,7 +2,7 @@
   <v-app id="sandbox">
     <Toolbar/>
     <Drawer/>
-    <v-content style="padding-top: 64px;">
+    <v-content style="padding-top: 64px;padding-bottom: 80px;">
       <Content/>
     </v-content>
   </v-app>

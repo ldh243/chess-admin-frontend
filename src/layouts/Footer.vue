@@ -1,6 +1,6 @@
 <template>
-  <v-footer height="auto" style="border-top: 1px solid #e2e2e2">
-    <v-layout row class="grey--text text-xs-center" wrap py-3>
+  <v-footer height="auto" style="background-color: rgba(0,0,0,0.67)">
+    <v-layout row class="grey--text text-xs-center" wrap py-2>
       <v-flex xs4 offset-xs8>
         <span class="px-3 body-2">
           &copy; {{ new Date().getFullYear() }} Copyright
@@ -19,5 +19,10 @@ export default {
 <style scoped>
 a {
   text-decoration: none;
+}
+.v-footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }
 </style>

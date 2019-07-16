@@ -53,8 +53,11 @@
         </div>
       </v-card>
 
-      <div v-if="createLesson == 2">
+      <div v-if="createLesson == 1">
           <CreateInteractiveLesson />
+      </div>
+      <div v-if="createLesson == 2">
+        <CreateExercise/>
       </div>
     </v-container>
     <Loader v-if="loader" />
@@ -63,6 +66,7 @@
 
 <script>
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
+import CreateExercise from '@/components/Instructor/CreateExercise'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import { async } from 'q'
@@ -70,7 +74,8 @@ const courseRepository = RepositoryFactory.get('course')
 export default {
   components: {
     CreateInteractiveLesson,
-    Loader
+    Loader,
+    CreateExercise
   },
   data() {
     return {

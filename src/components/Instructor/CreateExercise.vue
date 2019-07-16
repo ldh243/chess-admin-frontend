@@ -1,51 +1,70 @@
 <template>
-  <div>
     <v-card class="mt-3">
-      <v-toolbar color="green">
-        <v-toolbar-title id="scrolling-techniques">Bài tập 1</v-toolbar-title>
-      </v-toolbar>
-      <v-layout row>
-        <v-flex xs6>
-          <v-card-text>
-            <v-flex class="move-history">
-              <v-card-title>
-                <span class="title font-weight-bold">Nước đi</span>
-              </v-card-title>
-              <div class="move-history-content">
-                <div v-for="(item, index) in moveHistory" :key="index">
-                  <div class="index">{{ item.id }}</div>
-                  <div :id="item.id" class="move" @click="loadFen(item.fen, $event)">{{ item.move }}</div>
-                  <div
-                    v-if="item.blackMove"
-                    :id="item.id"
-                    class="move"
-                    @click="loadFen(item.fen, $event)"
-                  >{{ item.move }}</div>
-                </div>
-              </div>
+        <v-toolbar card prominent>
+            <v-toolbar-title>
+                Bài tập
+            </v-toolbar-title>
+        </v-toolbar>
+        <v-layout row>
+            <v-flex xs6 class="left-chess-info">
+                <v-flex class="move-history">
+                    <v-card-title>
+                        <span class="title font-weight-bold">Thế cờ</span>
+                    </v-card-title>
+                    <div class="puzzle-content">
+                    </div>
             </v-flex>
-          </v-card-text>
-          <v-card-text>
-            <v-textarea
-              :value="lessonViewModel.interactiveLesson.initCode"
-              solo
-              label="Thế cờ"
-            ></v-textarea>
-            <v-btn
+                <v-flex class="move-history">
+                    <v-card-title>
+                        <span class="title font-weight-bold">Nước đi</span>
+                    </v-card-title>
+                    <div class="move-history-content">
+                        <div v-for="(item, index) in moveHistory" :key="index">
+                        <div class="index">{{ item.id }}</div>
+                        <div :id="item.id" class="move" @click="loadFen(item.fen, $event)">{{ item.move }}</div>
+                        <div
+                            v-if="item.blackMove"
+                            :id="item.id"
+                            class="move"
+                            @click="loadFen(item.fen, $event)"
+                        >{{ item.move }}</div>
+                        </div>
+                    </div>
+            </v-flex>
+            <v-flex xs12 my-3>
+            <v-text-field
+                label="Thực hiện đúng"
+                solo
+                hide-details
+            ></v-text-field>
+            </v-flex>
+            <v-flex xs12 my-3>
+            <v-text-field
+                label="Thực hiện sai"
+                solo
+                hide-details
+            ></v-text-field>
+            </v-flex>
+            <v-card-actions class="justify-center">
+                <v-btn
               @click="exampleChess(exampleFen,currentStep)"
+              color="indigo"
+              class="white--text"
+            >Gợi ý nước đi</v-btn>
+            <v-btn
+              @click=""
+              color="teal"
+              class="white--text"
+            >Sửa nước đi</v-btn>
+            <v-btn
+              @click=""
               color="blue-grey"
               class="white--text"
-            >Bắt Đầu</v-btn>
-            <v-divider class="my-2"></v-divider>
-          </v-card-text>
-          <v-card-text>
-            <v-textarea v-model="this.content" box label="Nội dung:  "></v-textarea>
-            <v-btn color="blue-grey" class="white--text">Cập nhật</v-btn>
-            <!-- <v-btn color="blue-grey" class="white--text">Xóa</v-btn> -->
-          </v-card-text>
+            >Xóa nước đi</v-btn>
+            </v-card-actions>
         </v-flex>
         <v-flex xs5 pa-3 style="margin: auto">
-          <chessboard :fen="currentFen" @onMove="showInfo" />
+          <chessboard :fen="currentFen" :orientation="chessColor === 'w' ? 'white' : 'black'" @onMove="showInfo" />
           <div>
             <v-radio-group v-model="chessColor" row>
               <template v-slot:label>
@@ -108,28 +127,20 @@
             </div>
           </div>
         </v-flex>
-      </v-layout>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="success" depressed>Xong</v-btn>
-        <v-spacer></v-spacer>
-      </v-card-actions>
+        </v-layout>
     </v-card>
-    {{this.content}}
-    {{this.moveHistory}}
-  </div>
 </template>
 
 <script>
 import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
-import { constants } from 'crypto'
 export default {
-  components: {
-    Chessboard
-  },
-  data() {
+    name: 'CreateExercise',
+    components: {
+        Chessboard
+    },
+    data() {
     return {
-      chessColor: '',
+      chessColor: 'w',
       selectCastling: [],
       select: '',
       dialog: false,
@@ -164,6 +175,12 @@ export default {
           steps: []
         }
       }
+    }
+  },
+  watch: {
+    chessColor: function(newColor) {
+      this.chessColor = newColor
+      console.log(this.chessColor)
     }
   },
   created() {
@@ -336,55 +353,6 @@ export default {
 }
 </script>
 
-<style scoped >
->>> piece,
-.blue {
-  background-color: transparent !important;
-}
-.option_1 {
-  text-align: justify;
-}
-.option_2 {
-  color: dimgray;
-  font-size: 17px;
-}
-.move-history-content {
-  background-color: #fff;
-  border-color: #fff;
-  color: rgba(0, 0, 0, 0.87);
-  border-radius: 2px;
-  height: 150px;
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  overflow: auto;
-}
-.move-history-content div {
-  flex-wrap: wrap;
-  display: flex;
-}
-.chess-move-history {
-  min-width: 50%;
-}
-.move {
-  flex: 0 0 43%;
-  font-size: 1.185em;
-  padding-left: 10px;
-  height: 30px;
-  align-content: center;
-  font-size: 18px;
-}
-.move:hover {
-  cursor: pointer;
-  background-color: #1b83e4;
-  color: white;
-}
-.index {
-  flex: 0 0 14%;
-  border-right: 1px solid #d9d9d9;
-  background: #f7f6f5;
-  color: #b3b3b3;
-  justify-content: center;
-  align-content: center;
-  font-size: 15px;
-}
+<style src="@/assets/style/chessboard.css">
+
 </style>

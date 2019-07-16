@@ -1,11 +1,11 @@
 <template>
-    <div id="board">
+        <div id="board">
     </div>
 </template>
 
 <script>
 import Chess from 'chess.js'
-require('./chessboard-0.3.0.js')
+require('./chessboard-1.0.0.js')
 export default {
     name: 'ColsChessboard',
     props: {
@@ -15,7 +15,7 @@ export default {
         },
         orientation: {
             type: String,
-            default: 'white'
+            default: 'black'
         },
         sparePieces: {
             type: Boolean,
@@ -31,38 +31,49 @@ export default {
         fen: function(newFen) {
             this.fen = newFen
             this.loadPosition()
+        },
+        orientation: function(orientation) {
+            console.log("change orientation")
+            this.orientation = orientation
+            // this.game.reset()
+            // if (this.sparePieces) {
+            //     this.currentFen = `8/8/8/8/8/8/8/8 ${this.orientation === 'white' ? 'w' : 'b'} KQkq - 0 1`
+            // }
+            this.board.orientation(this.orientation)
+            // this.loadPosition()
         }
     },
     methods: {
         getPosition(oldPos, newPos) {
+            let data = {}
             if (ChessBoard.objToFen(newPos) !== undefined) {
                 console.log(ChessBoard.objToFen(newPos))
                 this.$emit('onChangePiece', ChessBoard.objToFen(newPos))
             }
         },
         loadPosition() {
-            console.log(this.fen)
-            this.game.load(this.fen)
+            this.game.load(this.currentFen)
             let cfg = {
                 position: this.game.fen(),
                 draggable: true,
                 sparePieces: this.sparePieces,
                 dropOffBoard: this.sparePieces ? 'trash' : 'snackback',
                 orientation: this.orientation,
-                onChange: this.getPosition
+                onChange: this.getPosition,
+                pieceTheme: '/assets/chesspieces/wikipedia/{piece}.png'
             }
             this.board = ChessBoard('board', cfg)
-            console.log(this.board)
         }
     },
     mounted() {
         this.loadPosition()
-        this.getPosition()
-        console.log(this.board)
     },
     created() {
         this.game = new Chess()
         this.board = null
+        if (this.sparePieces) {
+            this.currentFen = `8/8/8/8/8/8/8/8 ${this.orientation === 'white' ? 'w' : 'b'} KQkq - 0 1`
+        }
     }   
 }
 </script>
