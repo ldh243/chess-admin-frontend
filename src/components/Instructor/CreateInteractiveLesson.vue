@@ -1,27 +1,11 @@
 <template>
   <div>
-    <v-card>
+    <v-card class="mt-3">
       <v-toolbar color="green">
-        <v-toolbar-title>Bài tập 1</v-toolbar-title>
+        <v-toolbar-title id="scrolling-techniques">Bài tập 1</v-toolbar-title>
       </v-toolbar>
-      <v-card-text>
-        <v-text-field :value="lessonViewModel.name" box label="Nội dung" value></v-text-field>
-      </v-card-text>
-      <div class="layout_1">
-        <div class="layout_2">
-          <v-card-text>
-            <v-textarea
-              :value="lessonViewModel.interactiveLesson.initCode"
-              box
-              label="Tự động tạo thế cờ: "
-            ></v-textarea>
-            <v-btn
-              @click="exampleChess(exampleFen,currentStep)"
-              color="blue-grey"
-              class="white--text"
-            >Bắt Đầu</v-btn>
-            <v-divider class="my-2"></v-divider>
-          </v-card-text>
+      <v-layout row>
+        <v-flex xs6>
           <v-card-text>
             <v-flex class="move-history">
               <v-card-title>
@@ -42,18 +26,26 @@
             </v-flex>
           </v-card-text>
           <v-card-text>
+            <v-textarea
+              :value="lessonViewModel.interactiveLesson.initCode"
+              solo
+              label="Thế cờ"
+            ></v-textarea>
+            <v-btn
+              @click="exampleChess(exampleFen,currentStep)"
+              color="blue-grey"
+              class="white--text"
+            >Bắt Đầu</v-btn>
+            <v-divider class="my-2"></v-divider>
+          </v-card-text>
+          <v-card-text>
             <v-textarea v-model="this.content" box label="Nội dung:  "></v-textarea>
             <v-btn color="blue-grey" class="white--text">Cập nhật</v-btn>
             <!-- <v-btn color="blue-grey" class="white--text">Xóa</v-btn> -->
           </v-card-text>
-        </div>
-        <div class="layout_chessboard">
-          <v-layout row wrap>
-            <v-flex>
-              <chessboard :fen="currentFen" @onMove="showInfo" />
-            </v-flex>
-          </v-layout>
-
+        </v-flex>
+        <v-flex xs5 pa-3 style="margin: auto">
+          <chessboard :fen="currentFen" @onMove="showInfo" />
           <div>
             <v-radio-group v-model="chessColor" row>
               <template v-slot:label>
@@ -115,9 +107,8 @@
               </v-flex>
             </div>
           </div>
-        </div>
-      </div>
-      <v-divider></v-divider>
+        </v-flex>
+      </v-layout>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="success" depressed>Xong</v-btn>
@@ -375,7 +366,7 @@ export default {
   border-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   border-radius: 2px;
-  height: 180px;
+  height: 150px;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
   overflow: auto;

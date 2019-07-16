@@ -1,5 +1,5 @@
 <template>
-    <v-toolbar class="v-toolbar--fixed" dark color="white" scroll-off-screen>
+    <v-toolbar class="v-toolbar--fixed" dark color="white" scroll-off-screen scroll-target="#scrolling-techniques">
         <v-spacer></v-spacer>
         <v-list-tile :to="'/dashboard/profile'">
         <v-list-tile-avatar >
