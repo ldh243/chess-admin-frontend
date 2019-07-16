@@ -1,8 +1,9 @@
 <template>
   <div>
     <v-container>
+      <v-card-title class="px-0">
       <h2>CHI TIẾT KHÓA HỌC</h2>
-      <hr />
+      </v-card-title>
       <v-card>
         <v-card-text>
           <v-text-field :value="courseDetail.name" readonly box label="Tên khóa học"></v-text-field>
@@ -53,9 +54,7 @@
       </v-card>
 
       <div v-if="createLesson == 2">
-        <v-card-text>
           <CreateInteractiveLesson />
-        </v-card-text>
       </div>
     </v-container>
     <Loader v-if="loader" />
@@ -63,7 +62,7 @@
 </template>
 
 <script>
-import CreateInteractiveLesson from '@/Instructor/CreateInteractiveLesson'
+import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import { async } from 'q'

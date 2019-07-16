@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import CreateInteractiveLesson from '@/Instructor/CreateInteractiveLesson'
+import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
 import Loader from '@/components/Loader'
 import { mapState } from 'vuex'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
