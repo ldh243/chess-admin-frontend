@@ -41,30 +41,32 @@
           </v-card-text>
         </v-flex>
         <v-flex xs5 pa-1 style="margin: auto">
-          <CreateChessPuzzle/>
+          <CreateChessPuzzle />
         </v-flex>
       </v-layout>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="success" depressed>Xong</v-btn>
+        <v-btn color="success" depressed @click="createInteractiveLesson()">Xong</v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
-    {{this.content}}
-    {{this.moveHistory}}
   </div>
 </template>
 
 <script>
 import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle'
+import sampleSteps from '@/data/lesson.json'
 import { constants } from 'crypto'
 import { Transform } from 'stream'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+const lessonRepository = RepositoryFactory.get('lesson')
 export default {
   components: {
     CreateChessPuzzle
   },
   data() {
     return {
+      sampleSteps,
       repeat: require('@/assets/images/repe.png'),
       userColors: ['black', 'white'],
       chessColor: 'white',
@@ -98,10 +100,10 @@ export default {
       activeLesson: 0,
       lessonViewModel: {
         courseId: this.$route.params.courseId,
-        name: '',
+        name: 'Abc',
         interactiveLesson: {
-          initCode: '',
-          steps: []
+          initCode: '3B1B1B/p7/7B/8/7B/8/k1K5/8 w - - 0 1',
+          steps: sampleSteps
         }
       }
     }
@@ -292,6 +294,12 @@ export default {
       this.moveHistory = []
       this.currentMove = 0
       this.totalMove = 0
+    },
+    async createInteractiveLesson() {
+      const { data } = await lessonRepository.createInteractiveLesson(
+        this.lessonViewModel
+      )
+      console.log(data)
     }
   }
 }

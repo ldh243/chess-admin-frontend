@@ -1,0 +1,378 @@
+[
+  {
+    "id": 1,
+    "move": "e4",
+    "content": "",
+    "moveDirection": "e2e4",
+    "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+    "preId": null
+  },
+  {
+    "id": 2,
+    "move": "e6",
+    "content": "",
+    "moveDirection": "e7e6",
+    "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+    "preId": 1
+  },
+  {
+    "id": 3,
+    "move": "d3",
+    "content": "",
+    "moveDirection": "d2d3",
+    "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/3P4/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+    "preId": 2
+  },
+  {
+    "id": 4,
+    "move": "d5",
+    "content": "",
+    "moveDirection": "d7d5",
+    "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq d6 0 3",
+    "preId": 3
+  },
+  {
+    "id": 5,
+    "move": "Nd2",
+    "content": "",
+    "moveDirection": "b1d2",
+    "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/4P3/3P4/PPPN1PPP/R1BQKBNR b KQkq - 1 3",
+    "preId": 4
+  },
+  {
+    "id": 6,
+    "move": "c5",
+    "content": "",
+    "moveDirection": "c7c5",
+    "fen": "rnbqkbnr/pp3ppp/4p3/2pp4/4P3/3P4/PPPN1PPP/R1BQKBNR w KQkq c6 0 4",
+    "preId": 5
+  },
+  {
+    "id": 7,
+    "move": "Ngf3",
+    "content": "",
+    "moveDirection": "g1f3",
+    "fen": "rnbqkbnr/pp3ppp/4p3/2pp4/4P3/3P1N2/PPPN1PPP/R1BQKB1R b KQkq - 1 4",
+    "preId": 6
+  },
+  {
+    "id": 8,
+    "move": "Nc6",
+    "content": "",
+    "moveDirection": "b8c6",
+    "fen": "r1bqkbnr/pp3ppp/2n1p3/2pp4/4P3/3P1N2/PPPN1PPP/R1BQKB1R w KQkq - 2 5",
+    "preId": 7
+  },
+  {
+    "id": 9,
+    "move": "g3",
+    "content": "The classic pawn formation for the King's Indian Attack: pawns on d3, e4, and g3.",
+    "moveDirection": "g2g3",
+    "fen": "r1bqkbnr/pp3ppp/2n1p3/2pp4/4P3/3P1NP1/PPPN1P1P/R1BQKB1R b KQkq - 0 5",
+    "preId": 8
+  },
+  {
+    "id": 10,
+    "move": "Nf6",
+    "content": "",
+    "moveDirection": "g8f6",
+    "fen": "r1bqkb1r/pp3ppp/2n1pn2/2pp4/4P3/3P1NP1/PPPN1P1P/R1BQKB1R w KQkq - 1 6",
+    "preId": 9
+  },
+  {
+    "id": 11,
+    "move": "Bg2",
+    "content": "",
+    "moveDirection": "f1g2",
+    "fen": "r1bqkb1r/pp3ppp/2n1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQK2R b KQkq - 2 6",
+    "preId": 10
+  },
+  {
+    "id": 12,
+    "move": "Be7",
+    "content": "",
+    "moveDirection": "f8e7",
+    "fen": "r1bqk2r/pp2bppp/2n1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQK2R w KQkq - 3 7",
+    "preId": 11
+  },
+  {
+    "id": 13,
+    "move": "O-O",
+    "content": "",
+    "moveDirection": "e1g1",
+    "fen": "r1bqk2r/pp2bppp/2n1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQ1RK1 b kq - 4 7",
+    "preId": 12
+  },
+  {
+    "id": 14,
+    "move": "O-O",
+    "content": "",
+    "moveDirection": "e8g8",
+    "fen": "r1bq1rk1/pp2bppp/2n1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQ1RK1 w - - 5 8",
+    "preId": 13
+  },
+  {
+    "id": 15,
+    "move": "Re1",
+    "content": "",
+    "moveDirection": "f1e1",
+    "fen": "r1bq1rk1/pp2bppp/2n1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQR1K1 b - - 6 8",
+    "preId": 14
+  },
+  {
+    "id": 16,
+    "move": "b6",
+    "content": "Other options are b5 y Dc7.",
+    "moveDirection": "b7b6",
+    "fen": "r1bq1rk1/p3bppp/1pn1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQR1K1 w - - 0 9",
+    "preId": 15
+  },
+  {
+    "id": 17,
+    "move": "e5",
+    "content": "The e5 pawn is key as it invades the Black-side of the board and removes a natural defender of the king",
+    "moveDirection": "e4e5",
+    "fen": "r1bq1rk1/p3bppp/1pn1pn2/2ppP3/8/3P1NP1/PPPN1PBP/R1BQR1K1 b - - 0 9",
+    "preId": 16
+  },
+  {
+    "id": 18,
+    "move": "Nd7",
+    "content": "",
+    "moveDirection": "f6d7",
+    "fen": "r1bq1rk1/p2nbppp/1pn1p3/2ppP3/8/3P1NP1/PPPN1PBP/R1BQR1K1 w - - 1 10",
+    "preId": 17
+  },
+  {
+    "id": 19,
+    "move": "Nf1",
+    "content": "",
+    "moveDirection": "d2f1",
+    "fen": "r1bq1rk1/p2nbppp/1pn1p3/2ppP3/8/3P1NP1/PPP2PBP/R1BQRNK1 b - - 2 10",
+    "preId": 18
+  },
+  {
+    "id": 20,
+    "move": "Bf7",
+    "content": "",
+    "moveDirection": "c8b7",
+    "fen": "r2q1rk1/pb1nbppp/1pn1p3/2ppP3/8/3P1NP1/PPP2PBP/R1BQRNK1 w - - 3 11",
+    "preId": 19
+  },
+  {
+    "id": 21,
+    "move": "h4",
+    "content": "",
+    "moveDirection": "h2h4",
+    "fen": "r2q1rk1/pb1nbppp/1pn1p3/2ppP3/7P/3P1NP1/PPP2PB1/R1BQRNK1 b - h3 0 11",
+    "preId": 20
+  },
+  {
+    "id": 22,
+    "move": "Qc7",
+    "content": "",
+    "moveDirection": "d8c7",
+    "fen": "r4rk1/pbqnbppp/1pn1p3/2ppP3/7P/3P1NP1/PPP2PB1/R1BQRNK1 w - - 1 12",
+    "preId": 21
+  },
+  {
+    "id": 23,
+    "move": "Bf4",
+    "content": "",
+    "moveDirection": "c1f4",
+    "fen": "r4rk1/pbqnbppp/1pn1p3/2ppP3/5B1P/3P1NP1/PPP2PB1/R2QRNK1 b - - 2 12",
+    "preId": 22
+  },
+  {
+    "id": 24,
+    "move": "b5",
+    "content": "Black has lost tempi, b5 earlier on was quicker.",
+    "moveDirection": "b6b5",
+    "fen": "r4rk1/pbqnbppp/2n1p3/1pppP3/5B1P/3P1NP1/PPP2PB1/R2QRNK1 w - - 0 13",
+    "preId": 23
+  },
+  {
+    "id": 25,
+    "move": "N1h2",
+    "content": "",
+    "moveDirection": "f1h2",
+    "fen": "r4rk1/pbqnbppp/2n1p3/1pppP3/5B1P/3P1NP1/PPP2PBN/R2QR1K1 b - - 1 13",
+    "preId": 24
+  },
+  {
+    "id": 26,
+    "move": "d4",
+    "content": "Give up. the e4 square.",
+    "moveDirection": "d5d4",
+    "fen": "r4rk1/pbqnbppp/2n1p3/1pp1P3/3p1B1P/3P1NP1/PPP2PBN/R2QR1K1 w - - 0 14",
+    "preId": 25
+  },
+  {
+    "id": 27,
+    "move": "Ng5",
+    "content": "",
+    "moveDirection": "f3g5",
+    "fen": "r4rk1/pbqnbppp/2n1p3/1pp1P1N1/3p1B1P/3P2P1/PPP2PBN/R2QR1K1 b - - 1 14",
+    "preId": 26
+  },
+  {
+    "id": 28,
+    "move": "h6",
+    "content": "",
+    "moveDirection": "h7h6",
+    "fen": "r4rk1/pbqnbpp1/2n1p2p/1pp1P1N1/3p1B1P/3P2P1/PPP2PBN/R2QR1K1 w - - 0 15",
+    "preId": 27
+  },
+  {
+    "id": 29,
+    "move": "Qh5",
+    "content": "White wastes no time with the attack. We'll see this maneuver, the knight heads to g5 to provoke weaknesses and the queen to h5 with the same idea.",
+    "moveDirection": "d1h5",
+    "fen": "r4rk1/pbqnbpp1/2n1p2p/1pp1P1NQ/3p1B1P/3P2P1/PPP2PBN/R3R1K1 b - - 1 15",
+    "preId": 28
+  },
+  {
+    "id": 30,
+    "move": "hxg5",
+    "content": "Otherwise, the white attack would continue with Ng4 looking for sacrifices on h6.",
+    "moveDirection": "h6g5",
+    "fen": "r4rk1/pbqnbpp1/2n1p3/1pp1P1pQ/3p1B1P/3P2P1/PPP2PBN/R3R1K1 w - - 0 16",
+    "preId": 29
+  },
+  {
+    "id": 31,
+    "move": "b6",
+    "content": "",
+    "moveDirection": "b7b6",
+    "fen": "r1bqk2r/p3bppp/1pn1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQ1RK1 w kq - 0 8",
+    "preId": 13
+  },
+  {
+    "id": 32,
+    "move": "Re1",
+    "content": "",
+    "moveDirection": "f1e1",
+    "fen": "r1bqk2r/p3bppp/1pn1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQR1K1 b kq - 1 8",
+    "preId": 31
+  },
+  {
+    "id": 33,
+    "move": "Bb7",
+    "content": "",
+    "moveDirection": "c8b7",
+    "fen": "r2qk2r/pb2bppp/1pn1pn2/2pp4/4P3/3P1NP1/PPPN1PBP/R1BQR1K1 w kq - 2 9",
+    "preId": 32
+  },
+  {
+    "id": 34,
+    "move": "c3",
+    "content": "",
+    "moveDirection": "c2c3",
+    "fen": "r2qk2r/pb2bppp/1pn1pn2/2pp4/4P3/2PP1NP1/PP1N1PBP/R1BQR1K1 b kq - 0 9",
+    "preId": 33
+  },
+  {
+    "id": 35,
+    "move": "Qc7",
+    "content": "with chances for both sides",
+    "moveDirection": "d8c7",
+    "fen": "r3k2r/pbq1bppp/1pn1pn2/2pp4/4P3/2PP1NP1/PP1N1PBP/R1BQR1K1 w kq - 1 10",
+    "preId": 34
+  },
+  {
+    "id": 36,
+    "move": "e5",
+    "content": "e5 isn't that good when Black hasn't yet castled.",
+    "moveDirection": "e4e5",
+    "fen": "r2qk2r/pb2bppp/1pn1pn2/2ppP3/8/3P1NP1/PPPN1PBP/R1BQR1K1 b kq - 0 9",
+    "preId": 33
+  },
+  {
+    "id": 37,
+    "move": "Nd7",
+    "content": "",
+    "moveDirection": "f6d7",
+    "fen": "r2qk2r/pb1nbppp/1pn1p3/2ppP3/8/3P1NP1/PPPN1PBP/R1BQR1K1 w kq - 1 10",
+    "preId": 36
+  },
+  {
+    "id": 38,
+    "move": "Nf1",
+    "content": "",
+    "moveDirection": "d2f1",
+    "fen": "r2qk2r/pb1nbppp/1pn1p3/2ppP3/8/3P1NP1/PPP2PBP/R1BQRNK1 b kq - 2 10",
+    "preId": 37
+  },
+  {
+    "id": 39,
+    "move": "Qc7",
+    "content": "",
+    "moveDirection": "d8c7",
+    "fen": "r3k2r/pbqnbppp/1pn1p3/2ppP3/8/3P1NP1/PPP2PBP/R1BQRNK1 w kq - 3 11",
+    "preId": 38
+  },
+  {
+    "id": 40,
+    "move": "Bf4",
+    "content": "",
+    "moveDirection": "c1f4",
+    "fen": "r3k2r/pbqnbppp/1pn1p3/2ppP3/5B2/3P1NP1/PPP2PBP/R2QRNK1 b kq - 4 11",
+    "preId": 39
+  },
+  {
+    "id": 41,
+    "move": "h6",
+    "content": "",
+    "moveDirection": "h7h6",
+    "fen": "r3k2r/pbqnbpp1/1pn1p2p/2ppP3/5B2/3P1NP1/PPP2PBP/R2QRNK1 w kq - 0 12",
+    "preId": 40
+  },
+  {
+    "id": 42,
+    "move": "h4",
+    "content": "",
+    "moveDirection": "h2h4",
+    "fen": "r3k2r/pbqnbpp1/1pn1p2p/2ppP3/5B1P/3P1NP1/PPP2PB1/R2QRNK1 b kq h3 0 12",
+    "preId": 41
+  },
+  {
+    "id": 43,
+    "move": "O-O-O",
+    "content": "",
+    "moveDirection": "e8c8",
+    "fen": "2kr3r/pbqnbpp1/1pn1p2p/2ppP3/5B1P/3P1NP1/PPP2PB1/R2QRNK1 w - - 1 13",
+    "preId": 42
+  },
+  {
+    "id": 44,
+    "move": "Ne3",
+    "content": "",
+    "moveDirection": "f1e3",
+    "fen": "r4rk1/pbqnbppp/2n1p3/1pppP3/5B1P/3PNNP1/PPP2PB1/R2QR1K1 b - - 1 13",
+    "preId": 24
+  },
+  {
+    "id": 45,
+    "move": "b4",
+    "content": "",
+    "moveDirection": "b5b4",
+    "fen": "r4rk1/pbqnbppp/2n1p3/2ppP3/1p3B1P/3P1NP1/PPP2PBN/R2QR1K1 w - - 0 14",
+    "preId": 25
+  },
+  {
+    "id": 46,
+    "move": "Bxg5",
+    "content": "",
+    "moveDirection": "e7g5",
+    "fen": "r4rk1/pbqn1ppp/2n1p3/1pp1P1b1/3p1B1P/3P2P1/PPP2PBN/R2QR1K1 w - - 0 15",
+    "preId": 27
+  },
+  {
+    "id": 47,
+    "move": "hxg5",
+    "content": "The e5 and g5 pawns restrict Black's defensive possibilities.",
+    "moveDirection": "h4g5",
+    "fen": "r4rk1/pbqn1ppp/2n1p3/1pp1P1P1/3p1B2/3P2P1/PPP2PBN/R2QR1K1 b - - 0 15",
+    "preId": 46
+  }
+]

@@ -83,7 +83,14 @@ export default Vue.mixin({
           return 'Từ chối'
       }
     },
-
+    getLessonTypeName(lessonTypeId) {
+      switch (lessonTypeId) {
+        case 2:
+          return 'Thực hành'
+        case 3:
+          return 'Lý thuyết'
+      }
+    },
     getDateTimeFormat(datetime) {
       const date = new Date(Date.parse(datetime))
       return date.toLocaleString()
