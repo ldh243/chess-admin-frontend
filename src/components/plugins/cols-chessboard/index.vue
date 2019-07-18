@@ -1,5 +1,5 @@
 <template>
-        <div id="board">
+        <div :id="boardName">
     </div>
 </template>
 
@@ -15,11 +15,15 @@ export default {
         },
         orientation: {
             type: String,
-            default: 'black'
+            default: 'white'
         },
         sparePieces: {
             type: Boolean,
-            default: true
+            default: false
+        },
+        boardName: {
+            type: String,
+            default: 'board'
         }
     },
     data() {
@@ -30,26 +34,34 @@ export default {
     watch: {
         fen: function(newFen) {
             this.fen = newFen
-            this.loadPosition()
+            this.board.position(this.fen)
+            this.game.load(this.fen)
         },
         orientation: function(orientation) {
             console.log("change orientation")
             this.orientation = orientation
-            // this.game.reset()
-            // if (this.sparePieces) {
-            //     this.currentFen = `8/8/8/8/8/8/8/8 ${this.orientation === 'white' ? 'w' : 'b'} KQkq - 0 1`
-            // }
             this.board.orientation(this.orientation)
-            // this.loadPosition()
         }
     },
     methods: {
         getPosition(oldPos, newPos) {
             let data = {}
             if (ChessBoard.objToFen(newPos) !== undefined) {
-                console.log(ChessBoard.objToFen(newPos))
-                this.$emit('onChangePiece', ChessBoard.objToFen(newPos))
+                data['object'] = newPos
+                data['fen'] = ChessBoard.objToFen(newPos)
+                this.$emit('onChangePiece', data)
             }
+        },
+        getMove(source, target, piece, newPos, oldPos, orientation) {
+            let data = {}
+            let moves = this.game.moves({ verbose: true })
+            if (moves.includes({from: source, to: target})) {
+                console.log('ahihi')
+                this.game.move({from: source, to: target})
+            }
+            data['moveDirection'] = `${source}${target}`
+            data['move'] = `${piece.charAt(1) === 'P' ? '' : piece.charAt(1)}${target}`
+            this.$emit('onMove', data)
         },
         loadPosition() {
             this.game.load(this.currentFen)
@@ -60,9 +72,10 @@ export default {
                 dropOffBoard: this.sparePieces ? 'trash' : 'snackback',
                 orientation: this.orientation,
                 onChange: this.getPosition,
+                onDrop: !this.sparePieces ? this.getMove : '',
                 pieceTheme: '/assets/chesspieces/wikipedia/{piece}.png'
             }
-            this.board = ChessBoard('board', cfg)
+            this.board = ChessBoard(this.boardName, cfg)
         }
     },
     mounted() {

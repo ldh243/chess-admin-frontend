@@ -30,11 +30,6 @@
   height: 220px;
 }
 /* for learning-board ============================*/
-.v-btn {
-  height: 30px;
-  min-width: 20%;
-  margin: 0px;
-}
 .main-button {
   min-width: 30% !important;
 }
@@ -110,4 +105,10 @@
 }
 .btn-castling {
   width: 100px;
+}
+#createBoard {
+  width: 300px;
+}
+.piece-content {
+  display: inline-flex;
 }

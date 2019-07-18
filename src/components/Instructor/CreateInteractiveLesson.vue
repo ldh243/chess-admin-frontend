@@ -5,7 +5,7 @@
         <v-text-field v-model="lessonViewModel.name" label="Bài Tập 1" single-line></v-text-field>
       </v-toolbar>
       <v-layout>
-        <v-flex xs6>
+        <v-flex xs6 pr-4>
           <v-card-text>
             <v-flex class="move-history">
               <v-card-title>
@@ -31,7 +31,17 @@
             <!-- <v-btn color="blue-grey" class="white--text">Xóa</v-btn> -->
           </v-card-text>
           <v-card-text>
-            <v-textarea :value="lessonViewModel.interactiveLesson.initCode" solo label="Thế cờ"></v-textarea>
+            <v-card-title>
+                <span class="title font-weight-bold">Thế cờ</span>
+              </v-card-title>
+            <div class="puzzle-content pa-3">
+                <div><span class="heading font-weight-bold">White: </span>
+                  <div class="piece-content mr-1" v-for="piece in whiteObj" :key="piece">{{piece}}</div>
+                </div>
+                <div><span class="heading font-weight-bold">Black: </span>
+                  <div class="piece-content mr-1" v-for="piece in blackObj" :key="piece">{{piece}}</div>
+                </div>
+              </div>
             <v-btn
               @click="exampleChess(exampleFen,currentStep)"
               color="blue-grey"
@@ -40,8 +50,17 @@
             <v-divider class="my-2"></v-divider>
           </v-card-text>
         </v-flex>
-        <v-flex xs5 pa-1 style="margin: auto">
-          <CreateChessPuzzle/>
+        <v-flex xs6 pa-1 style="margin: auto">
+          <v-layout row>
+          <v-flex xs10>
+            <Chessboard @onMove="showInfo" :fen="fen" :boardName="'board'" />
+          </v-flex>
+          <v-flex xs2 style="margin: auto">
+        <v-btn @click="editBoard = true" flat icon fab color="grey">
+          <v-icon>fa-pen</v-icon>
+        </v-btn>
+      </v-flex>
+      </v-layout>
         </v-flex>
       </v-layout>
       <v-card-actions>
@@ -50,249 +69,144 @@
         <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
-    {{this.content}}
-    {{this.moveHistory}}
+    <v-dialog v-model="editBoard" persistent max-width="800px">
+      <v-card>
+        <v-toolbar card>
+          <v-card-title>
+          <span class="headline">Tạo thế cờ</span>
+        </v-card-title>
+        </v-toolbar>
+        <v-container>
+          <create-chess-puzzle @onChangeFen="getFen" :boardName="'createBoard'"></create-chess-puzzle>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="editBoard = false" class="btn-create-puzzle text-xs-center"  flat color="blue darken-1">Đóng</v-btn>
+            <v-btn @click="saveFen" class="btn-create-puzzle" depressed color="info">Lưu</v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle'
-import { constants } from 'crypto'
-import { Transform } from 'stream'
+import Chessboard from '@/components/plugins/cols-chessboard'
+import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
+
 export default {
   components: {
+    Chessboard,
     CreateChessPuzzle
   },
   data() {
     return {
-      repeat: require('@/assets/images/repe.png'),
-      userColors: ['black', 'white'],
-      chessColor: 'white',
-      chessColors: '',
-      indexColor: 0,
-      selectCastling: [],
-      select: '',
-      dialog: false,
-      currentFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      defaultFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      currentStep: 0,
-      exampleFen: [
-        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        'rnbq1b1r/ppp2kpp/8/3p4/3Pn3/8/PPP2PPP/RNBQKB1R w KQ - 0 6',
-        '3B1B1B/p7/7B/8/7B/8/k1K5/8 w - - 0 1'
-      ],
-      moveHistory: [],
+      lessonViewModel: '',
+      moveHistory: '',
       content: '',
-      updateMove: true,
-      currentMove: 0,
-      totalMove: 0,
-      moveDirection: '',
-      turn: '',
-      interval: null,
-      isPlayerWin: false,
-      move: '',
-      moves: '',
-      isStart: false,
-      gameStatus: '',
-      newestFen: '',
-      activeLesson: 0,
-      lessonViewModel: {
-        courseId: this.$route.params.courseId,
-        name: '',
-        interactiveLesson: {
-          initCode: '',
-          steps: []
-        }
-      }
+      editBoard: false,
+      fen: '',
+      chessboardData: {},
+      whiteObj: [],
+      blackObj: []
     }
   },
   created() {
-    this.currentFen = this.defaultFen
+    
   },
   methods: {
-    userColor(userColors) {
-      this.resetBoard()
-      this.chessColor = userColors[this.indexColor++]
-      if (this.indexColor > userColors.length) {
-        return (this.indexColor = 0)
-      }
-      if (this.chessColor == 'white') {
-        this.chessColors = 'w'
-      } else {
-        this.chessColors = 'b'
-      }
-      console.log(this.chessColor)
-      console.log(this.chessColors)
+    getFen(data) {
+      this.chessboardData = data
     },
-    exampleChess(exampleFen) {
-      this.currentFen = exampleFen[this.currentStep]
-      this.lessonViewModel.interactiveLesson.initCode =
-        exampleFen[this.currentStep++]
-      if (this.currentStep >= exampleFen.length) {
-        return (this.currentStep = 0)
-      }
-      console.log(this.currentStep)
-    },
-    resetBoard() {
-      this.moveHistory = []
-      this.moves = ''
-      this.updateMove = true
-      this.currentFen = this.defaultFen
-      this.currentMove = 0
-      this.totalMove = 0
-    },
-    loadFen(fen, event) {
-      this.updateMove = false
-      this.currentFen = fen
-      if (event != undefined) {
-        const divTarget = event.srcElement
-        //Lấy id của nó parse sang int
-        this.currentMove = this.getIdNumberOfMove(divTarget)
-        this.setCurrentMove()
-      }
-      console.log(event)
+    saveFen() {
+      this.fen = this.chessboardData.fen
+      let posKey = Object.keys(this.chessboardData.object)
+      this.whiteObj = []
+      this.blackObj = []
+      posKey.forEach(e => {
+        let piece = this.chessboardData.object[e]
+        if (piece.charAt(0) === 'w') {
+          this.whiteObj.push(piece.charAt(1) + e)
+        } else {
+          this.blackObj.push(piece.charAt(1) + e)
+        }
+      })
+      this.editBoard = false
     },
     showInfo(data) {
-      const black = 'black'
-      let moveHistory = this.moveHistory
-      let content = this.content
-      //Lấy nước đi mới
-      let newMove = data.history[data.history.length - 1]
-      let id = this.idChessBoard
-      //Lấy nước đi cuối cùng
-      let lastMove = moveHistory[moveHistory.length - 1]
-      let moveDirection = data.hisMoves.split(' ')
-      for (let index = 0; index < moveDirection.length; index++) {
-        this.moveDirection = moveDirection[index]
-      }
-
-      // let content = this.lessonViewModel.interactiveLesson.steps.content
-      if (newMove === undefined || !this.currentFen) return
-      //   newMove = this.changeChessKey(newMove)
-      //Lấy turn hiện tại
-      const turn = data.turn
-      this.totalMove++
-      if (turn === black) {
-        //tạo thêm turn mới
-        const newTurn = {
-          id: this.totalMove,
-          fen: data.fen,
-          move: newMove,
-          content: content,
-
-          moveDirection: this.moveDirection
-        }
-        moveHistory.push(newTurn)
-      } else {
-        //nước đi tiếp theo của turn cũ
-        lastMove = {
-          id: this.totalMove,
-          fen: data.fen,
-          move: newMove,
-          content: content,
-          moveDirection: this.moveDirection
-        }
-        moveHistory.push(lastMove)
-      }
       console.log(data)
-      this.currentMove = this.totalMove
-    },
-    setCurrentMove() {
-      //set highlight div dựa trên this.current move hiện tại
-      let arr = document.getElementsByClassName('move')
-      if (arr != undefined && arr != null && arr.length !== 0) {
-        Array.prototype.forEach.call(arr, function(move) {
-          move.classList.remove('current-move')
-        })
-        let currentMove = document.getElementById('move-' + this.currentMove)
-        currentMove.classList.add('current-move')
-        currentMove.parentNode.parentNode.scrollTop = currentMove.offsetTop
-      }
-    },
-    getIdNumberOfMove(divTarget) {
-      return parseInt(divTarget.id.replace('move-', ''))
-    },
-    getMoveByIdNumber() {
-      return document.getElementById('move-' + this.currentMove)
-    },
-    turnToNextMove() {
-      if (this.currentMove !== this.totalMove) {
-        this.currentMove++
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
-      }
-    },
-    turnToLastMove() {
-      if (this.currentMove !== this.totalMove) {
-        this.currentMove = this.totalMove
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
-      }
-    },
-    turnToPreviousMove() {
-      if (this.currentMove > 1) {
-        this.currentMove--
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
-      }
-    },
-    turnToFirstMove() {
-      if (this.currentMove > 1) {
-        this.currentMove = 1
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
-      }
-    },
-    turnToNextLesson() {
-      if (this.activeLesson < this.lessons.length - 1) {
-        this.activeLesson++
-        this.loader = true
-        this.resetBoardAndResetHistory()
-        this.getLessonById()
-        this.checkStatusDirectLesson()
-        this.loader = false
-      }
-    },
-    turnToPreviousLesson() {
-      if (this.activeLesson >= 1) {
-        this.activeLesson--
-        this.loader = true
-        this.resetBoardAndResetHistory()
-        this.getLessonById()
-        this.checkStatusDirectLesson()
-        this.loader = false
-      }
-    },
-    checkStatusDirectLesson() {
-      this.statusNextLesson = this.checkStatusNextLesson()
-      this.statusPreviousLesson = this.checkStatusPreviousLesson()
-    },
-    checkStatusNextLesson() {
-      if (this.activeLesson === this.lessons.length - 1) {
-        return true
-      }
-      return false
-    },
-    checkStatusPreviousLesson() {
-      if (this.activeLesson <= 0) {
-        return true
-      }
-      return false
-    },
-    resetBoardAndResetHistory() {
-      this.currentFen = ''
-      this.moveHistory = []
-      this.currentMove = 0
-      this.totalMove = 0
     }
+    // turnToNextMove() {
+    //   if (this.currentMove !== this.totalMove) {
+    //     this.currentMove++
+    //     const divTarget = this.getMoveByIdNumber()
+    //     divTarget.click()
+    //     this.updateMove = false
+    //     this.setCurrentMove()
+    //   }
+    // },
+    // turnToLastMove() {
+    //   if (this.currentMove !== this.totalMove) {
+    //     this.currentMove = this.totalMove
+    //     const divTarget = this.getMoveByIdNumber()
+    //     divTarget.click()
+    //     this.updateMove = false
+    //     this.setCurrentMove()
+    //   }
+    // },
+    // turnToPreviousMove() {
+    //   if (this.currentMove > 1) {
+    //     this.currentMove--
+    //     const divTarget = this.getMoveByIdNumber()
+    //     divTarget.click()
+    //     this.updateMove = false
+    //     this.setCurrentMove()
+    //   }
+    // },
+    // turnToFirstMove() {
+    //   if (this.currentMove > 1) {
+    //     this.currentMove = 1
+    //     const divTarget = this.getMoveByIdNumber()
+    //     divTarget.click()
+    //     this.updateMove = false
+    //     this.setCurrentMove()
+    //   }
+    // },
+    // turnToNextLesson() {
+    //   if (this.activeLesson < this.lessons.length - 1) {
+    //     this.activeLesson++
+    //     this.loader = true
+    //     this.resetBoardAndResetHistory()
+    //     this.getLessonById()
+    //     this.checkStatusDirectLesson()
+    //     this.loader = false
+    //   }
+    // },
+    // turnToPreviousLesson() {
+    //   if (this.activeLesson >= 1) {
+    //     this.activeLesson--
+    //     this.loader = true
+    //     this.resetBoardAndResetHistory()
+    //     this.getLessonById()
+    //     this.checkStatusDirectLesson()
+    //     this.loader = false
+    //   }
+    // },
+    // checkStatusDirectLesson() {
+    //   this.statusNextLesson = this.checkStatusNextLesson()
+    //   this.statusPreviousLesson = this.checkStatusPreviousLesson()
+    // },
+    // checkStatusNextLesson() {
+    //   if (this.activeLesson === this.lessons.length - 1) {
+    //     return true
+    //   }
+    //   return false
+    // },
+    // checkStatusPreviousLesson() {
+    //   if (this.activeLesson <= 0) {
+    //     return true
+    //   }
+    //   return false
+    // },
   }
 }
 </script>
@@ -301,15 +215,5 @@ export default {
 >>> piece,
 .blue {
   background-color: transparent !important;
-}
-.option_1 {
-  text-align: justify;
-}
-.option_2 {
-  color: dimgray;
-  font-size: 17px;
-}
-.btn {
-  font-size: 20px;
 }
 </style>
