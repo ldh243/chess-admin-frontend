@@ -24,11 +24,18 @@ export default {
         boardName: {
             type: String,
             default: 'board'
+        },
+        reset: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
         return {
-            currentFen: ''
+            currentFen: '',
+            squareClass: 'square-55d63',
+            fromSquare: '',
+            toSquare: ''
         }
     },
     watch: {
@@ -36,6 +43,19 @@ export default {
             this.fen = newFen
             this.board.position(this.fen)
             this.game.load(this.fen)
+        },
+        reset: function(reset) {
+            this.reset = reset
+            if (this.reset) {
+                this.board.position('start')
+                this.fromSquare = ''
+                this.toSquare = ''
+                let currentHighLight = document.getElementsByClassName(this.squareClass)
+                Array.prototype.forEach.call(currentHighLight, function(square) {
+                    square.classList.remove('highlight-white')
+                })
+                this.game = new Chess()
+            }
         },
         orientation: function(orientation) {
             console.log("change orientation")
@@ -53,15 +73,38 @@ export default {
             }
         },
         getMove(source, target, piece, newPos, oldPos, orientation) {
-            let data = {}
-            let moves = this.game.moves({ verbose: true })
-            if (moves.includes({from: source, to: target})) {
-                console.log('ahihi')
-                this.game.move({from: source, to: target})
+            let move = this.game.move({
+                from: source,
+                to: target,
+                promotion: 'q'
+            })
+            if (move === null) {
+                return 'snapback'
+            } else {
+                let data = {}
+                data['moveDirection'] = `${source}${target}`
+                data['move'] = this.game.pgn().split(' ')[this.game.pgn().split(' ').length - 1]
+                data['turn'] = this.game.turn() === 'w' ? 'white' : 'black'
+                data['fen'] = this.game.fen()
+                this.$emit('onMove', data)
             }
-            data['moveDirection'] = `${source}${target}`
-            data['move'] = `${piece.charAt(1) === 'P' ? '' : piece.charAt(1)}${target}`
-            this.$emit('onMove', data)
+            let currentHighLight = document.getElementsByClassName(this.squareClass)
+            Array.prototype.forEach.call(currentHighLight, function(square) {
+                square.classList.remove('highlight-white')
+            })
+            this.fromSquare = source
+            this.toSquare = target
+         },
+        performMove() {
+            this.board.position(this.game.fen())
+            let fromSquare = document.getElementsByClassName(`square-${this.fromSquare}`)
+            let toSquare = document.getElementsByClassName(`square-${this.toSquare}`)
+            Array.prototype.forEach.call(fromSquare, function(square) {
+                square.classList.add('highlight-white')
+            })
+            Array.prototype.forEach.call(toSquare, function(square) {
+                square.classList.add('highlight-white')
+            })
         },
         loadPosition() {
             this.game.load(this.currentFen)
@@ -73,7 +116,8 @@ export default {
                 orientation: this.orientation,
                 onChange: this.getPosition,
                 onDrop: !this.sparePieces ? this.getMove : '',
-                pieceTheme: '/assets/chesspieces/wikipedia/{piece}.png'
+                pieceTheme: '/assets/chesspieces/wikipedia/{piece}.png',
+                onSnapEnd: this.performMove
             }
             this.board = ChessBoard(this.boardName, cfg)
         }
@@ -91,6 +135,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+    .highlight-white {
+        box-shadow: inset 0 0 3px 3px yellow;
+    }
 </style>
