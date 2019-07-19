@@ -26,12 +26,7 @@
           <LessonViewModels :lessonView="courseDetail.lessonViewModels" />
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            @click="showCreateLesson(1)"
-            block
-            color="blue-grey"
-            class="white--text"
-          >Thêm bài học</v-btn>
+          <v-btn @click="dialog = !dialog" block color="blue-grey" class="white--text">Thêm bài học</v-btn>
           <v-btn
             @click="showCreateLesson(2)"
             block
@@ -57,24 +52,26 @@
     <!-- Dialog Create Lesson -->
     <v-dialog persistent v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-title>
-          <span class="headline">
-            <h4>THÊM BÀI HỌC</h4>
-          </span>
-        </v-card-title>
+        <v-toolbar light color="yellow lighten-1">
+          <v-toolbar-title class="fontWord">THÊM BÀI HỌC</v-toolbar-title>
+        </v-toolbar>
+
         <v-card-text>
           <v-container grid-list-md>
             <v-flex>
-              <!-- <v-card-text>
-                <div class="fontWord">Thêm bài học lý thuyết:</div>
-              </v-card-text>-->
               <v-card-actions>
-                <v-btn block color="success" round>Thêm bài học lý thuyết</v-btn>
+                <v-btn class="fontWordBtn" light block color="primary" round>Thêm bài học lý thuyết</v-btn>
               </v-card-actions>
             </v-flex>
             <v-flex>
               <v-card-actions>
-                <v-btn block color="primary" round>Thêm bài học thực hành</v-btn>
+                <v-btn
+                  @click="showCreateLesson(1), dialog = false"
+                  class="fontWordBtn"
+                  block
+                  color="primary"
+                  round
+                >Thêm bài học thực hành</v-btn>
               </v-card-actions>
             </v-flex>
           </v-container>
@@ -147,7 +144,9 @@ export default {
   text-align: center;
 }
 .fontWord {
-  font-weight: bold;
-  font: italic;
+  font-family: Comic Sans MS;
+}
+.fontWordBtn {
+  font-family: Tahoma;
 }
 </style>

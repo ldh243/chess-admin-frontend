@@ -16,8 +16,12 @@
         <td>
           <v-btn
             @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
-            color="" icon small
-          ><v-icon>fa-list</v-icon></v-btn>
+            color
+            icon
+            small
+          >
+            <v-icon>fa-list</v-icon>
+          </v-btn>
           <v-btn icon flat class="btn-active-deactive" @click="confirmEditCategory(props.item)">
             <v-icon>fa-edit</v-icon>
           </v-btn>
@@ -40,11 +44,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
-          <v-btn
-            flat
-            color="primary"
-            @click="createCategory(), refreshPage(), dialog = false"
-          >Đồng Ý</v-btn>
+          <v-btn flat color="primary" @click="createCategory(), dialog = false">Đồng Ý</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -55,7 +55,7 @@
         <v-card-text>
           <h2 class="basic">Các khóa học {{detailCategory.name}}</h2>
         </v-card-text>
-        <hr>
+        <hr />
         <v-card>
           <BasicCourse :listCourses="listCourses"></BasicCourse>
         </v-card>
@@ -80,11 +80,7 @@
         <v-card-actions @click>
           <v-spacer></v-spacer>
           <v-btn @click="editDialog = false" color="blue darken-1" flat>Hủy</v-btn>
-          <v-btn
-            @click="updateCategory(), editDialog = false, refreshPage()"
-            color="blue darken-1"
-            flat
-          >Đồng Ý</v-btn>
+          <v-btn @click="updateCategory(), editDialog = false" color="blue darken-1" flat>Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -106,14 +102,14 @@
           <v-spacer></v-spacer>
           <v-btn @click="removeDialog = false" color="blue darken-1" flat>Hủy</v-btn>
           <v-btn
-            @click="removeCategory(removedCategory.categoryId), removeDialog = false, refreshPage()"
+            @click="removeCategory(removedCategory.categoryId), removeDialog = false"
             color="blue darken-1"
             flat
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Loader v-if="loader"/>
+    <Loader v-if="loader" />
   </div>
 </template>
 
@@ -210,6 +206,11 @@ export default {
         this.removedCategory.categoryId,
         this.removedCategory.name
       )
+      if (data.data) {
+        this.listCategory = this.listCategory.filter(
+          el => el.categoryId != this.removedCategory.categoryId
+        )
+      }
     },
     confirmEditCategory(item) {
       this.editedCategory = this.listCategory.find(

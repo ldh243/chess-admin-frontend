@@ -11,29 +11,23 @@
     <v-toolbar flat class="transparent">
       <v-list class="pa-0">
         <v-list-tile :to="'/'">
-        <v-list-tile-action>
-          <img :src="chessLogo" width="40" height="40"/>
-        </v-list-tile-action>
-            <v-list-tile-content>
-      <v-list-tile-title>
+          <v-list-tile-action>
+            <img :src="chessLogo" width="40" height="40" />
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
               <span class="font-weight-black">COLS</span>
             </v-list-tile-title>
-            </v-list-tile-content>
-            <v-btn icon @click.stop.prevent="mini = !mini">
-              <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
+          </v-list-tile-content>
+          <v-btn icon @click.stop.prevent="mini = !mini">
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
         </v-list-tile>
       </v-list>
     </v-toolbar>
 
     <v-list class="pt-0" dense>
-
-      <v-list-tile
-        v-if="user.roleId == 3"
-        v-for="item in items"
-        :key="item.title"
-        :to="item.path"
-      >
+      <v-list-tile v-if="user.roleId == 3" v-for="item in items" :key="item.title" :to="item.path">
         <v-list-tile-action>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-tile-action>
@@ -42,11 +36,7 @@
           <v-list-tile-title>{{ item.title }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
-      <v-list-tile
-        v-if="user.roleId == 1"
-        :to="item.path"
-        v-for="item in items2" :key="item.path"
-      >
+      <v-list-tile v-if="user.roleId == 1" :to="item.path" v-for="item in items2" :key="item.path">
         <v-list-tile-action>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-tile-action>
@@ -59,7 +49,7 @@
         <v-list-tile-action>
           <v-icon>fa-sign-out-alt</v-icon>
         </v-list-tile-action>
-      
+
         <v-list-tile-content>
           <v-list-tile-title>Đăng xuất</v-list-tile-title>
         </v-list-tile-content>
@@ -85,7 +75,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <Loader v-if="loader"/>
+          <Loader v-if="loader" />
         </v-layout>
       </v-list-tile>
     </v-list>
@@ -128,7 +118,7 @@ export default {
         {
           title: 'Xét duyệt giảng viên',
           icon: 'fa-chalkboard-teacher',
-          path: '/dashboard/instructorRequest'
+          path: '/dashboard/requestInstructor'
         }
       ],
       items2: [
@@ -140,12 +130,12 @@ export default {
         {
           title: 'Danh sách khóa học',
           icon: 'fa-address-book',
-          path: '/dashboard/instructorCourse',
+          path: '/dashboard/instructorCourse'
         },
         {
           title: 'Thêm khóa học',
           icon: 'fa-plus-circle',
-          path: '/dashboard/createcourse',
+          path: '/dashboard/createcourse'
         }
       ],
       mini: true,
@@ -197,5 +187,4 @@ export default {
 >>> .primary--text {
   max-width: 300px;
 }
-
 </style>

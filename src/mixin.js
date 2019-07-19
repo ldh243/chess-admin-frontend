@@ -60,11 +60,25 @@ export default Vue.mixin({
         return 'Vô hiệu hóa'
       }
     },
+    getStatusRequestInstructor(active) {
+      if (active) {
+        return 'Kích hoạt'
+      } else {
+        return 'Chờ xét duyệt'
+      }
+    },
 
     formatListUser(users) {
       users.forEach(user => {
         user.roleName = this.getRoleName(user.roleId)
         user.status = this.getStatusUser(user.isActive)
+      })
+      return users
+    },
+    formatListRequestInstructor(users) {
+      users.forEach(user => {
+        user.roleName = this.getRoleName(user.roleId)
+        user.status = this.getStatusRequestInstructor(user.isActive)
       })
       return users
     },
