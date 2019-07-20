@@ -4,11 +4,9 @@
         <v-flex xs10>
           <v-form ref="form" lazy-validation>
                 <v-card class="hide-overflow">
-                    <p v-if="errors.length > 0">
-                        <ul style="list-style-type:none;">
-                            <li v-for="error in errors" class="text-danger">{{ error }}</li>
-                        </ul>
-                    </p>
+                    <v-toolbar v-if="errors.length > 0">
+                        <p class="text-danger">{{errors[0]}}</p>
+                    </v-toolbar>
                     <v-toolbar card>
                         <v-text-field label="Tên Bài Học:" v-model="name"></v-text-field>
                     </v-toolbar>
@@ -44,18 +42,18 @@
         },
         props:{
             
-            isEditting:{
+            isEdittingInput:{
                 required:true,
                 type:Boolean
             },
 
-            lessonId:{
+            lessonIdInput:{
                 required : false,
                 type:Number,
                 default:0
             },
 
-            courseId:{
+            courseIdInput:{
                 required : false,
                 type:Number,
                 default:0
@@ -69,7 +67,10 @@
                 editor: ckeditor5,
                 errors:[],
                 loader: false,
-                uninteractiveLessonId:0
+                uninteractiveLessonId:0,
+                lessonId:this.lessonIdInput,
+                isEditting:this.isEdittingInput,
+                isUpdatedName:false
             }
         },
         watch:{
@@ -78,6 +79,19 @@
             lessonIdCreated:{
                 handler:function(){
                     this.$emit('newdata',[this.lessonIdCreated,this.name])
+                },
+                deep:true
+            },
+            name:{
+                handler:function(){
+                    this.isUpdatedName = false
+                }
+            },
+            isUpdatedName:{
+                handler:function(){
+                    if(this.isUpdatedName){
+                        this.$emit('newdata',[this.lessonId,this.name])
+                    }
                 },
                 deep:true
             }
@@ -95,7 +109,7 @@
                    return
                }
                const data = await lessonRepository.createUninteractiveLesson(
-                   this.name,this.editor.methods.getVal(),this.courseId
+                   this.name,this.editor.methods.getVal(),this.courseIdInput
                )
                if(data.data.data.success){
                    //set id when success
@@ -113,6 +127,10 @@
                     type:'error'
                     })
                }
+               //set current lessonId
+               this.lessonId = this.lessonIdCreated
+               //change state create to update
+               this.isEditting = true
                this.loader = false
             },
             async getById(){
@@ -148,6 +166,8 @@
                     type:'error'
                     })
                }
+               //trigger that lesson updated
+               this.isUpdatedName = true
                this.loader = false
             },
             //return true if error
@@ -157,9 +177,18 @@
                 if(!this.name || this.name.length < 6){
                     this.errors.push("Tên bài học phải nhiều hơn 6 ký tự")
                 }
-
-                return this.errors.length > 0 ? true : false
+                if(this.editor.methods.getText().length == 0){
+                    this.errors.push("Nội dung bài học không được trống")
+                }
+                var isError = this.errors.length > 0 ? true : false
+                if(isError){
+                    this.scrollTop()
+                }
+                return isError
             },
+            scrollTop: function(){
+                document.documentElement.scrollTop = 0
+            }
         }
 
     }

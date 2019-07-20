@@ -63,6 +63,14 @@
                     htmlContent += ckContentDOM.childNodes[i].outerHTML
                 }
                 return htmlContent;
+            },
+            getText(){
+                var text = ""
+                var ckContentDOM = document.getElementsByClassName('ck-content')[0]
+                for(var i = 0;i < ckContentDOM.childNodes.length;i++){
+                    text += ckContentDOM.childNodes[i].textContent.trim()
+                }
+                return text
             }
         }
     }
