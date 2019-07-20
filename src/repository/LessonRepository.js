@@ -14,5 +14,29 @@ export default {
       name: name
     }
     // return Repository.post(`${resource}/create-course`, data)
+  },
+  createUninteractiveLesson(name,content,courseId){
+    const data = {
+      name : name,
+      content : content,
+      courseId : courseId
+    }
+    return Repository.post(`${resource}/create-uninteractive-lesson`,data)
+  },
+  getById(lessonId){
+    const data = {
+      params: {
+        lessonId: lessonId
+      }
+    }
+    return Repository.get(`${resource}/get-by-id`,data)
+  },
+  updateUninteractiveLesson(lessonId,name,uninteractiveLesson){
+    const data = {
+      lessonId: lessonId,
+      name : name,
+      uninteractiveLesson : uninteractiveLesson
+    }
+    return Repository.put(`${resource}/update-uninteractive-lesson`,data)
   }
 }

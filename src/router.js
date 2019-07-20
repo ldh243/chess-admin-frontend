@@ -38,7 +38,7 @@ export default new Router({
         { path: 'courses', component: CourseManagement },
         { path: 'accounts', component: UserManagement },
         { path: 'category', component: CategoryManagement },
-        { path: 'instructorCourse', component: CourseDetailByInstructor }
+        { path: 'instructorCourse', component: CourseDetailByInstructor },
       ]
     },
     { path: '*', redirect: '/' }

@@ -116,6 +116,6 @@ export default Vue.mixin({
           return imageLink
         })
       return link
-    }
+    },
   }
 })
