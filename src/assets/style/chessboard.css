@@ -20,7 +20,7 @@
   overflow: auto;
 }
 .move-history-content, .lesson-content {
-  height: 130px;
+  height: 150px;
 }
 .puzzle-content {
   height: 100px;

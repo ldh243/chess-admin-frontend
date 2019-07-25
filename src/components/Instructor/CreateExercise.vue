@@ -1,4 +1,5 @@
 <template>
+<div>
     <v-card class="mt-3">
         <v-toolbar card prominent>
             <v-toolbar-title>
@@ -7,13 +8,6 @@
         </v-toolbar>
         <v-layout row>
             <v-flex xs6 class="left-chess-info">
-                <v-flex class="move-history">
-                    <v-card-title>
-                        <span class="title font-weight-bold">Thế cờ</span>
-                    </v-card-title>
-                    <div class="puzzle-content">
-                    </div>
-            </v-flex>
                 <v-flex class="move-history">
                     <v-card-title>
                         <span class="title font-weight-bold">Nước đi</span>
@@ -63,76 +57,61 @@
             >Xóa nước đi</v-btn>
             </v-card-actions>
         </v-flex>
-        <v-flex xs5 pa-3 style="margin: auto">
-          <chessboard :fen="currentFen" :orientation="chessColor === 'w' ? 'white' : 'black'" @onMove="showInfo" />
-          <div>
-            <v-radio-group v-model="chessColor" row>
-              <template v-slot:label>
-                <strong>Chọn màu quân đi: &ensp;</strong>
-              </template>
-              <v-radio color="#000000" value="w">
-                <template v-slot:label>
-                  <div>
-                    <strong>Trắng</strong>
-                  </div>
-                </template>
-              </v-radio>
-              <v-radio color="#000000" value="b">
-                <template v-slot:label>
-                  <div>
-                    <strong>Đen</strong>
-                  </div>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </div>
-          <div class="option_2">
-            <strong>Nhập thành:</strong>
-          </div>
-          <div>
-            <v-layout row wrap>
-              <v-checkbox v-model="selectCastling" color="#000000" value="K">
-                <template v-slot:label>
-                  <div>
-                    <strong>Cánh vua trắng</strong>
-                  </div>
-                </template>
-              </v-checkbox>
-              <v-checkbox v-model="selectCastling" color="#000000" value="Q">
-                <template v-slot:label>
-                  <div>
-                    <strong>Cánh hậu trắng</strong>
-                  </div>
-                </template>
-              </v-checkbox>
-              <v-checkbox v-model="selectCastling" color="#000000" value="k">
-                <template v-slot:label>
-                  <div>
-                    <strong>Cánh vua đen</strong>
-                  </div>
-                </template>
-              </v-checkbox>
-              <v-checkbox v-model="selectCastling" color="#000000" value="q">
-                <template v-slot:label>
-                  <div>
-                    <strong>Cánh hậu đen</strong>
-                  </div>
-                </template>
-              </v-checkbox>
-            </v-layout>
-            <div>
-              <v-flex xs9>
-                <v-text-field outline label="Nước đi trước đó"></v-text-field>
-              </v-flex>
-            </div>
-          </div>
+        <v-flex xs6 py-4 px-1 style="margin: auto">
+          <v-layout row>
+            <v-flex xs10>
+              <Chessboard @onMove="showInfo" :reset="isResetBoard" :fen="fen" :boardName="'exerciseBoard'" />
+              <v-card-title>
+                <span class="title font-weight-bold">Thế cờ</span>
+              </v-card-title>
+              <div class="puzzle-content pa-3">
+                <div>
+                  <span class="heading font-weight-bold">Trắng:</span>
+                  <div class="piece-content mr-1" v-for="piece in whiteObj" :key="piece">{{piece}}</div>
+                </div>
+                <div>
+                  <span class="heading font-weight-bold">Đen:</span>
+                  <div class="piece-content mr-1" v-for="piece in blackObj" :key="piece">{{piece}}</div>
+                </div>
+              </div>
+            </v-flex>
+            <v-flex xs2 style="margin: auto">
+              <v-btn @click="editExerciseBoard = true" flat icon fab color="grey">
+                <v-icon>fa-pen</v-icon>
+              </v-btn>
+            </v-flex>
+          </v-layout>
         </v-flex>
         </v-layout>
     </v-card>
+    <v-dialog v-model="editExerciseBoard" persistent max-width="800px">
+      <v-card>
+        <v-toolbar card>
+          <v-card-title>
+            <span class="headline">Tạo thế cờ</span>
+          </v-card-title>
+        </v-toolbar>
+        <v-container>
+          <create-chess-puzzle @onChangeFen="getFen" :boardName="'exerciseCreateBoard'"></create-chess-puzzle>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              @click="editExerciseBoard = false"
+              class="btn-create-puzzle text-xs-center"
+              flat
+              color="blue darken-1"
+            >Đóng</v-btn>
+            <v-btn @click="saveFen" class="btn-create-puzzle" depressed color="info">Lưu</v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
+    </div>
 </template>
 
 <script>
 import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
+import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
 export default {
     name: 'CreateExercise',
     components: {
@@ -140,6 +119,7 @@ export default {
     },
     data() {
     return {
+      editExerciseBoard: false,
       chessColor: 'w',
       selectCastling: [],
       select: '',
@@ -164,6 +144,7 @@ export default {
       move: '',
       moves: '',
       isStart: false,
+      chessboardData: {},
       gameStatus: '',
       newestFen: '',
       activeLesson: 0,
@@ -187,6 +168,9 @@ export default {
     this.currentFen = this.defaultFen
   },
   methods: {
+    getFen() {
+      this.chessboardData = data
+    },
     exampleChess(exampleFen) {
       this.currentFen = exampleFen[this.currentStep]
       this.lessonViewModel.interactiveLesson.initCode =

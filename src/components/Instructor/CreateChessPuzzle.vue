@@ -57,7 +57,8 @@ export default {
       castling: [],
       fen: '8/8/8/8/8/8/8/8 w - - 0 1',
       previousMove: '-',
-      position: {}
+      position: {},
+      defaultFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
     }
   },
   watch: {  
@@ -88,6 +89,7 @@ export default {
       let data = {}
       data['fen'] = this.fen
       data['object'] = this.position
+      data['orientation'] = this.chessColor
       this.$emit('onChangeFen', data)
     }
   },
@@ -111,7 +113,7 @@ export default {
       }
     },
     startBoard() {
-      this.fen = `rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR ${this.orientation === 'white' ? 'w' : 'b'} KQkq - 0 1`
+      this.fen = `rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`
       this.castling = ['K', 'Q', 'k', 'q']
     },
     clearBoard() {  
@@ -119,10 +121,11 @@ export default {
       this.castling = []
     },
     flipBoard() {
+      const black = 'black'
       this.chessColor = this.chessColor === 'white' ? 'black' : 'white'
-      let fenArr = this.fen.split(' ')
-      this.previousMove = '-'
-      this.fen = `${fenArr[0]} ${this.chessColor === 'white' ? 'w' : 'b'} ${fenArr[2]} ${this.previousMove} ${fenArr[4]} ${fenArr[5]}`
+      if (this.fen !== this.defaultFen) {
+        this.fen = this.fen.replace(`${this.chessColor === black ? 'w' : 'b'}`, `${this.chessColor === black ? 'b' : 'w'}`)
+      }
     },
     exampleChess(exampleFen) {
       this.currentFen = exampleFen[this.currentStep]
