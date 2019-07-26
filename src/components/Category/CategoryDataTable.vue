@@ -2,8 +2,8 @@
   <div>
     <v-card-title class="pa-0">
       <h5 class="text-captital grey--text">Danh sách danh mục</h5>
-      <v-spacer></v-spacer>
-      <v-btn class="mb-3 align-end" @click="dialog = !dialog" color="amber lighten-1">Thêm danh mục</v-btn>
+      <!-- <v-spacer></v-spacer> -->
+      <v-btn depressed class="ml-3 align-end" @click="dialog = !dialog" color="amber lighten-1">Thêm danh mục</v-btn>
     </v-card-title>
       <v-card-actions>
       <v-spacer></v-spacer>
