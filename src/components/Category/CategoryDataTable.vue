@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-flex pa-2>
-      <v-btn @click="dialog = !dialog" color="success">Thêm danh mục</v-btn>
+      <v-btn color="success" @click="showCreateCategoryDialog()">Thêm danh mục</v-btn>
     </v-flex>
     <v-data-table
       :headers="headers"
@@ -12,13 +12,16 @@
       class="elevation-1"
     >
       <template v-slot:items="props">
-        <td style="width: 70%">{{ props.item.name}}</td>
+        <td style="width: 70%">{{ props.item.name }}</td>
         <td>
           <v-btn
-            @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
             color
             icon
             small
+            @click="
+              confirmDetailCategory(props.item),
+                getCourseByCategoryId((categoryId = props.item.categoryId))
+            "
           >
             <v-icon>fa-list</v-icon>
           </v-btn>
@@ -36,23 +39,28 @@
     </div>
 
     <!-- Create Category -->
-    <v-dialog persistent v-model="dialog" max-width="500px">
+    <v-dialog v-model="createCategoryDialog" max-width="500px">
       <v-card>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-card-text>
             <v-text-field
+              v-model="newCategoryName"
               type="text"
               :counter="50"
               :rules="categoryNameRules"
-              v-model="createdCategory.name"
               label="Danh mục"
               required
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
-            <v-btn flat color="primary" @click="createCategory()">Đồng Ý</v-btn>
+            <v-btn flat color="error" @click="createCategoryDialog = false">Hủy bỏ</v-btn>
+            <v-btn
+              flat
+              color="success"
+              @click="createCategory()"
+              :disabled="statusCreateCategory"
+            >Đồng Ý</v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
         </v-form>
@@ -62,17 +70,17 @@
     <v-dialog v-model="detailContainer" max-width="1000px">
       <v-card>
         <v-card-text>
-          <h2 class="basic">Các khóa học {{detailCategory.name}}</h2>
+          <h2 class="basic">Các khóa học {{ detailCategory.name }}</h2>
         </v-card-text>
         <hr />
         <v-card>
-          <BasicCourse :listCourses="listCourses"></BasicCourse>
+          <BasicCourse :list-courses="listCourses"></BasicCourse>
         </v-card>
       </v-card>
     </v-dialog>
 
     <!-- Dialog Update Category -->
-    <v-dialog persistent v-model="editDialog" max-width="500px">
+    <v-dialog v-model="editDialog" max-width="500px">
       <v-card>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-card-title>
@@ -95,33 +103,32 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn @click="editDialog = false" color="blue darken-1" flat>Hủy</v-btn>
-            <v-btn @click="updateCategory()" color="blue darken-1" flat>Đồng Ý</v-btn>
+            <v-btn color="blue darken-1" flat @click="editDialog = false">Hủy</v-btn>
+            <v-btn color="blue darken-1" flat @click="updateCategory()">Đồng Ý</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
     </v-dialog>
 
     <!-- Dialog Remove Category-->
-    <v-dialog persistent v-model="removeDialog" max-width="500px">
+    <v-dialog v-model="removeDialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">XÓA DANH MỤC</span>
         </v-card-title>
         <v-card-text>
-          <v-container grid-list-md>
-            <v-flex>
-              <v-card-text>Bạn có chắc chắn muốn xóa danh mục {{removedCategory.name}}</v-card-text>
-            </v-flex>
-          </v-container>
+          Bạn có chắc chắn muốn xóa danh mục
+          <b>{{ selectedCategory.name }}</b>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="removeDialog = false" color="blue darken-1" flat>Hủy</v-btn>
+          <v-btn color="error" flat @click="removeDialog = false">Hủy</v-btn>
           <v-btn
-            @click="removeCategory(removedCategory.categoryId), removeDialog = false"
-            color="blue darken-1"
+            color="success"
             flat
+            @click="
+              removeCategory(selectedCategory), (removeDialog = false)
+            "
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
@@ -129,7 +136,6 @@
     <Loader v-if="loader" />
   </div>
 </template>
-
 
 <script>
 import BasicCourse from '@/components/Category/BasicCourse'
@@ -145,7 +151,7 @@ export default {
   data() {
     return {
       valid: true,
-      dialog: false,
+      createCategoryDialog: false,
       loader: false,
       editDialog: false,
       removeDialog: false,
@@ -160,15 +166,15 @@ export default {
           text: 'Tên Danh Mục Khóa Học ',
           value: 'name',
           align: 'left',
-          sortable: false
+          sortable: true
         },
         { text: '', value: 'action', sortable: false }
       ],
       listCourses: [],
       listCategory: [],
       editedCategory: [],
-      createdCategory: [],
-      removedCategory: [],
+      newCategoryName: '',
+      selectedCategory: [],
       detailCategory: [],
       listRules: {},
       categoryNameRules: [
@@ -182,8 +188,16 @@ export default {
       const rowsPerPage = this.pagination.rowsPerPage
       const totalItems = this.listCategory.length
       if (rowsPerPage == null || totalItems == null) return 0
-
       return Math.ceil(totalItems / rowsPerPage)
+    },
+    statusCreateCategory() {
+      if (
+        this.newCategoryName.length > 0 &&
+        this.newCategoryName.length <= 50
+      ) {
+        return false
+      }
+      return true
     }
   },
   mounted() {
@@ -197,7 +211,7 @@ export default {
     },
     async getCategories() {
       const { data } = await categoryRepository.getCategories()
-      this.listCategory = this.formatListCourse(data.data)
+      this.listCategory = data.data
     },
     async getCourseByCategoryId() {
       const { data } = await courseRepository.getCourseByCategoryId(
@@ -208,30 +222,20 @@ export default {
       this.listCourses = this.formatListCourse(data.data.content)
     },
     async createCategory() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true
-      }
       const { data } = await categoryRepository.createCategory(
-        this.createdCategory.categoryId,
-        this.createdCategory.name
+        this.newCategoryName
       )
-
-      // if (data.data) {
-      //   this.listCategory.categoryId = this.listRules.savedId
-      //   this.listCategory
-      // }
-
       // Xuất thông báo tạo category thành công and đóng dialog
       this.listRules = data.data
-      if (this.listRules.savedId != 0) {
-        let r = confirm('Tạo danh mục thành công !')
-        this.dialog = false
+      if (data.data.success) {
+        this.createCategoryDialog = false
+        this.listCategory.push({
+          categoryId: data.data.savedId,
+          name: this.newCategoryName
+        })
       }
     },
     async updateCategory() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true
-      }
       const { data } = await categoryRepository.updateCategory(
         this.editedCategory.categoryId,
         this.editedCategory.name
@@ -247,32 +251,36 @@ export default {
     },
     async removeCategory() {
       const { data } = await categoryRepository.removeCategory(
-        this.removedCategory.categoryId,
-        this.removedCategory.name
+        this.selectedCategory.categoryId,
+        this.selectedCategory.name
       )
       if (data.data) {
         this.listCategory = this.listCategory.filter(
-          el => el.categoryId != this.removedCategory.categoryId
+          el => el.categoryId != this.selectedCategory.categoryId
         )
       }
     },
     confirmEditCategory(item) {
-      this.editedCategory = this.listCategory.find(
-        category => category.categoryId === item.categoryId
-      )
+      this.editedCategory = this.getCategoryById(item.categoryId)
       this.editDialog = true
     },
     confirmRemoveCategory(item) {
-      this.removedCategory = this.listCategory.find(
-        category => category.categoryId === item.categoryId
-      )
+      this.selectedCategory = this.getCategoryById(item.categoryId)
       this.removeDialog = true
     },
     confirmDetailCategory(item) {
-      this.detailCategory = this.listCategory.find(
-        category => category.categoryId === item.categoryId
-      )
+      this.detailCategory = this.getCategoryById(item.categoryId)
       this.detailContainer = true
+    },
+
+    getCategoryById(categoryId) {
+      return this.listCategory.find(
+        category => category.categoryId === categoryId
+      )
+    },
+    showCreateCategoryDialog() {
+      this.newCategoryName = ''
+      this.createCategoryDialog = true
     }
   }
 }

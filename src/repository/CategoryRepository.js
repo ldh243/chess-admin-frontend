@@ -14,10 +14,9 @@ export default {
     }
     return Repository.get(`${resource}/get-by-id`, data)
   },
-  createCategory(categoryId, name) {
+  createCategory(newCategory) {
     const data = {
-      categoryId: categoryId,
-      name: name
+      name: newCategory
     }
     return Repository.post(`${resource}/create-category`, data)
   },
