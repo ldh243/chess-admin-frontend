@@ -125,7 +125,7 @@ export default {
       },
       nameRules: [
         v => !!v || 'Tên khóa học không được để trống',
-        v => (v && v.length <= 100) || 'Tên khóa học không được quá 50 ký tự'
+        v => (v && v.length <= 100) || 'Tên khóa học không được quá 100 ký tự'
       ],
       descriptionRules: [v => !!v || 'Mô tả khóa học không được để trống'],
       imageRules: [v => !!v || 'Chọn hình ảnh cho khóa học'],

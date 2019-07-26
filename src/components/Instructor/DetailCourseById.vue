@@ -20,9 +20,14 @@
         <v-card-text>
           <v-alert
             :value="true"
-            color="success"
-            outline
-          >Số lượng bài học hiện có: {{courseDetail.totalLesson}}</v-alert>
+            color="cyan"
+            border="left"
+            elevation="2"
+            colored-border
+            icon="mdi-twitter"
+          >
+            <strong>Số bài học hiện có: {{courseDetail.totalLesson}}</strong>
+          </v-alert>
           <LessonViewModels :lessonView="courseDetail.lessonViewModels" />
         </v-card-text>
         <v-card-actions>

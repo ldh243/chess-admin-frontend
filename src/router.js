@@ -6,6 +6,7 @@ import UserManagement from '@/layouts/dashboard/UserManagement'
 import CategoryManagement from '@/layouts/dashboard/CategoryManagement'
 import CourseDetailByInstructor from '@/layouts/dashboard/CourseDetailByInstructor'
 import RequestInstructor from '@/layouts/dashboard/RequestInstructor'
+import RequestCourse from '@/layouts/dashboard/RequestCourse'
 import Dashboard from '@/pages/Dashboard.vue'
 //page
 import Login from '@/pages/Login'
@@ -40,7 +41,8 @@ export default new Router({
         { path: 'accounts', component: UserManagement },
         { path: 'category', component: CategoryManagement },
         { path: 'instructorCourse', component: CourseDetailByInstructor },
-        { path: 'requestInstructor', component: RequestInstructor }
+        { path: 'requestInstructor', component: RequestInstructor },
+        { path: 'requestCourses', component: RequestCourse }
       ]
     },
     { path: '*', redirect: '/' }

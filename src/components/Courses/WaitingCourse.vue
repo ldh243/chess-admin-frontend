@@ -23,6 +23,7 @@
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.courseName }}</td>
+
         <td class="text-xs-center" style="width: 25%">{{ props.item.author.fullName }}</td>
         <td class="text-xs-center" style="width: 20%">{{ props.item.courseCreatedDate }}</td>
         <td class="text-xs-center" style="width: 15%">
@@ -122,9 +123,7 @@ export default {
       ],
       listCourses: [],
       listStatus: [
-        { statusId: 1, statusName: 'Đang soạn thảo' },
         { statusId: 2, statusName: 'Công khai' },
-        { statusId: 3, statusName: 'Đã xóa' },
         { statusId: 4, statusName: 'Chờ duyệt' },
         { statusId: 5, statusName: 'Từ chối' }
       ],
@@ -144,7 +143,7 @@ export default {
   },
   mounted() {
     this.loader = true
-    this.getCoursesPagination()
+    this.getCoursesWaiting()
     this.loader = false
   },
   methods: {
@@ -154,8 +153,8 @@ export default {
         statusId: item.statusId
       }
     },
-    async getCoursesPagination() {
-      const { data } = await courseRepository.getCoursesPagination(1, 500)
+    async getCoursesWaiting() {
+      const { data } = await courseRepository.getCoursesWaiting(1, 500, 4)
       this.listCourses = this.formatListCourse(data.data.content)
       console.log(data)
     },

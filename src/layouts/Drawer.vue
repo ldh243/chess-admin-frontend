@@ -36,7 +36,12 @@
           <v-list-tile-title>{{ item.title }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
-      <v-list-tile v-if="user.roleId == 1" :to="item.path" v-for="item in items2" :key="item.path">
+      <v-list-tile
+        v-if="user.roleId == 1 && user.active == true"
+        :to="item.path"
+        v-for="item in itemsInstructor"
+        :key="item.path"
+      >
         <v-list-tile-action>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-tile-action>
@@ -119,9 +124,14 @@ export default {
           title: 'Xét duyệt giảng viên',
           icon: 'fa-chalkboard-teacher',
           path: '/dashboard/requestInstructor'
+        },
+        {
+          title: 'Xét duyệt khóa học',
+          icon: 'fa-book-reader',
+          path: '/dashboard/requestCourses'
         }
       ],
-      items2: [
+      itemsInstructor: [
         {
           title: 'Thống kê',
           icon: 'fa-chart-line',
