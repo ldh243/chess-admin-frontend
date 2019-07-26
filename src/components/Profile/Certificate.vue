@@ -1,6 +1,6 @@
 <template>
-  <v-card class="hide-overflow">
-    <v-toolbar card>
+  <v-card :elevation="8">
+    <v-toolbar flat>
       <v-icon>mdi-account</v-icon>
       <v-toolbar-title class="font-weight-light">Thành tích</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -9,11 +9,10 @@
         <v-icon v-else>mdi-pencil</v-icon>
       </v-btn>
     </v-toolbar>
+    <v-divider></v-divider>
     <v-card-text>
       <v-textarea :disabled="!isEditing" name="input-7-1" label="Giải thưởng" auto-grow></v-textarea>
     </v-card-text>
-
-    <v-divider></v-divider>
     <v-card-actions>
       <!-- <div class="centerx">
         <vs-upload
@@ -58,4 +57,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.v-card {
+  border-radius: 10px;
+}
+</style>

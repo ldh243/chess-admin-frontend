@@ -1,8 +1,11 @@
-import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vue from 'vue';
+import Vuetify from 'vuetify/lib';
 import '@/assets/style/global.styl'
 import '@fortawesome/fontawesome-free/css/all.css'
+Vue.use(Vuetify);
 
-Vue.use(Vuetify, {
-  iconfont: 'mdi' || 'fa'
-})
+export default new Vuetify({
+  icons: {
+    iconfont: 'mdi' || 'fa',
+  },
+});

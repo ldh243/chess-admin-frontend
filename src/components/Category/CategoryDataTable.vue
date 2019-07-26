@@ -1,15 +1,21 @@
 <template>
   <div>
-    <div>
-      <v-btn @click="dialog = !dialog" color="success">Thêm danh mục</v-btn>
-    </div>
-    <v-data-table
+    <v-card-title class="pa-0">
+      <h5 class="text-captital grey--text">Danh sách danh mục</h5>
+      <v-spacer></v-spacer>
+      <v-btn class="mb-3 align-end" @click="dialog = !dialog" color="amber lighten-1">Thêm danh mục</v-btn>
+    </v-card-title>
+      <v-card-actions>
+      <v-spacer></v-spacer>
+    </v-card-actions>
+      <v-data-table
       :headers="headers"
       :items="listCategory"
       :search="search"
       hide-actions
+      hide-default-footer
+      :items-per-page="5"
       :pagination.sync="pagination"
-      class="elevation-1"
     >
       <template v-slot:items="props">
         <td style="width: 70%">{{ props.item.name}}</td>
@@ -28,7 +34,9 @@
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
+      <v-layout justify-center>
       <v-pagination v-model="pagination.page" :length="pages" circle></v-pagination>
+      </v-layout>
     </div>
 
     <!-- Create Category -->
@@ -233,6 +241,9 @@ export default {
 }
 </script>
 <style scoped>
+.v-card {
+  border-radius: 10px;
+}
 .btn-active-deactive {
   width: 35px !important;
   height: 35px !important;

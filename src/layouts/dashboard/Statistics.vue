@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid fill-height style="height: 850px">
     <LineChart/>
   </v-container>
 </template>

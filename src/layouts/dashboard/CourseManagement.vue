@@ -1,17 +1,19 @@
 <template>
-  <v-container fluid>
-    <v-card-title>
-      <h2>Quản lý khóa học</h2>
-    </v-card-title>
-    <CourseDataTable/>
+  <v-container>
+    <PageTitle :title="'Quản lý khóa học'"/>
+    <v-flex lg12 xl10 justify-center ma-auto>
+        <CourseOverview />
+    </v-flex>    
   </v-container>
 </template>
 
 <script>
-import CourseDataTable from '@/components/Courses/CourseDataTable'
+import PageTitle from '@/components/kit/PageTitle'
+import CourseOverview from '@/components/Instructor/CourseOverview'
 export default {
   components: {
-    CourseDataTable
+    PageTitle,
+    CourseOverview
   },
   data() {
     return {

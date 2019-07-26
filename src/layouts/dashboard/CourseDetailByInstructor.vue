@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid fill-height style="height: 1000px">
     <v-card-title>
       <h2>Thống kê khóa học</h2>
     </v-card-title>

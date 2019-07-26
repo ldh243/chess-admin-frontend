@@ -1,10 +1,9 @@
 {
   "name": "chesst-frontend",
   "version": "0.0.1",
-  "description": "Chess",
-  "productName": "Chess Website",
-  "author": "ldh243 <ldh243@gmail.com>",
   "private": true,
+  "description": "Chess",
+  "author": "ldh243 <ldh243@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -18,12 +17,14 @@
     "core-js": "^2.6.5",
     "firebase": "^6.3.0",
     "jquery": "^3.4.1",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
     "vue": "^2.6.10",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.3",
     "vue-upload-multiple-image": "^1.1.4",
     "vuelidate": "^0.7.4",
-    "vuetify": "^1.5.5",
+    "vuetify": "^2.0.0",
     "vuetify-upload-button": "^2.0.0",
     "vuex": "^3.0.1"
   },
@@ -37,10 +38,13 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "material-design-icons-iconfont": "^5.0.1",
+    "sass": "^1.17.4",
+    "sass-loader": "^7.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "vue-cli-plugin-vuetify": "^0.5.0",
+    "vue-cli-plugin-vuetify": "git+https://github.com/vuetifyjs/vue-cli-plugin-vuetify.git#dev",
     "vue-template-compiler": "^2.5.21",
-    "vuetify-loader": "^1.0.5"
-  }
+    "vuetify-loader": "^1.2.2"
+  },
+  "productName": "Chess Website"
 }

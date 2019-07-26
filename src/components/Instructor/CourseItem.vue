@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <v-hover class="hover">
-      <v-card class="black--text" slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`">
-        <v-layout row wrap>
-          <v-flex xs12>
-            <v-img :src="content.courseImage" height="175px"></v-img>
+      <div class="black--text xs12 mx-auto course-item">
+        <v-layout>
+          <v-flex course-item__image--wrapper xs3 shrink>
+            <v-img :src="content.courseImage" height="180"></v-img>
           </v-flex>
-          <v-flex xs12>
+          <v-flex xs8 >
             <v-card-title primary-title class="pt-2">
               <v-flex xs12>
                 <p class="mb-0 course-title">{{ content.courseName }}</p>
@@ -47,16 +45,15 @@
             </div>
           </v-expand-transition>
         </v-layout>
-        <v-divider light></v-divider>
+        <!-- <v-divider light></v-divider>
         <v-card-actions class="px-3">
           <span class="course-point">{{ content.point }} điểm</span>
           <v-spacer></v-spacer>
           <span class="course-status">Trạng thái: {{ content.statusName }}</span>
-        </v-card-actions>
-      </v-card>
-    </v-hover>
+        </v-card-actions> -->
+      </div>
     <!-- Dialog Remove Course-->
-    <v-dialog v-model="dialog" max-width="500px">
+    <!-- <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">XÓA KHÓA HỌC</span>
@@ -78,15 +75,13 @@
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <Loader v-if="loader" />
-  </div>
+    </v-dialog> -->
+    <!-- <Loader v-if="loader" /> -->
 </template>
 
 <script>
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import Loader from '@/components/Loader'
-import { async } from 'q'
 const courseRepository = RepositoryFactory.get('course')
 export default {
   props: {
@@ -104,24 +99,28 @@ export default {
     }
   },
   methods: {
-    refreshPage() {
-      window.location.reload()
-    },
-    async removeCourse() {
-      const { data } = await courseRepository.removeCourse(
-        this.content.courseId
-      )
-      console.log(data)
-    },
-    goToCourseDetail() {
-      this.$router.push(`/dashboard/instructorCourse/${this.content.courseId}`)
-    }
+    // refreshPage() {
+    //   window.location.reload()
+    // },
+    // async removeCourse() {
+    //   const { data } = await courseRepository.removeCourse(
+    //     this.content.courseId
+    //   )
+    //   console.log(data)
+    // },
+    // goToCourseDetail() {
+    //   this.$router.push(`/dashboard/instructorCourse/${this.content.courseId}`)
+    // }
   }
 }
 </script>
 
 <style scoped>
-.course-author {
+.course-item__image--wrapper, .course-item__image--wrapper .v-image {
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+/* .course-author {
   font-size: 14px;
   color: #686f7a;
 }
@@ -146,11 +145,8 @@ export default {
   font-size: 12px;
   font-weight: 400;
   color: #686f7a;
-}
-.bottom {
-  float: bottom;
-}
-.course-point {
+} */
+/* .course-point {
   float: left;
   font-size: 18px;
   color: #29303b;
@@ -161,8 +157,8 @@ export default {
   font-size: 13px;
   color: red;
   font-weight: 600;
-}
-.v-card--reveal {
+} */
+/* .v-card--reveal {
   align-items: center;
   bottom: 0;
   justify-content: center;
@@ -176,5 +172,5 @@ export default {
 }
 .v-card--reveal .flex .v-btn {
   opacity: 1;
-}
+} */
 </style>

@@ -2,8 +2,8 @@
   <v-app id="sandbox">
     <Toolbar/>
     <Drawer/>
-    <v-content style="padding-top: 64px;padding-bottom: 80px;">
-      <Content/>
+    <v-content style="padding-top: 72px;padding-bottom: 80px;padding-left:256px">
+        <Content/>
     </v-content>
   </v-app>
 </template>
@@ -21,4 +21,9 @@ export default {
 </script>
 
 <style scoped>
+</style>
+<style>
+  *, html {
+    font-family: 'Heebo', sans-serif;
+  }
 </style>

@@ -1,25 +1,16 @@
 <template>
-  <div>
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="fa-search"
-        label="Tìm kiếm"
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
+  <v-flex>
     <v-data-table
       :headers="headers"
       :items="listUsers"
       :search="search"
       hide-actions
       :pagination.sync="pagination"
-      class="elevation-1"
       prev-icon="mdi-menu-left"
       next-icon="mdi-menu-right"
       sort-icon="mdi-menu-down"
+      :items-per-page="5"
+      hide-default-footer
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.fullName }}</td>
@@ -51,7 +42,9 @@
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
+      <v-layout justify-center>
       <v-pagination v-model="pagination.page" :length="pages" circle></v-pagination>
+      </v-layout>
     </div>
     <Loader v-if="loader"/>
     <v-dialog v-model="dialog" width="400">
@@ -80,7 +73,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-flex>
 </template>
 
 <script>
@@ -95,13 +88,19 @@ export default {
   components: {
     Loader
   },
+  props: {
+    search: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       dialog: false,
       editDialog: false,
       editedUser: [],
       loader: false,
-      search: '',
+      // search: '',
       pagination: {
         rowsPerPage: 10
       },

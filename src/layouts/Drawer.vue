@@ -1,94 +1,53 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
-    :mini-variant.sync="mini"
-    hide-overlay
-    stateless
-    orverflow
-    app
     fixed
+      dark
+      floating
+      src="@/assets/images/drawer-bg.jpg"
+      permanent
   >
-    <v-toolbar flat class="transparent">
-      <v-list class="pa-0">
-        <v-list-tile :to="'/'">
-        <v-list-tile-action>
-          <img :src="chessLogo" width="40" height="40"/>
-        </v-list-tile-action>
-            <v-list-tile-content>
-      <v-list-tile-title>
-              <span class="font-weight-black">COLS</span>
-            </v-list-tile-title>
-            </v-list-tile-content>
-            <v-btn icon @click.stop.prevent="mini = !mini">
-              <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
-        </v-list-tile>
+  <v-list>
+    <v-list-item :to="'/'">
+        <v-list-item-avatar>
+          <v-img :src="chessLogo"></v-img>
+        </v-list-item-avatar>
+
+        <v-list-item-title class="logo--text">COLS</v-list-item-title>
+    </v-list-item>
       </v-list>
-    </v-toolbar>
+      <v-divider></v-divider>
+  <v-list dense rounded v-if="user.roleId == 3">
+    <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            link
+            :to="item.path"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+  </v-list>  
+      <v-list dense rounded v-if="user.roleId == 1">
+    <v-list-item
+            v-for="item in items2"
+            :key="item.title"
+            link
+            :to="item.path"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+  </v-list>  
 
-    <v-list class="pt-0" dense>
-
-      <v-list-tile
-        v-if="user.roleId == 3"
-        v-for="item in items"
-        :key="item.title"
-        :to="item.path"
-      >
-        <v-list-tile-action>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-
-        <v-list-tile-content>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile
-        v-if="user.roleId == 1"
-        :to="item.path"
-        v-for="item in items2" :key="item.path"
-      >
-        <v-list-tile-action>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-
-        <v-list-tile-content>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click.stop="dialog = true">
-        <v-list-tile-action>
-          <v-icon>fa-sign-out-alt</v-icon>
-        </v-list-tile-action>
-      
-        <v-list-tile-content>
-          <v-list-tile-title>Đăng xuất</v-list-tile-title>
-        </v-list-tile-content>
-        <v-layout row justify-center>
-          <v-dialog v-model="dialog" width="400">
-            <v-card>
-              <v-card-title class="headline">Đăng xuất</v-card-title>
-              <v-card-text>Bạn có chắc chắn muốn đăng xuất?</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  class="font-weight-bold"
-                  color="red darken-1"
-                  flat="flat"
-                  @click="dialog = false"
-                >Hủy bỏ</v-btn>
-                <v-btn
-                  class="font-weight-bold"
-                  color="green darken-1"
-                  flat="flat"
-                  @click="logout()"
-                >Đồng ý</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <Loader v-if="loader"/>
-        </v-layout>
-      </v-list-tile>
-    </v-list>
   </v-navigation-drawer>
 </template>
 
@@ -127,7 +86,7 @@ export default {
         },
         {
           title: 'Xét duyệt giảng viên',
-          icon: 'fa-chalkboard-teacher',
+          icon: 'fa-users-cog',
           path: '/dashboard/instructorRequest'
         }
       ],
@@ -140,7 +99,7 @@ export default {
         {
           title: 'Danh sách khóa học',
           icon: 'fa-address-book',
-          path: '/dashboard/instructorCourse',
+          path: '/dashboard/courses',
         },
         {
           title: 'Thêm khóa học',
@@ -148,7 +107,6 @@ export default {
           path: '/dashboard/createcourse',
         }
       ],
-      mini: true,
       dialog: false,
       user: this.$store.state.user
     }
@@ -198,4 +156,22 @@ export default {
   max-width: 300px;
 }
 
+</style>
+<style>
+.v-navigation-drawer__image {
+  opacity: 0.2;
+}
+.v-image__image--cover {
+  background-position-x: left;
+}
+.logo--text {
+  font-family: 'Lobster', cursive;
+  font-size: 1.7rem;
+}
+.v-list-item--active {
+  color: #FBC02D !important;
+}
+.v-list-item__icon {
+  width: 25px;
+}
 </style>
