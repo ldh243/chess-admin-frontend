@@ -3,16 +3,16 @@ import Repository from '@/repository/Repository'
 const resource = '/lesson'
 
 export default {
-  createInteractiveLesson(
-    courseId,
-    name,
-    interactiveLesson,
-    initCode,
-    interactiveLessonid
-  ) {
+  getById(lessonId) {
     const data = {
-      name: name
+      params: {
+        lessonId: lessonId
+      }
     }
-    // return Repository.post(`${resource}/create-course`, data)
+    return Repository.get(`${resource}/get-by-id`, data)
+  },
+  createInteractiveLesson(lessonViewModel) {
+    const data = lessonViewModel
+    return Repository.post(`${resource}/create-interactive-lesson`, data)
   }
 }

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div>
+    <v-flex pa-2>
       <v-btn @click="dialog = !dialog" color="success">Thêm danh mục</v-btn>
-    </div>
+    </v-flex>
     <v-data-table
       :headers="headers"
       :items="listCategory"
@@ -16,8 +16,12 @@
         <td>
           <v-btn
             @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
-            color="" icon small
-          ><v-icon>fa-list</v-icon></v-btn>
+            color
+            icon
+            small
+          >
+            <v-icon>fa-list</v-icon>
+          </v-btn>
           <v-btn icon flat class="btn-active-deactive" @click="confirmEditCategory(props.item)">
             <v-icon>fa-edit</v-icon>
           </v-btn>
@@ -34,19 +38,24 @@
     <!-- Create Category -->
     <v-dialog persistent v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-text>
-          <v-text-field type="text" v-model="createdCategory.name" label="Danh mục"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
-          <v-btn
-            flat
-            color="primary"
-            @click="createCategory(), refreshPage(), dialog = false"
-          >Đồng Ý</v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-card-text>
+            <v-text-field
+              type="text"
+              :counter="50"
+              :rules="categoryNameRules"
+              v-model="createdCategory.name"
+              label="Danh mục"
+              required
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
+            <v-btn flat color="primary" @click="createCategory()">Đồng Ý</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
     <!-- Show Detail Course of Catagory -->
@@ -55,7 +64,7 @@
         <v-card-text>
           <h2 class="basic">Các khóa học {{detailCategory.name}}</h2>
         </v-card-text>
-        <hr>
+        <hr />
         <v-card>
           <BasicCourse :listCourses="listCourses"></BasicCourse>
         </v-card>
@@ -65,27 +74,31 @@
     <!-- Dialog Update Category -->
     <v-dialog persistent v-model="editDialog" max-width="500px">
       <v-card>
-        <v-card-title>
-          <span class="headline">CHỈNH SỬA DANH MỤC</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap column>
-              <v-flex>
-                <v-text-field v-model="editedCategory.name" label="Danh mục"></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions @click>
-          <v-spacer></v-spacer>
-          <v-btn @click="editDialog = false" color="blue darken-1" flat>Hủy</v-btn>
-          <v-btn
-            @click="updateCategory(), editDialog = false, refreshPage()"
-            color="blue darken-1"
-            flat
-          >Đồng Ý</v-btn>
-        </v-card-actions>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-card-title>
+            <span class="headline">CHỈNH SỬA DANH MỤC</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap column>
+                <v-flex>
+                  <v-text-field
+                    v-model="editedCategory.name"
+                    :counter="50"
+                    :rules="categoryNameRules"
+                    label="Danh mục"
+                    required
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="editDialog = false" color="blue darken-1" flat>Hủy</v-btn>
+            <v-btn @click="updateCategory()" color="blue darken-1" flat>Đồng Ý</v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
 
@@ -106,14 +119,14 @@
           <v-spacer></v-spacer>
           <v-btn @click="removeDialog = false" color="blue darken-1" flat>Hủy</v-btn>
           <v-btn
-            @click="removeCategory(removedCategory.categoryId), removeDialog = false, refreshPage()"
+            @click="removeCategory(removedCategory.categoryId), removeDialog = false"
             color="blue darken-1"
             flat
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Loader v-if="loader"/>
+    <Loader v-if="loader" />
   </div>
 </template>
 
@@ -131,6 +144,7 @@ export default {
   },
   data() {
     return {
+      valid: true,
       dialog: false,
       loader: false,
       editDialog: false,
@@ -155,7 +169,12 @@ export default {
       editedCategory: [],
       createdCategory: [],
       removedCategory: [],
-      detailCategory: []
+      detailCategory: [],
+      listRules: {},
+      categoryNameRules: [
+        v => !!v || 'Tên danh mục không được để trống',
+        v => (v && v.length <= 50) || 'Tên danh mục không được quá 50 ký tự'
+      ]
     }
   },
   computed: {
@@ -189,11 +208,30 @@ export default {
       this.listCourses = this.formatListCourse(data.data.content)
     },
     async createCategory() {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true
+      }
       const { data } = await categoryRepository.createCategory(
+        this.createdCategory.categoryId,
         this.createdCategory.name
       )
+
+      // if (data.data) {
+      //   this.listCategory.categoryId = this.listRules.savedId
+      //   this.listCategory
+      // }
+
+      // Xuất thông báo tạo category thành công and đóng dialog
+      this.listRules = data.data
+      if (this.listRules.savedId != 0) {
+        let r = confirm('Tạo danh mục thành công !')
+        this.dialog = false
+      }
     },
     async updateCategory() {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true
+      }
       const { data } = await categoryRepository.updateCategory(
         this.editedCategory.categoryId,
         this.editedCategory.name
@@ -204,12 +242,19 @@ export default {
         )
         category.name = this.editedCategory.name
       }
+      this.editDialog = fals
+      e
     },
     async removeCategory() {
       const { data } = await categoryRepository.removeCategory(
         this.removedCategory.categoryId,
         this.removedCategory.name
       )
+      if (data.data) {
+        this.listCategory = this.listCategory.filter(
+          el => el.categoryId != this.removedCategory.categoryId
+        )
+      }
     },
     confirmEditCategory(item) {
       this.editedCategory = this.listCategory.find(

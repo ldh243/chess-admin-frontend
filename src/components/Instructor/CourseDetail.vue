@@ -40,7 +40,7 @@
                 <v-btn v-if="content.statusId == 3" fab flat dark color="grey">
                   <v-icon dark>fa-trash</v-icon>
                 </v-btn>
-                <v-btn v-else @click="dialog = !dialog" fab flat dark color="grey">
+                <v-btn v-else @click="showConfirmDeleteComment()" fab flat dark color="grey">
                   <v-icon dark>fa-trash</v-icon>
                 </v-btn>
               </v-flex>
@@ -115,6 +115,22 @@ export default {
     },
     goToCourseDetail() {
       this.$router.push(`/dashboard/instructorCourse/${this.content.courseId}`)
+    },
+    showConfirmDeleteComment(courseId) {
+      this.$swal({
+        title: 'Bạn có chắc chắn muốn xóa khóa học này?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy'
+      }).then(result => {
+        if (result.value) {
+          this.removeCourse(courseId)
+          this.refreshPage()
+        }
+      })
     }
   }
 }
