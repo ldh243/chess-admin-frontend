@@ -45,6 +45,14 @@
                 item-text="statusName"
                 item-value="statusId"
               ></v-select>
+
+              <v-textarea
+                v-show="editedCourse.statusId == 5"
+                v-model="editedCourse.reasonReject"
+                outline
+                label="Lý do từ chối: "
+                value
+              ></v-textarea>
             </template>
           </v-edit-dialog>
         </td>
@@ -61,6 +69,7 @@
         </td>
       </template>
     </v-data-table>
+
     <div class="text-xs-center pt-2">
       <v-pagination v-model="pagination.page" :length="pages" circle></v-pagination>
     </div>
@@ -100,6 +109,7 @@ export default {
   },
   data() {
     return {
+      reasonReject: '',
       detailDialog: false,
       dialog: false,
       removeDialog: false,
@@ -161,7 +171,8 @@ export default {
     async updateCourseStatus() {
       const { data } = await courseRepository.updateCourseStatus(
         this.editedCourse.courseId,
-        this.editedCourse.statusId
+        this.editedCourse.statusId,
+        this.editedCourse.reasonReject
       )
       if (data.data) {
         let course = this.listCourses.find(

@@ -62,10 +62,11 @@ export default {
     return Repository.put(`${resource}/remove-course`, data)
   },
 
-  updateCourseStatus(courseId, statusId) {
+  updateCourseStatus(courseId, statusId, reasonReject) {
     const data = {
       courseId: courseId,
-      statusId: statusId
+      statusId: statusId,
+      reasonReject: reasonReject
     }
     return Repository.put(`${resource}/update-course-status`, data)
   },

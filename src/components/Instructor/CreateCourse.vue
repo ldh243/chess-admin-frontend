@@ -84,9 +84,7 @@
           <v-divider class="my-2"></v-divider>
           <v-card-actions>
             <div class="create">
-              <!-- <router-link to="/dashboard/instructorCourse"> -->
               <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
-              <!-- </router-link> -->
             </div>
           </v-card-actions>
         </v-form>
