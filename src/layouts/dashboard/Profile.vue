@@ -1,36 +1,28 @@
 <template>
-  <v-container fluid>
-    <v-layout align-center justify-center row wrap v-if="user != null">
-      <v-flex xs12 my-5>
-        <v-layout justify-center align-center>
-          <v-avatar size="100" color="grey lighten-4">
-            <img :src="user.avatar" alt="avatar">
-          </v-avatar>
-          <span class="font-weight-medium display-1 ml-4">{{user.fullName}}</span>
-        </v-layout>
-      </v-flex>
-      <v-flex xs10>
+  <v-container class="pa-6">
+    <v-layout align-start justify-space-between v-if="user != null">
+      <v-flex xs4>
         <v-layout>
           <v-flex>
-            <FixedProfile/>
+            <HighlightProfile/>
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs10 mt-4>
-        <Certificate/>
+      <v-flex xs8>
+        <ProfileInfo/>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import FixedProfile from '@/components/Profile/FixedProfile'
-import Certificate from '@/components/Profile/Certificate'
+import HighlightProfile from '@/components/Profile/HighlightProfile'
+import ProfileInfo from '@/components/Profile/ProfileInfo'
 import { mapState } from 'vuex'
 export default {
   components: {
-    FixedProfile,
-    Certificate
+    HighlightProfile,
+    ProfileInfo
   },
   data() {
     return {}
@@ -39,4 +31,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.xs4 {
+  max-width: 31.5%;
+}
+</style>

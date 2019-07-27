@@ -1,35 +1,29 @@
 <template>
-    <v-container>
-        <v-layout align-center justify-center row wrap>
-      <v-flex xs12 my-5>
-        <v-layout justify-center align-center>
-          <v-avatar size="100" color="grey lighten-4">
-            <img :src="user.avatar" alt="avatar">
-          </v-avatar>
-          <span class="font-weight-medium display-1 ml-4">{{user.fullName}}</span>
-        </v-layout>
+    <v-container class="pa-6">
+    <v-layout align-start justify-space-between v-if="user != null">
+      <v-flex xs4>
+            <HighlightProfile/>
+            <v-card-actions class="mt-2">
+                <v-spacer></v-spacer>
+                <v-btn width="120" depressed large class="mr-2" color="success">Đồng ý</v-btn>
+                <v-btn width="120" depressed large color="error">Từ chối</v-btn>
+                <v-spacer></v-spacer>
+            </v-card-actions>
       </v-flex>
-      <v-flex xs10>
-        <v-layout>
-          <v-flex>
-            <FixedProfile/>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-      <v-flex xs10 mt-4>
-        <Certificate/>
+      <v-flex xs8>
+        <ProfileInfo :isInstructor="true"/>
       </v-flex>
     </v-layout>
-    </v-container>
+  </v-container>
 </template>
 
 <script>
-import FixedProfile from '@/components/Profile/FixedProfile'
-import Certificate from '@/components/Profile/Certificate'
+import HighlightProfile from '@/components/Profile/HighlightProfile'
+import ProfileInfo from '@/components/Profile/ProfileInfo'
 export default {
     components: {
-        FixedProfile,
-        Certificate
+        HighlightProfile,
+        ProfileInfo
     },
     data() {    
         return  {
@@ -55,6 +49,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.xs4 {
+  max-width: 31.5%;
+}
 </style>
