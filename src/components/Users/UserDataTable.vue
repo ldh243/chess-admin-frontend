@@ -41,11 +41,7 @@
         </td>
       </template>
     </v-data-table>
-    <div class="text-xs-center pt-2">
-      <v-layout justify-center>
-      <v-pagination v-model="pagination.page" :length="pages" circle></v-pagination>
-      </v-layout>
-    </div>
+    <Pagination :pages="pages"/>
     <Loader v-if="loader"/>
     <v-dialog v-model="dialog" width="400">
       <v-card>
@@ -81,12 +77,14 @@ export default {}
 </script>
 
 <script>
+import Pagination from '@/components/kit/Pagination'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const userRepository = RepositoryFactory.get('user')
 export default {
   components: {
-    Loader
+    Loader,
+    Pagination
   },
   props: {
     search: {

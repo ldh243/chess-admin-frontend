@@ -48,7 +48,7 @@
     </v-menu>
     <v-toolbar-items class="align-center py-1 pr-3">
       <v-divider color="#BDBDBD" class="mx-4" vertical inset></v-divider>
-        <v-menu bottom left offset-y>
+        <v-menu bottom left offset-y transition="slide-y-transition">
           <template v-slot:activator="{on}">
             <a v-on="on">
               <v-list-tile>

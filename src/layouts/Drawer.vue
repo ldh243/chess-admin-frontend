@@ -87,7 +87,7 @@ export default {
         {
           title: 'Xét duyệt giảng viên',
           icon: 'fa-users-cog',
-          path: '/dashboard/instructorRequest'
+          path: '/dashboard/instructor-request'
         }
       ],
       items2: [
