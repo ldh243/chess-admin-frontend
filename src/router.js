@@ -4,6 +4,8 @@ import Profile from '@/layouts/dashboard/Profile'
 import Statistics from '@/layouts/dashboard/Statistics'
 import UserManagement from '@/layouts/dashboard/UserManagement'
 import CategoryManagement from '@/layouts/dashboard/CategoryManagement'
+import NewInstructorManagement from '@/layouts/dashboard/NewInstructorManagement'
+import NewInstructor from '@/layouts/instructor/NewInstructor'
 import CourseDetailByInstructor from '@/layouts/dashboard/CourseDetailByInstructor'
 import Dashboard from '@/pages/Dashboard.vue'
 //page
@@ -38,7 +40,9 @@ export default new Router({
         { path: 'courses', component: CourseManagement },
         { path: 'accounts', component: UserManagement },
         { path: 'category', component: CategoryManagement },
-        { path: 'instructorCourse', component: CourseDetailByInstructor }
+        { path: 'instructor-request', component: NewInstructorManagement },
+        { path: 'instructorCourse', component: CourseDetailByInstructor },
+        { path: 'new-ins-profile', component: NewInstructor}
       ]
     },
     { path: '*', redirect: '/' }

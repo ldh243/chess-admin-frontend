@@ -120,9 +120,6 @@ export default {
 </script>
 
 <style scoped>
-.v-card {
-  border-radius: 10px;
-}
 .course-item {
   flex-basis: 32.6666666%;
   -webkit-box-flex: 0;
@@ -132,4 +129,5 @@ export default {
 .course-divider {
   border-style: dashed; 
 }
+
 </style>
