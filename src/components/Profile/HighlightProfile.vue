@@ -1,6 +1,6 @@
 <template>
   <v-card :elevation="8">
-    <v-img :src="backgroundImage" height="200px"></v-img>
+    <v-img :src="backgroundImage"></v-img>
     <div class="avatar-container justify-center align-center">
       <v-avatar :size="100">
       <img :src="$store.state.user.avatar" alt="avatar">
@@ -10,17 +10,6 @@
       <p class="mb-0 headline font-weight-medium grey--text text--darken-2">{{$store.state.user.fullName}}</p>
       <p class="body-1 font-weight-medium grey--text">{{$store.state.user.roleName}}</p>
     </v-card-text>
-    <!-- <v-toolbar flat>
-        <v-icon>mdi-account</v-icon>
-        <v-toolbar-title class="font-weight-light">Thông tin cá nhân</v-toolbar-title>
-      </v-toolbar>
-      <v-divider></v-divider>
-      <v-card-text v-if="$store.state.user != null">
-        <v-text-field :value="$store.state.user.email" disabled color="success" label="E-mail"></v-text-field>
-        <v-text-field :value="$store.state.user.fullName" disabled label="Họ và tên"></v-text-field>
-        <v-text-field :value="$store.state.user.roleName" disabled label="Vai trò"></v-text-field>
-        <v-text-field :value="$store.state.user.status" disabled label="Trạng thái"></v-text-field>
-    </v-card-text>-->
   </v-card>
 </template>
 
@@ -40,12 +29,15 @@ export default {
 </script>
 
 <style scoped>
+.v-responsive.v-image {
+    height: 145px;
+  }
 .avatar-container {
   width: 110px;
   height: 110px;
   position: absolute;
+  top: 145px;
   left: 50%;
-  top: 200px;
   transform: translate(-50%, -50%);
   border-radius: 50% !important;
   background-color: #fff;
@@ -55,10 +47,21 @@ export default {
   align-items: center;
 }
 .profile-highlight-container {
-  padding-top: 65px;
+  padding-top: 55px;
 }
 .profile-highlight-container p {
   text-align: center;
+}
+@media(min-width: 1904px) {
+  .v-responsive.v-image {
+    height: 180px;
+  }
+  .avatar-container {
+    top: 180px;
+  }
+  .profile-highlight-container {
+  padding-top: 65px;
+}
 }
 >>> input {
   color: #757575 !important;
