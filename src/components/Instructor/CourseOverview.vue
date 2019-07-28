@@ -51,38 +51,7 @@ export default {
       pagination: {
         rowsPerPage: 4
       },
-      listCourses: [{
-        courseId: 1,
-        courseName: 'Cách học cờ vua',
-        courseDescription: 'basic to master',
-        courseImage: "https://i.ytimg.com/vi/6K_MElXH694/maxresdefault.jpg",
-        courseCreatedDate: "2019-06-04T16:02:08.000+0000",
-        point: -300,
-        statusId: 2,
-        author: {
-          userId: 52,
-          email: null,
-          fullName: "Dang Van Hoang - K11 FUG HCM",
-          roleId: 1,
-          avatar: "https://lh4.googleusercontent.com/-Fo4zncGaROA/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rctOAda47D_gQ_MGmBjdjy8bgp6DA/mo/photo.jpg"
-        },
-      },
-      {
-        courseId: 2,
-        courseName: "Cách chơi cờ cơ bản",
-        courseDescription: "trainning",
-        courseImage: "http://3.bp.blogspot.com/-opna9bBQCN0/VWf_jZDj8OI/AAAAAAAALVE/lZ8zdjKyTTE/s1600/ban%2Bco%2Bv.jpg",
-        courseCreatedDate: "2019-06-04T16:02:50.000+0000",
-        point: 0,
-        statusId: 2,
-        author: {
-          userId: 53,
-          email: null,
-          fullName: "Chess Learning System Admin",
-          roleId: 0,
-          avatar: "https://lh6.googleusercontent.com/-_nkeCY8xsbQ/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rcW5iOIe-Ryy4fdawUdHwY5SCXXEQ/mo/photo.jpg"
-        },
-      }],
+      listCourses: [],
       editedCourse: {},
       removedCourse: []
     }
@@ -97,18 +66,18 @@ export default {
     }
   },
   mounted() {
-    // this.loader = true
-    // this.getCoursesPaginationCurrentInstructor()
-    // this.loader = false
+    this.loader = true
+    this.getCoursesPaginationCurrentInstructor()
+    this.loader = false
   },
   methods: {
-    // async getCoursesPaginationCurrentInstructor() {
-    //   const {
-    //     data
-    //   } = await courseRepository.getCoursesPaginationCurrentInstructor(1, 500)
-    //   this.listCourses = this.formatListCourse(data.data.content)
-    //   console.log(data)
-    // },
+    async getCoursesPaginationCurrentInstructor() {
+      const {
+        data
+      } = await courseRepository.getCoursesPaginationCurrentInstructor(1, 500)
+      this.listCourses = this.formatListCourse(data.data.content)
+      console.log(data)
+    },
     async removeCourse() {
       const { data } = await courseRepository.removeCourse(
         this.listCourses.courseId

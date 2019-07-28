@@ -98,7 +98,7 @@ export default {
     }
   },
   created() {
-    this.isInstructor = $store.state.user.roleId === 1 ? true : false
+    this.isInstructor = this.$store.state.user.roleId === 1 ? true : false
   }
 }
 </script>

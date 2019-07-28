@@ -1,110 +1,75 @@
 <template>
-  <div>
-    <v-container>
-      <h2>TẠO KHÓA HỌC MỚI</h2>
-      <hr />
-      <v-card>
-        <v-card-text>
-          <v-text-field
-            v-model="createdCourse.name"
-            box
-            label="Tên khóa học"
-            :error-messages="nameErrors"
-            required
-            @input="$v.createdCourse.name.$touch()"
-            @blur="$v.createdCourse.name.$touch()"
-          ></v-text-field>
-        </v-card-text>
-
-        <div>
-          <v-card-text>
-            <v-textarea
-              v-model="createdCourse.description"
-              box
-              label="Mô tả: "
-              value
-              :error-messages="decriptonErrors"
-              required
-              @input="$v.createdCourse.description.$touch()"
-              @blur="$v.createdCourse.description.$touch()"
-            ></v-textarea>
-            <v-divider class="my-2"></v-divider>
-          </v-card-text>
-        </div>
-        <div class="point-category">
-          <div class="point">
-            <v-card-text>
+  <v-container class="pa-6">
+    <v-card elevation="8">
+      <CourseBackground :title="'Tạo khóa học mới'"/>
+        <v-form>
+          <v-container class="pa-5" grid-list-xs>
+            <v-layout wrap>
+            <v-flex xs9>
               <v-text-field
-                v-model="createdCourse.point"
+                color="amber darken-1"
+                v-model="createdCourse.name"
                 box
-                label="Điểm để học"
-                :error-messages="pointErros"
+                label="Tên khóa học"
+                :error-messages="nameErrors"
                 required
-                @input="$v.createdCourse.point.$touch()"
-                @blur="$v.createdCourse.point.$touch()"
               ></v-text-field>
-            </v-card-text>
-          </div>
-          <div>
-            <v-card-text>
-              <v-flex xs9 d-flex>
-                <v-select
-                  v-model="createdCourse.listCategoryIds"
-                  :items="listCategories"
-                  item-text="name"
-                  item-value="categoryId"
-                  multiple
-                  chips
-                  label="Danh mục"
-                  :error-messages="listCategoryErrors"
-                  required
-                  @input="$v.createdCourse.listCategoryIds.$touch()"
-                  @blur="$v.createdCourse.listCategoryIds.$touch()"
-                ></v-select>
               </v-flex>
-            </v-card-text>
-          </div>
-        </div>
-        <div>
-          <v-card-actions>
-            <v-text-field
-              label="Chọn hình ảnh"
-              @click="pickFile"
-              v-model="imageName"
-              prepend-icon="fa-paperclip"
-            ></v-text-field>
-            <input
-              type="file"
-              style="display: none"
-              ref="image"
-              accept="image/*"
-              @change="onFilePicked"
-            />
-          </v-card-actions>
-        </div>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <img :src="createdCourse.image" height="200" v-if="createdCourse.image" />
-          <v-spacer></v-spacer>
-        </v-card-actions>
-        <v-divider class="my-2"></v-divider>
-        <v-card-actions>
-          <div class="create">
-            <!-- <router-link to="/dashboard/instructorCourse"> -->
-            <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
-            <!-- </router-link> -->
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-container>
-    <Loader v-if="loader" />
-  </div>
+              <v-flex xs3>
+                <v-text-field
+                  v-model="createdCourse.point"
+                  box
+                  label="Điểm để học"
+                  :error-messages="pointErros"
+                  required
+                  color="amber darken-1"
+                ></v-text-field>
+              </v-flex>
+            <v-flex xs12>
+              <v-textarea
+                v-model="createdCourse.description"
+                box
+                label="Mô tả: "
+                value
+                :error-messages="decriptonErrors"
+                required
+                color="amber darken-1"
+              ></v-textarea>
+            </v-flex>
+            <v-flex xs12>
+              <v-select
+                v-model="createdCourse.listCategoryIds"
+                :items="listCategories"
+                item-text="name"
+                item-value="categoryId"
+                multiple
+                chips
+                label="Danh mục"
+                color="amber darken-1"
+                item-color="amber darken-1"
+              ></v-select>
+            </v-flex>
+            <v-flex xs12>
+              <v-file-input prepend-icon="mdi-camera" accept="image/*" color="amber darken-1" label="Ảnh khóa học"></v-file-input>
+            </v-flex>
+          </v-layout>
+          </v-container>
+        </v-form>
+      <v-divider class="my-2"></v-divider>
+      <v-card-actions class="px-5">
+        <v-spacer></v-spacer>
+        <v-btn depressed dark color="amber darken-2">Xóa toàn bộ</v-btn>
+        <v-btn @click="createCourse()" depressed dark color="amber darken-4">Hoàn tất</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
 import { validationMixin } from 'vuelidate'
 import { required, integer } from 'vuelidate/lib/validators'
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
+import CourseBackground from '@/components/Instructor/CourseBackground'
 import Loader from '@/components/Loader'
 import { mapState } from 'vuex'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
@@ -116,7 +81,8 @@ export default {
   mixins: [validationMixin],
   components: {
     CreateInteractiveLesson,
-    Loader
+    Loader,
+    CourseBackground
   },
   validations: {
     createdCourse: {
@@ -151,45 +117,7 @@ export default {
     this.getCategories()
     this.loader = false
   },
-  computed: {
-    nameErrors() {
-      const errors = []
-      if (!this.$v.createdCourse.name.$dirty) return errors
-      !this.$v.createdCourse.name.required &&
-        errors.push('Tên khóa học không được để trống !')
-      return errors
-    },
-    decriptonErrors() {
-      const errors = []
-      if (!this.$v.createdCourse.description.$dirty) return errors
-      !this.$v.createdCourse.description.required &&
-        errors.push('Bạn phải mô tả khóa học !')
-      return errors
-    },
-    listCategoryErrors() {
-      const errors = []
-      if (!this.$v.createdCourse.listCategoryIds.$dirty) return errors
-      !this.$v.createdCourse.listCategoryIds.required &&
-        errors.push('Chọn tên danh mục.')
-      return errors
-    },
-    pointErros() {
-      const errors = []
-      if (!this.$v.createdCourse.point.$dirty) return errors
-      !this.$v.createdCourse.point.integer &&
-        errors.push('Nhập đúng số điểm của khóa học.')
-      !this.$v.createdCourse.point.required &&
-        errors.push('Vui lòng nhập số điểm.')
-      return errors
-    },
-    imageErros() {
-      const errors = []
-      if (!this.$v.createdCourse.image.$dirty) return errors
-      !this.$v.createdCourse.image.required &&
-        errors.push('Hình ảnh không được để trống')
-      return errors
-    }
-  },
+  computed: {},
   methods: {
     refreshPage() {
       window.location.reload()
@@ -246,15 +174,8 @@ export default {
 }
 </script>
 
-<style>
-.point {
-  width: 50%;
-  float: left;
-}
-.point-category {
-  height: 150px;
-}
-.create {
-  text-align: center;
+<style scoped>
+.create-course-title {
+  font-family: 'Roboto', sans-serif;
 }
 </style>

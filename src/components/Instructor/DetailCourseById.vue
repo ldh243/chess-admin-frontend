@@ -1,72 +1,62 @@
 <template>
-  <div>
-    <v-container>
-      <v-card-title class="px-0">
-      <h2>CHI TIẾT KHÓA HỌC</h2>
-      </v-card-title>
-      <v-card>
-        <v-card-text>
-          <v-text-field :value="courseDetail.name" readonly box label="Tên khóa học"></v-text-field>
-        </v-card-text>
-
-        <div>
-          <v-card-text>
-            <v-textarea :value="courseDetail.description" readonly box label="Mô tả: "></v-textarea>
-            <v-divider class="my-2"></v-divider>
-          </v-card-text>
-        </div>
-        <div class="divvv">
-          <div>
-            <v-card-text>
-              <v-text-field :value="courseDetail.point" readonly box label="Điểm để học"></v-text-field>
-            </v-card-text>
-          </div>
-        </div>
-        <div>
-          <v-card-text>
-            <v-alert
-              :value="true"
-              color="success"
-              outline
-            >Số lượng bài học hiện có: {{courseDetail.totalLesson}}</v-alert>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              @click="showCreateLesson(1)"
-              block
-              color="blue-grey"
-              class="white--text"
-            >Thêm bài học</v-btn>
-            <v-btn
-              @click="showCreateLesson(2)"
-              block
-              color="blue-grey"
-              class="white--text"
-            >Thêm bài tập</v-btn>
-          </v-card-actions>
-          <v-divider class="my-2"></v-divider>
-          <v-card-actions>
-            <div class="create">
-              <v-btn @click="createCourse()" class="text-xs-center" color="success">Hoàn tất</v-btn>
-            </div>
-          </v-card-actions>
-        </div>
-      </v-card>
-
-      <div v-if="createLesson == 1">
-          <CreateInteractiveLesson />
-      </div>
-      <div v-if="createLesson == 2">
-        <CreateExercise/>
-      </div>
-    </v-container>
-    <Loader v-if="loader" />
-  </div>
+  <v-container class="pa-6">
+    <v-card :elevation="8">
+      <CourseBackground :title="courseDetail.name" :point="`${courseDetail.point} điểm`" />
+      <v-form>
+        <v-container class="pa-5" grid-list-xs>
+          <v-layout wrap>
+            <v-flex xs12>
+              <v-textarea :value="courseDetail.description" disabled label="Mô tả: "></v-textarea>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-form>
+      <v-container class="px-5 pb-5 pt-0">
+        <h5 class="mb-3 grey--text text--darken-1 title text-uppercase">Danh sách bài học</h5>
+        <v-expansion-panels max="1" focusable class="mb-3">
+          <v-expansion-panel v-for="(item,i) in 5" :key="i">
+            <v-expansion-panel-header class="grey--text text--darken-3 font-weight-medium">Bài {{i + 1}}</v-expansion-panel-header>
+            <v-expansion-panel-content align-center>
+                  <v-card-actions class="px-0">
+                    <p>Loại: Bài đọc</p>
+                <v-spacer></v-spacer>
+                    <v-btn fab dark small color="amber lighten-1">
+                      <v-icon dark>edit</v-icon>
+                    </v-btn>
+                    <v-btn class="ml-2" fab dark small color="amber darken-2">
+                      <v-icon dark>delete</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <v-card-actions class="px-0">
+          <v-btn
+            @click="showCreateLesson(1)"
+            color="blue-grey"
+            class="white--text"
+          >Thêm bài học</v-btn>
+          <v-btn
+            @click="showCreateLesson(2)"
+            color="blue-grey"
+            class="white--text"
+          >Thêm bài tập</v-btn>
+        </v-card-actions>
+      </v-container>
+    </v-card>
+    <div v-if="createLesson == 1">
+      <CreateInteractiveLesson />
+    </div>
+    <div v-if="createLesson == 2">
+      <CreateExercise />
+    </div>
+  </v-container>
 </template>
 
 <script>
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
 import CreateExercise from '@/components/Instructor/CreateExercise'
+import CourseBackground from '@/components/Instructor/CourseBackground'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import { async } from 'q'
@@ -75,7 +65,8 @@ export default {
   components: {
     CreateInteractiveLesson,
     Loader,
-    CreateExercise
+    CreateExercise,
+    CourseBackground
   },
   data() {
     return {
@@ -106,24 +97,9 @@ export default {
 }
 </script>
 
-<style>
-.div {
-  width: 50%;
-  float: left;
-}
-.divv {
-  float: right;
-}
-.divvv {
-  height: 100px;
-}
-.create {
-  text-align: center;
-}
-.div1 {
-  text-align: center;
-}
-.div2 {
-  padding-top: 50px;
+<style scoped>
+.v-expansion-panel-header--active {
+  background-color: #FFC107;
+  opacity: 1;
 }
 </style>

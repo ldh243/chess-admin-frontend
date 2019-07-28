@@ -53,6 +53,20 @@ export default Vue.mixin({
           return 'Thành viên mới'
       }
     },
+    getCourseRoleName(roleId) {
+      switch (roleId) {
+        case 1:
+          return 'Đang soạn thảo'
+        case 2:
+          return 'Công khai'
+        case 3:
+          return 'Đã xóa'
+        case 4:
+          return 'Chờ xét duyệt'
+        case 5:
+          return 'Đã từ chối'
+      }
+    },
     getStatusUser(active) {
       if (active) {
         return 'Kích hoạt'
