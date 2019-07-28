@@ -175,7 +175,5 @@ export default {
 </script>
 
 <style scoped>
-.create-course-title {
-  font-family: 'Roboto', sans-serif;
-}
+
 </style>

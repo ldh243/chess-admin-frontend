@@ -20,40 +20,31 @@
                   <v-card-actions class="px-0">
                     <p>Loại: Bài đọc</p>
                 <v-spacer></v-spacer>
-                    <v-btn fab dark small color="amber lighten-1">
+                    <v-btn fab dark small color="yellow darken-3">
                       <v-icon dark>edit</v-icon>
                     </v-btn>
-                    <v-btn class="ml-2" fab dark small color="amber darken-2">
+                    <v-btn class="ml-2" fab dark small color="orange darken-3">
                       <v-icon dark>delete</v-icon>
                     </v-btn>
                   </v-card-actions>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-card-actions class="px-0">
           <v-btn
-            @click="showCreateLesson(1)"
-            color="blue-grey"
+            @click="showCreateLesson"
+            color="orange darken-1"
+            block
+            depressed
             class="white--text"
-          >Thêm bài học</v-btn>
-          <v-btn
-            @click="showCreateLesson(2)"
-            color="blue-grey"
-            class="white--text"
-          >Thêm bài tập</v-btn>
-        </v-card-actions>
+          >Thêm mới</v-btn>
       </v-container>
     </v-card>
-    <div v-if="createLesson == 1">
-      <CreateInteractiveLesson />
-    </div>
-    <div v-if="createLesson == 2">
-      <CreateExercise />
-    </div>
+    <LessonTab class="mt-3" v-if="isCreateLesson"/>
   </v-container>
 </template>
 
 <script>
+import LessonTab from '@/components/Instructor/LessonTab'
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
 import CreateExercise from '@/components/Instructor/CreateExercise'
 import CourseBackground from '@/components/Instructor/CourseBackground'
@@ -66,7 +57,8 @@ export default {
     CreateInteractiveLesson,
     Loader,
     CreateExercise,
-    CourseBackground
+    CourseBackground,
+    LessonTab
   },
   data() {
     return {
@@ -74,7 +66,8 @@ export default {
       loader: false,
       courseDetail: {},
       listCategorys: [],
-      createLesson: ''
+      createLesson: '',
+      isCreateLesson: false
     }
   },
   mounted() {
@@ -83,8 +76,8 @@ export default {
     this.loader = false
   },
   methods: {
-    showCreateLesson(number) {
-      this.createLesson = number
+    showCreateLesson() {
+      this.isCreateLesson = true
     },
     async getCourseById() {
       const courseId = this.$route.params.courseId
@@ -99,7 +92,10 @@ export default {
 
 <style scoped>
 .v-expansion-panel-header--active {
-  background-color: #FFC107;
-  opacity: 1;
+  background: #FFD54F;
+  opacity: 1 !important;
+}
+.v-expansion-panel-header--active::before {
+  opacity: 0 !important;
 }
 </style>
