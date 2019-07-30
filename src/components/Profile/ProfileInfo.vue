@@ -96,9 +96,6 @@ export default {
         text: 'Lorem ipsum dolor sit amet, consectetur'
       })
     }
-  },
-  created() {
-    this.isInstructor = this.$store.state.user.roleId === 1 ? true : false
   }
 }
 </script>

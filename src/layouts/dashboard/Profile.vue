@@ -9,7 +9,7 @@
         </v-layout>
       </v-flex>
       <v-flex xs8>
-        <ProfileInfo/>
+        <ProfileInfo :isInstructor="isInstructor"/>
       </v-flex>
     </v-layout>
   </v-container>
@@ -27,7 +27,10 @@ export default {
   data() {
     return {}
   },
-  computed: mapState(['user'])
+  computed: mapState(['user']),
+  created() {
+    this.isInstructor = this.$store.state.user.roleId === 1 ? true : false
+  }
 }
 </script>
 

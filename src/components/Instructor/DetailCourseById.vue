@@ -92,7 +92,7 @@ export default {
 
 <style scoped>
 .v-expansion-panel-header--active {
-  background: #FFD54F;
+  background: #FB8C00;
   opacity: 1 !important;
 }
 .v-expansion-panel-header--active::before {
