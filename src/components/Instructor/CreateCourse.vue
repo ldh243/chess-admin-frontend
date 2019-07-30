@@ -1,44 +1,54 @@
 <template>
   <v-container class="pa-6">
     <v-card elevation="8">
-      <CourseBackground :title="'Tạo khóa học mới'"/>
-        <v-form>
-          <v-container class="pa-5" grid-list-xs>
-            <v-layout wrap>
-            <v-flex xs9>
+      <CourseBackground :title="'Tạo khóa học mới'" />
+      <v-form ref="form" v-model="courseForm" lazy-validation>
+        <v-container class="pa-5" grid-list-xs>
+          <v-layout wrap>
+            <v-flex xs8>
               <v-text-field
                 color="amber darken-1"
-                v-model="createdCourse.name"
+                v-model="course.name"
                 box
                 label="Tên khóa học"
-                :error-messages="nameErrors"
+                :rules="nameRules"
                 required
               ></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field
-                  v-model="createdCourse.point"
-                  box
-                  label="Điểm để học"
-                  :error-messages="pointErros"
-                  required
-                  color="amber darken-1"
-                ></v-text-field>
-              </v-flex>
+            </v-flex>
+            <v-flex xs2>
+              <v-text-field
+                v-model="course.requiredPoint"
+                box
+                label="Điểm để học"
+                required
+                color="amber darken-1"
+                :rules="pointRules"
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs2>
+              <v-text-field
+                v-model="course.point"
+                box
+                label="Điểm nhận được"
+                required
+                color="amber darken-1"
+                :rules="pointRules"
+              ></v-text-field>
+            </v-flex>
             <v-flex xs12>
               <v-textarea
-                v-model="createdCourse.description"
+                v-model="course.description"
                 box
                 label="Mô tả: "
                 value
-                :error-messages="decriptonErrors"
                 required
                 color="amber darken-1"
+                :rules="descriptionRules"
               ></v-textarea>
             </v-flex>
             <v-flex xs12>
               <v-select
-                v-model="createdCourse.listCategoryIds"
+                v-model="course.listCategoryIds"
                 :items="listCategories"
                 item-text="name"
                 item-value="categoryId"
@@ -50,66 +60,64 @@
               ></v-select>
             </v-flex>
             <v-flex xs12>
-              <v-file-input prepend-icon="mdi-camera" accept="image/*" color="amber darken-1" label="Ảnh khóa học"></v-file-input>
+              <v-file-input
+                v-model="image"
+                prepend-icon="mdi-camera"
+                accept="image/png, image/jpeg"
+                color="amber darken-1"
+                label="Ảnh khóa học"
+                :rules="imageRules"
+              ></v-file-input>
             </v-flex>
           </v-layout>
-          </v-container>
-        </v-form>
+        </v-container>
+      </v-form>
       <v-divider class="my-2"></v-divider>
       <v-card-actions class="px-5">
         <v-spacer></v-spacer>
-        <v-btn depressed dark color="amber darken-2">Xóa toàn bộ</v-btn>
-        <v-btn @click="createCourse()" depressed dark color="amber darken-4">Hoàn tất</v-btn>
+        <v-btn depressed dark @click="resetForm" color="amber darken-2">Xóa toàn bộ</v-btn>
+        <v-btn @click="createCourse" depressed dark color="amber darken-4">Hoàn tất</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, integer } from 'vuelidate/lib/validators'
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
 import CourseBackground from '@/components/Instructor/CourseBackground'
 import Loader from '@/components/Loader'
 import { mapState } from 'vuex'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
-import { async } from 'q'
-import { log } from 'util'
 const categoryRepository = RepositoryFactory.get('category')
 const courseRepository = RepositoryFactory.get('course')
 export default {
-  mixins: [validationMixin],
   components: {
     CreateInteractiveLesson,
     Loader,
     CourseBackground
   },
-  validations: {
-    createdCourse: {
-      name: { required },
-      description: { required },
-      listCategoryIds: { required },
-      image: { required },
-      point: { required, integer }
-    }
-  },
   data() {
     return {
+      image: [],
       valueName: '',
       email: this.$store.state.user.email,
       loader: false,
-      createdCourse: {
+      course: {
         name: '',
+        requiredPoint: 0,
+        point: 0,
         description: '',
-        image: '',
-        point: '',
-        listCategoryIds: []
+        listCategoryIds: [],
+        image: ''
       },
       listCategories: [],
-      createLesson: '',
       imageName: '',
       imageUrl: '',
-      imageFile: ''
+      imageFile: '',
+      nameRules: [v => !!v || 'Tên khóa học không được để trống'],
+      pointRules: [v => /^\d+$/.test(v) || 'Điểm phải là giá trị số'],
+      descriptionRules: [v => !!v || 'Mô tả khóa học không được để trống'],
+      imageRules: [v => v.type === 'image/png' || v.type === 'image/jpeg' || 'Hình ảnh không hợp lệ']
     }
   },
   mounted() {
@@ -119,11 +127,9 @@ export default {
   },
   computed: {},
   methods: {
-    refreshPage() {
-      window.location.reload()
-    },
-    showCreateLesson(number) {
-      this.createLesson = number
+    resetForm() {
+      this.$refs.form.reset()
+      this.$refs.form.resetValidation()
     },
     pickFile() {
       this.$refs.image.click()
@@ -152,28 +158,16 @@ export default {
       this.listCategories = data.data
     },
     async createCourse() {
-      this.$v.createdCourse.$touch()
-      let image = '',
-        nameCourse = this.createdCourse.name
-      let match = this.$store.state.user.email.match(/^([^@]*)/)
-      image = await this.uploadImageByDataURL(
-        this.createdCourse.image,
-        nameCourse,
-        `courses/${match[0]}`
-      )
-      const { data } = await courseRepository.createCourse(
-        this.createdCourse.name,
-        this.createdCourse.description,
-        image,
-        this.createdCourse.point,
-        this.createdCourse.listCategoryIds
-      )
-      console.log(data)
+      if (this.$refs.form.validate()) {
+        let match = this.$store.state.user.email.match(/^([^@]*)/)
+        let courseSlug = this.course.name.toLowerCase().split(" ").join('-')
+        this.course.image = await this.uploadImageByFile(this.image, courseSlug, `courses/${match[0]}`)
+        const {data} = await courseRepository.createCourse(this.course)
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>

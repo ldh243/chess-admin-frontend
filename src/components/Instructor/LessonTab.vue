@@ -10,7 +10,7 @@
                 <InteractiveLesson/>
             </v-tab-item>
             <v-tab-item>
-                <UninteractiveLesson/>
+                <UninteractiveLesson :courseId="courseId"/>
             </v-tab-item>
             <v-tab-item>
                 <Exercise/>
@@ -24,6 +24,12 @@ import InteractiveLesson from '@/components/Lessons/InteractiveLesson'
 import Exercise from '@/components/Lessons/Exercise'
 import UninteractiveLesson from '@/components/Lessons/UninteractiveLessonForm'
 export default {
+    props: {
+        courseId: {
+            type: Number,
+            default: 0
+        }
+    },
     components: {
         InteractiveLesson,
         Exercise,

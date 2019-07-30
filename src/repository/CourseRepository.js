@@ -1,4 +1,5 @@
 import Repository from '@/repository/Repository'
+import router from '../router'
 
 const resource = '/course'
 
@@ -34,15 +35,11 @@ export default {
       data
     )
   },
-  createCourse(name, description, image, point, listCategoryIds) {
-    const data = {
-      name: name,
-      description: description,
-      image: image,
-      point: point,
-      listCategoryIds: listCategoryIds
-    }
-    return Repository.post(`${resource}/create-course`, data)
+  createCourse(data) {
+    return Repository.post(`${resource}/create-course`, data).then(res => {
+      const courseId = res.data.data.savedId
+      router.push({path: `/dashboard/instructorCourse/${courseId}`})
+    })
   },
   removeCourse(courseId) {
     const data = {

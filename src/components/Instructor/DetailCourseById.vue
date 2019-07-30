@@ -1,24 +1,32 @@
 <template>
   <v-container class="pa-6">
     <v-card :elevation="8">
-      <CourseBackground :title="courseDetail.name" :point="`${courseDetail.point} điểm`" />
+      <CourseBackground :title="course.name" :point="`${course.requiredPoint} điểm`" />
       <v-form>
         <v-container class="pa-5" grid-list-xs>
           <v-layout wrap>
             <v-flex xs12>
-              <v-textarea :value="courseDetail.description" disabled label="Mô tả: "></v-textarea>
+              <v-textarea :value="course.description" disabled label="Mô tả: "></v-textarea>
             </v-flex>
           </v-layout>
         </v-container>
       </v-form>
       <v-container class="px-5 pb-5 pt-0">
         <h5 class="mb-3 grey--text text--darken-1 title text-uppercase">Danh sách bài học</h5>
-        <v-expansion-panels max="1" focusable class="mb-3">
-          <v-expansion-panel v-for="(item,i) in 5" :key="i">
-            <v-expansion-panel-header class="grey--text text--darken-3 font-weight-medium">Bài {{i + 1}}</v-expansion-panel-header>
+        <v-alert
+      border="right"
+      colored-border
+      type="warning"
+      elevation="2" v-if="listLessons.length === 0"
+    >
+      Khóa học hiện tại chưa có bài học nào.
+    </v-alert>
+        <v-expansion-panels max="1" focusable class="mb-3" v-if="listLessons.length > 0">
+          <v-expansion-panel v-for="(item,i) in listLessons" :key="i">
+            <v-expansion-panel-header class="grey--text text--darken-3 font-weight-medium">Bài {{i + 1}}: {{item.name}}</v-expansion-panel-header>
             <v-expansion-panel-content align-center>
                   <v-card-actions class="px-0">
-                    <p>Loại: Bài đọc</p>
+                    <p>Loại: {{lessonTypeName[item.lessonType - 1]}}</p>
                 <v-spacer></v-spacer>
                     <v-btn fab dark small color="yellow darken-3">
                       <v-icon dark>edit</v-icon>
@@ -39,7 +47,7 @@
           >Thêm mới</v-btn>
       </v-container>
     </v-card>
-    <LessonTab class="mt-3" v-if="isCreateLesson"/>
+    <LessonTab :courseId="course.courseId" class="mt-3" v-if="isCreateLesson"/>
   </v-container>
 </template>
 
@@ -50,7 +58,6 @@ import CreateExercise from '@/components/Instructor/CreateExercise'
 import CourseBackground from '@/components/Instructor/CourseBackground'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
-import { async } from 'q'
 const courseRepository = RepositoryFactory.get('course')
 export default {
   components: {
@@ -64,10 +71,12 @@ export default {
     return {
       dialogLessonInteractive: false,
       loader: false,
-      courseDetail: {},
+      course: {},
       listCategorys: [],
       createLesson: '',
-      isCreateLesson: false
+      isCreateLesson: false,
+      listLessons: [],
+      lessonTypeName: ['Bài thực hành', 'Phân tích trận đấu', 'Bài đọc']
     }
   },
   mounted() {
@@ -82,9 +91,9 @@ export default {
     async getCourseById() {
       const courseId = this.$route.params.courseId
       const { data } = await courseRepository.getById(courseId)
-      this.courseDetail = data.data
+      this.course = data.data
       this.listCategorys = data.data.listCategorys
-      console.log(this.courseDetail)
+      this.listLessons = data.data.lessonViewModels
     }
   }
 }

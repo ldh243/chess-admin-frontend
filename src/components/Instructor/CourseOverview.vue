@@ -9,13 +9,13 @@
             <v-text-field height="20" outlined rounded append-icon="fa-search" color="amber"></v-text-field>
           </v-flex> -->
           </v-card-title>
-          <v-divider></v-divider>
+          <v-divider class="mb-5"></v-divider>
           <v-layout column wrap :pagination.sync="pagination">
           <v-flex
             v-for="(item, index) in listCourses"
             :key="index"
             class="course-item"
-            px-5 pt-5
+            px-5
           >
             <CourseItem :content="item" class="mb-3"/>
             <v-divider class="my-5 course-divider"></v-divider>

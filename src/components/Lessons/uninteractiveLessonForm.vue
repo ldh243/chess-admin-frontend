@@ -4,7 +4,13 @@
       <v-flex xs10>
         <v-form ref="form" lazy-validation>
           <v-card-text>
-            <v-text-field color="blue-grey darken-1" label="Tên Bài Học:" v-model="name"></v-text-field>
+            <v-text-field
+              :rules="lessonNameRules"
+              color="blue-grey darken-1"
+              label="Tên Bài Học:"
+              v-model="lessonName"
+            ></v-text-field>
+            <v-alert dense outlined type="error" v-if="errors.length > 0">{{errors}}</v-alert>
             <ckeditor5 :content="content" />
           </v-card-text>
         </v-form>
@@ -15,7 +21,9 @@
     <v-card-actions class="px-6">
       <v-spacer></v-spacer>
       <v-btn
-        color="orange darken-3" dark depressed
+        color="orange darken-3"
+        dark
+        depressed
         @click="isEditting ? updateUninteractiveLesson() : createUninteractiveLesson()"
         v-text="isEditting ? 'Lưu' : 'Thêm'"
       ></v-btn>
@@ -50,20 +58,25 @@ export default {
       required: false,
       type: Number,
       default: 0
+    },
+    courseId: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       lessonIdCreated: 0,
       content: '',
-      name: '',
+      lessonName: '',
       editor: ckeditor5,
-      errors: [],
+      errors: '',
       loader: false,
       uninteractiveLessonId: 0,
       lessonId: this.lessonIdInput,
       isEditting: this.isEdittingInput,
-      isUpdatedName: false
+      isUpdatedName: false,
+      lessonNameRules: [v => !!v || 'Tên bài học không được bỏ trống']
     }
   },
   watch: {
@@ -96,37 +109,38 @@ export default {
   },
   methods: {
     async createUninteractiveLesson() {
-      this.loader = true
-      if (this.checkForm()) {
-        this.loader = false
-        return
+      if (this.editor.methods.getText().length === 0) {
+        this.errors = 'Nội dung bài học không được bỏ trống'
       }
-      const data = await lessonRepository.createUninteractiveLesson(
-        this.name,
-        this.editor.methods.getVal(),
-        this.courseIdInput
-      )
-      if (data.data.data.success) {
-        //set id when success
-        this.lessonIdCreated = data.data.data.savedId
+      if (this.$refs.form.validate()) {
+        const data = await lessonRepository.createUninteractiveLesson({
+          content: this.editor.methods.getVal(),
+          courseId: this.courseId,
+          name: this.lessonName
+        }) 
+      }
+      
+      // if (data.data.data.success) {
+      //   //set id when success
+      //   this.lessonIdCreated = data.data.data.savedId
 
-        Swal.fire({
-          title: this.name,
-          text: 'đã được thêm thành công',
-          type: 'success'
-        })
-      } else {
-        Swal.fire({
-          title: 'Oops...',
-          text: 'đã có lỗi diễn ra trong quá trình lưu',
-          type: 'error'
-        })
-      }
-      //set current lessonId
-      this.lessonId = this.lessonIdCreated
-      //change state create to update
-      this.isEditting = true
-      this.loader = false
+      //   Swal.fire({
+      //     title: this.name,
+      //     text: 'đã được thêm thành công',
+      //     type: 'success'
+      //   })
+      // } else {
+      //   Swal.fire({
+      //     title: 'Oops...',
+      //     text: 'đã có lỗi diễn ra trong quá trình lưu',
+      //     type: 'error'
+      //   })
+      // }
+      // //set current lessonId
+      // this.lessonId = this.lessonIdCreated
+      // //change state create to update
+      // this.isEditting = true
+      // this.loader = false
     },
     async getById() {
       this.loader = true
@@ -167,22 +181,6 @@ export default {
       //trigger that lesson updated
       this.isUpdatedName = true
       this.loader = false
-    },
-    //return true if error
-    checkForm: function() {
-      this.errors = []
-
-      if (!this.name || this.name.length < 6) {
-        this.errors.push('Tên bài học phải nhiều hơn 6 ký tự')
-      }
-      if (this.editor.methods.getText().length == 0) {
-        this.errors.push('Nội dung bài học không được trống')
-      }
-      var isError = this.errors.length > 0 ? true : false
-      if (isError) {
-        this.scrollTop()
-      }
-      return isError
     },
     scrollTop: function() {
       document.documentElement.scrollTop = 0

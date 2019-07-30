@@ -130,6 +130,25 @@ export default Vue.mixin({
           return imageLink
         })
       return link
+    },
+    async uploadImageByFile(image, imageName, directory) {
+      const uploadTask = firebase
+        .storage()
+        .ref(`images/${directory}/${imageName}`)
+      const link = await uploadTask
+        .put(image)
+        .then(async () => {
+          const imageLink = await firebase
+            .storage()
+            .ref(`images/${directory}`)
+            .child(`${imageName}`)
+            .getDownloadURL()
+            .then(url => {
+              return url
+            })
+          return imageLink
+        })
+      return link
     }
   }
 })
