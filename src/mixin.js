@@ -34,7 +34,14 @@ export default Vue.mixin({
       }
       return await axios(config)
     },
-
+    removeClassNameOfElement(sourceClass, targetClass) {
+      let arr = document.getElementsByClassName(sourceClass)
+      if (arr != undefined && arr != null && arr.length !== 0) {
+        Array.prototype.forEach.call(arr, function(e) {
+          e.classList.remove(targetClass)
+        })
+      }
+    },
     getCurrentPage() {
       return window.location.href
     },
