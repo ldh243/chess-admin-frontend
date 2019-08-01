@@ -13,7 +13,7 @@
                 <InteractiveLesson/>
             </v-tab-item>
             <v-tab-item>
-                <UninteractiveLesson :editingLessonId="editingLessonId" @onAddUninteractiveLesson="getAddUnteractiveResult" @onEditUninteractiveLesson="getEditingLesson" :courseId="courseId"/>
+                <UninteractiveLesson @onAddUninteractiveLesson="getAddUnteractiveResult"/>
             </v-tab-item>
         </v-tabs-items>
     </v-card>
@@ -51,9 +51,6 @@ export default {
     methods: {
         getAddUnteractiveResult(data) {
             this.$emit('onAddUninteractiveLesson', data)
-        },
-        getEditingLesson(data) {
-            this.$emit('onEditUninteractiveLesson', data)
         }
     },
     created() {
