@@ -24,8 +24,8 @@
         color="orange darken-3"
         dark
         depressed
-        @click="isEditting ? updateUninteractiveLesson() : createUninteractiveLesson()"
-        v-text="isEditting ? 'Lưu' : 'Thêm'"
+        @click="isEditing ? updateUninteractiveLesson() : createUninteractiveLesson()"
+        v-text="isEditing ? 'Lưu' : 'Thêm'"
       ></v-btn>
     </v-card-actions>
   </div>
@@ -43,11 +43,10 @@ export default {
     Loader
   },
   props: {
-    isEdittingInput: {
-      required: true,
-      type: Boolean
+    editingLessonId: {
+      type: Number,
+      default: -1
     },
-
     lessonIdInput: {
       required: false,
       type: Number,
@@ -73,10 +72,11 @@ export default {
       errors: '',
       loader: false,
       uninteractiveLessonId: 0,
+      isEditing: false,
       lessonId: this.lessonIdInput,
-      isEditting: this.isEdittingInput,
       isUpdatedName: false,
-      lessonNameRules: [v => !!v || 'Tên bài học không được bỏ trống']
+      lessonNameRules: [v => !!v || 'Tên bài học không được bỏ trống',
+      v => (v && v.length >= 6 || 'Tên bài học phải có ít nhất 6 kí tự')]
     }
   },
   watch: {
@@ -100,87 +100,60 @@ export default {
         }
       },
       deep: true
+    },
+    editingLessonId: function(newId) {
+      this.editingLessonId = newId
+      if (this.editingLessonId > 0) {
+        this.getById(this.editingLessonId)
+        this.isEditing = true
+      }
+    }
+  },
+  created() {
+    if (this.editingLessonId > 0) {
+      this.getById(this.editingLessonId)
+      this.isEditing = true
     }
   },
   mounted() {
-    if (this.isEditting) {
-      this.getById(this.lessonId)
-    }
+    // if (this.isEditting) {
+    //   this.getById(this.lessonId)
+    // }
   },
   methods: {
-    async createUninteractiveLesson() {
+    createUninteractiveLesson() {
       if (this.editor.methods.getText().length === 0) {
         this.errors = 'Nội dung bài học không được bỏ trống'
       }
       if (this.$refs.form.validate()) {
-        const data = await lessonRepository.createUninteractiveLesson({
+        const lesson = {
           content: this.editor.methods.getVal(),
-          courseId: this.courseId,
           name: this.lessonName
-        }) 
+        }
+        this.$emit('onAddUninteractiveLesson', lesson)
       }
-      
-      // if (data.data.data.success) {
-      //   //set id when success
-      //   this.lessonIdCreated = data.data.data.savedId
-
-      //   Swal.fire({
-      //     title: this.name,
-      //     text: 'đã được thêm thành công',
-      //     type: 'success'
-      //   })
-      // } else {
-      //   Swal.fire({
-      //     title: 'Oops...',
-      //     text: 'đã có lỗi diễn ra trong quá trình lưu',
-      //     type: 'error'
-      //   })
-      // }
-      // //set current lessonId
-      // this.lessonId = this.lessonIdCreated
-      // //change state create to update
-      // this.isEditting = true
-      // this.loader = false
     },
-    async getById() {
-      this.loader = true
-      const data = await lessonRepository.getById(this.lessonId)
-      this.loader = false
-      this.name = data.data.data.name
-      this.content = data.data.data.uninteractiveLesson.content
+    async getById(lessonId) {
+      const data = await lessonRepository.getById(lessonId)
+      this.lessonName = data.data.data.name
+      this.content = data.data.data.uninteractiveLesson.content 
       this.uninteractiveLessonId =
         data.data.data.uninteractiveLesson.uninteractiveLessonId
     },
-    async updateUninteractiveLesson() {
-      this.loader = true
-      if (this.checkForm()) {
-        this.loader = false
-        return
+    updateUninteractiveLesson() {
+      if (this.editor.methods.getText().length === 0) {
+        this.errors = 'Nội dung bài học không được bỏ trống'
       }
-      const data = await lessonRepository.updateUninteractiveLesson(
-        this.lessonId,
-        this.name,
-        {
-          content: this.editor.methods.getVal(),
-          uninteractiveLessonId: this.uninteractiveLessonId
+      if (this.$refs.form.validate()) {
+        const lesson = {
+          name : this.lessonName,
+          uninteractiveLesson : {
+            content: this.editor.methods.getVal(),
+            uninteractiveLessonId: this.uninteractiveLessonId
+          }
         }
-      )
-      if (data.data.data) {
-        Swal.fire({
-          title: this.name,
-          text: 'đã được lưu thành công',
-          type: 'success'
-        })
-      } else {
-        Swal.fire({
-          title: 'Oops...',
-          text: 'đã có lỗi diễn ra trong quá trình lưu',
-          type: 'error'
-        })
+        this.$emit('onEditUninteractiveLesson', lesson)
       }
-      //trigger that lesson updated
-      this.isUpdatedName = true
-      this.loader = false
     },
     scrollTop: function() {
       document.documentElement.scrollTop = 0

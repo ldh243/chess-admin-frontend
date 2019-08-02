@@ -26,12 +26,13 @@ export default {
     }
     return Repository.get(`${resource}/get-by-id`,data)
   },
-  updateUninteractiveLesson(lessonId,name,uninteractiveLesson){
-    const data = {
-      lessonId: lessonId,
-      name : name,
-      uninteractiveLesson : uninteractiveLesson
-    }
+  updateUninteractiveLesson(data){
     return Repository.put(`${resource}/update-uninteractive-lesson`,data)
+  },
+  removeLesson(lessonId) {
+    const data = {
+      lessonId: lessonId
+    }
+    return Repository.put(`${resource}/remove-lesson`, data)
   }
 }

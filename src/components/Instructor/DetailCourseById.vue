@@ -21,17 +21,17 @@
     >
       Khóa học hiện tại chưa có bài học nào.
     </v-alert>
-        <v-expansion-panels max="1" focusable class="mb-3" v-if="listLessons.length > 0">
+        <v-expansion-panels :value="lessonListPanel" max="1" focusable class="mb-3" v-if="listLessons.length > 0">
           <v-expansion-panel v-for="(item,i) in listLessons" :key="i">
             <v-expansion-panel-header class="grey--text text--darken-3 font-weight-medium">Bài {{i + 1}}: {{item.name}}</v-expansion-panel-header>
             <v-expansion-panel-content align-center>
                   <v-card-actions class="px-0">
                     <p>Loại: {{lessonTypeName[item.lessonType - 1]}}</p>
                 <v-spacer></v-spacer>
-                    <v-btn fab dark small color="yellow darken-3">
+                    <v-btn @click="showEditingLesson(item)" fab dark small color="yellow darken-3">
                       <v-icon dark>edit</v-icon>
                     </v-btn>
-                    <v-btn class="ml-2" fab dark small color="orange darken-3">
+                    <v-btn @click="confirmRemove = true; currentLessonId = item.lessonId" class="ml-2" fab dark small color="orange darken-3">
                       <v-icon dark>delete</v-icon>
                     </v-btn>
                   </v-card-actions>
@@ -47,23 +47,53 @@
           >Thêm mới</v-btn>
       </v-container>
     </v-card>
-    <LessonTab :courseId="course.courseId" class="mt-3" v-if="isCreateLesson"/>
+    <LessonTab :tab="currentLessonTypeTab" 
+    @onAddUninteractiveLesson="addUninteractiveLesson"
+    class="mt-3" v-if="isCreatingLesson"/>
+    <v-card :elevation="8" class="py-3 mt-3" v-if="isEditingLesson > 0">
+      <Exercise v-if="isEditingLesson === 1"/>
+    <InteractiveLesson v-if="isEditingLesson === 2" />
+    <UninteractiveLesson 
+    :editingLessonId="editingUninteractiveLessonId"
+    @onEditUninteractiveLesson="editUninteractiveLesson"  
+    v-if="isEditingLesson === 3"/>
+    </v-card>
+    <v-snackbar v-model="snackbar" top :timeout="5000">
+      {{snackbarContent}}
+      <v-btn @click="snackbar = false" fab icon color="grey">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
+    <v-dialog v-model="confirmRemove" max-width="320">
+      <v-card>
+        <v-card-title class="headline">Xác nhận</v-card-title>
+        <v-card-text>Bạn có muốn xóa bài học này?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="amber darken-1" dark text @click="confirmRemove = false">Đóng</v-btn>
+          <v-btn color="amber darken-1" dark text @click="removeLesson">Xác nhận</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import LessonTab from '@/components/Instructor/LessonTab'
-import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
-import CreateExercise from '@/components/Instructor/CreateExercise'
+import InteractiveLesson from '@/components/Lessons/InteractiveLesson'
+import Exercise from '@/components/Lessons/Exercise'
+import UninteractiveLesson from '@/components/Lessons/UninteractiveLessonForm'
 import CourseBackground from '@/components/Instructor/CourseBackground'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const courseRepository = RepositoryFactory.get('course')
+const lessonRepository = RepositoryFactory.get('lesson')
 export default {
   components: {
-    CreateInteractiveLesson,
+    InteractiveLesson,
+    Exercise,
+    UninteractiveLesson,
     Loader,
-    CreateExercise,
     CourseBackground,
     LessonTab
   },
@@ -74,19 +104,53 @@ export default {
       course: {},
       listCategorys: [],
       createLesson: '',
-      isCreateLesson: false,
+      isCreatingLesson: false,
+      isEditingLesson: 0,
       listLessons: [],
-      lessonTypeName: ['Bài thực hành', 'Phân tích trận đấu', 'Bài đọc']
+      lessonTypeName: ['Bài thực hành', 'Phân tích trận đấu', 'Bài đọc'],
+      courseId: 0,
+      snackbar: false,
+      snackbarContent: '',
+      currentLessonTypeTab: -1,
+      editingUninteractiveLessonId: 0,
+      currentLessonId: -1,
+      confirmRemove: false,
+      lessonListPanel: -1
     }
   },
   mounted() {
     this.loader = true
+    this.courseId = this.$route.params.courseId
     this.getCourseById()
     this.loader = false
   },
   methods: {
     showCreateLesson() {
-      this.isCreateLesson = true
+      this.isCreatingLesson = true
+      this.currentLessonTypeTab = 0
+      this.editingLessonId = 0
+      this.isEditingLesson = 0
+    },
+    showEditingLesson(lesson) {
+      this.isEditingLesson = lesson.lessonType
+      switch (lesson.lessonType) {
+        case 1: 
+        case 2:
+        case 3:
+          this.editingUninteractiveLessonId = lesson.lessonId
+      }
+    },
+    async removeLesson() {
+      const data = await lessonRepository.removeLesson(this.currentLessonId).then(res => {
+        if (res.status === 200) {
+          this.getCourseById()
+          this.confirmRemove = false
+          this.lessonListPanel = []
+          if (this.isEditingLesson > 0) {
+            this.isEditingLesson = 0
+          }
+        }
+      })
     },
     async getCourseById() {
       const courseId = this.$route.params.courseId
@@ -94,6 +158,36 @@ export default {
       this.course = data.data
       this.listCategorys = data.data.listCategorys
       this.listLessons = data.data.lessonViewModels
+    },
+    async addUninteractiveLesson(course) {
+      let newCourse = course
+      newCourse['courseId'] = this.courseId
+      const data = await lessonRepository.createUninteractiveLesson(newCourse).then(res => {
+        if (res.status === 200) {
+          newCourse['lessonId'] = res.data.data.savedId
+          newCourse['lessonOrdered'] = this.listLessons.length
+          newCourse['lessonType'] = 3
+          this.editingLessonId = res.data.data.savedId
+          this.listLessons.push(newCourse)
+          this.snackbarContent = 'Thêm bài học thành công'
+          this.snackbar = true
+          this.isCreatingLesson = false
+          this.isEditingLesson = 3
+          this.editingUninteractiveLessonId = newCourse.lessonId
+          this.lessonListPanel = this.listLessons.length - 1
+        }
+      })
+    },
+    async editUninteractiveLesson(lesson) {
+      //only get lesson infor from component and add lessonId in here
+      lesson['lessonId'] = this.editingUninteractiveLessonId
+      const data = await lessonRepository.updateUninteractiveLesson(lesson).then(res => {
+        if (res.status === 200) {
+          this.getCourseById()
+          this.snackbarContent = 'Sửa bài học thành công'
+          this.snackbar = true
+        }
+      })
     }
   }
 }

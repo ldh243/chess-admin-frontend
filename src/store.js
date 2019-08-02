@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {RepositoryFactory} from './repository/RepositoryFactory'
+const courseRepository = RepositoryFactory.get('course')
 
 Vue.use(Vuex)
 
@@ -17,7 +19,8 @@ export default new Vuex.Store({
       admin: '3',
       registrator: '4'
     },
-    user: JSON.parse(localStorage.getItem('user'))
+    user: JSON.parse(localStorage.getItem('user')),
+    currentLessonList: []
   },
   mutations: {
     changeUser(state, payload) {

@@ -1,19 +1,19 @@
 <template>
     <v-card :elevation="8">
         <v-tabs centered fixed-tabs v-model="lessonTab" dark background-color="orange darken-1" >
+            <v-tab class="font-weight-bold">Thêm bài thực hành</v-tab>
             <v-tab class="font-weight-bold">Thêm ván cờ</v-tab>
             <v-tab class="font-weight-bold">Thêm bài đọc</v-tab>
-            <v-tab class="font-weight-bold">Thêm bài thực hành</v-tab>
         </v-tabs>
         <v-tabs-items v-model="lessonTab">
+            <v-tab-item>
+                <Exercise/>
+            </v-tab-item>
             <v-tab-item>
                 <InteractiveLesson/>
             </v-tab-item>
             <v-tab-item>
-                <UninteractiveLesson :courseId="courseId"/>
-            </v-tab-item>
-            <v-tab-item>
-                <Exercise/>
+                <UninteractiveLesson @onAddUninteractiveLesson="getAddUnteractiveResult"/>
             </v-tab-item>
         </v-tabs-items>
     </v-card>
@@ -28,6 +28,14 @@ export default {
         courseId: {
             type: Number,
             default: 0
+        },
+        tab: {
+            type: Number,
+            default: -1
+        },
+        editingLessonId: {
+            type: Number,
+            default: -1
         }
     },
     components: {
@@ -37,8 +45,16 @@ export default {
     },
     data() {
         return {
-            lessonTab: null
+            lessonTab: 0
         }
+    },
+    methods: {
+        getAddUnteractiveResult(data) {
+            this.$emit('onAddUninteractiveLesson', data)
+        }
+    },
+    created() {
+        this.lessonTab = this.tab
     }
 }
 </script>
