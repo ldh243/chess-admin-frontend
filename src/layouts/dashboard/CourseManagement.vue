@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <PageTitle :title="'Quản lý khóa học'"/>
+    <PageTitle :title="'Quản lý khóa học'" @search="handleSearch($event)" :searchInput="search"/>
     <v-flex lg12 xl10 justify-center ma-auto>
-        <CourseOverview />
+        <CourseOverview :search="search" :fnGetDataAPI="getDataAPI"/>
     </v-flex>    
   </v-container>
 </template>
@@ -10,6 +10,9 @@
 <script>
 import PageTitle from '@/components/kit/PageTitle'
 import CourseOverview from '@/components/Instructor/CourseOverview'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+const courseRepository = RepositoryFactory.get('course')
+
 export default {
   components: {
     PageTitle,
@@ -17,116 +20,24 @@ export default {
   },
   data() {
     return {
-      listCourses: [
-        {
-          title: 'Khóa học 1',
-          author: 'Nguyễn Văn A',
-          pointRequire: '300',
-          rating: 4.2,
-          year: '2011',
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 2',
-          author: 'Nguyễn Văn B',
-          pointRequire: '350',
-          rating: 2.7,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2014',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 3',
-          author: 'Nguyễn Văn C',
-          pointRequire: '600',
-          rating: 1.9,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2015',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 4',
-          author: 'Nguyễn Văn C',
-          pointRequire: '150',
-          rating: 5,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2019',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 1',
-          author: 'Nguyễn Văn A',
-          pointRequire: '300',
-          rating: 4.2,
-          year: '2011',
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 2',
-          author: 'Nguyễn Văn B',
-          pointRequire: '350',
-          rating: 2.5,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2014',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 3',
-          author: 'Nguyễn Văn C',
-          pointRequire: '600',
-          rating: 1.2,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2015',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 4',
-          author: 'Nguyễn Văn C',
-          pointRequire: '150',
-          rating: 5,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2019',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 1',
-          author: 'Nguyễn Văn A',
-          pointRequire: '300',
-          rating: 4,
-          year: '2011',
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 2',
-          author: 'Nguyễn Văn B',
-          pointRequire: '350',
-          rating: 2,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2014',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 3',
-          author: 'Nguyễn Văn C',
-          pointRequire: '600',
-          rating: 4.3,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2015',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        },
-        {
-          title: 'Khóa học 4',
-          author: 'Nguyễn Văn C',
-          pointRequire: '150',
-          rating: 5,
-          imageURL: require('@/assets/images/chess-course-1.jpg'),
-          year: '2019',
-          avatar: require('@/assets/images/avatar-instructor.jpg')
-        }
-      ]
+      search:''
+    }
+  },
+  mounted(){
+    if(this.$route.query.courseName){
+      this.search = this.$route.query.courseName
+    }
+  },
+  methods:{
+    handleSearch(e){
+      this.search = e
+    },
+    async getDataAPI(page, pageSize,nameCourse,statusId){
+      if(this.$store.state.user.roleId == 1){
+        return courseRepository.getCoursesPaginationByInstructor(page, pageSize,nameCourse,statusId)
+      }else if(this.$store.state.user.roleId == 3){
+        return courseRepository.getCoursesPagination(page, pageSize,nameCourse,statusId)
+      }
     }
   }
 }

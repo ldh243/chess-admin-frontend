@@ -38,11 +38,14 @@ export default new Router({
         { path: 'profile', component: Profile },
         { path: 'statistics', component: Statistics },
         { path: 'courses', component: CourseManagement },
+        { path: 'courses?:courseName=&:status', component: CourseManagement },
+        { path: 'courses?:courseName=', component: CourseManagement },
         { path: 'accounts', component: UserManagement },
         { path: 'category', component: CategoryManagement },
         { path: 'instructor-request', component: NewInstructorManagement },
+        { path: 'instructor-request?:email', component: NewInstructorManagement },
         { path: 'instructorCourse', component: CourseDetailByInstructor },
-        { path: 'new-ins-profile', component: NewInstructor}
+        { path: 'new-ins-profile/:userId', component: NewInstructor}
       ]
     },
     { path: '*', redirect: '/' }

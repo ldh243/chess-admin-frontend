@@ -3,25 +3,19 @@
     <v-layout>
       <v-flex xs2 mr-3>
         <v-avatar size="70">
-          <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="avatar" />
+          <img :src="avatar" alt="avatar" />
         </v-avatar>
       </v-flex>
       <v-flex xs10>
         <p
           class="mb-0 font-weight-bold title grey--text text--darken-3"
-        >Phạm Hoàng Tuyết Ngân bla bla</p>
-        <p class="grey--text">abcxyz@gmail.com</p>
-        <p class="grey--text font-weight-thin body-1 mb-0">2 giờ trước</p>
+        >{{fullName}}</p>
+        <p class="grey--text">{{email}}</p>
+        <p class="grey--text font-weight-thin body-1 mb-0">{{moment(createdDate).add(7,'hours').fromNow()}}</p>
         <v-card-actions class="pa-0">
           <v-spacer></v-spacer>
-          <v-btn fab icon dark small color="grey">
+          <v-btn fab icon dark small color="grey" @click="redirectToInstructorDetail">
             <v-icon dark>fa-info</v-icon>
-          </v-btn>
-          <v-btn fab icon dark small color="grey">
-            <v-icon dark>far fa-grin-wink</v-icon>
-          </v-btn>
-          <v-btn fab icon dark small color="grey">
-            <v-icon dark>far fa-frown</v-icon>
           </v-btn>
         </v-card-actions>
       </v-flex>
@@ -30,7 +24,43 @@
 </template>
 
 <script>
-export default {}
+import Moment from '@/assets/js/Moment'
+const MomentSetting = new Moment()
+
+export default {
+  props:{
+    userId:{
+      required:true,
+      type:Number
+    },
+    avatar:{
+      required:true,
+      type:String
+    },
+    fullName:{
+      required:true,
+      type:String
+    },
+    email:{
+      required:true,
+      type:String
+    },
+    createdDate:{
+      required:true,
+      type:String
+    }
+  },
+  data(){
+    return{
+      moment:MomentSetting.getInstance()
+    }
+  },
+  methods:{
+    redirectToInstructorDetail(){
+      this.$router.push(`/dashboard/new-ins-profile/${this.userId}`)
+    }
+  }
+}
 </script>
 
 <style>

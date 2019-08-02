@@ -33,7 +33,7 @@
 <script>
 import ckeditor5 from '@/components/HtmlEditor/Ckeditor5'
 import Loader from '@/components/Loader'
-import Swal from 'vue-sweetalert2'
+import Swal from 'sweetalert2'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const lessonRepository = RepositoryFactory.get('lesson')
 

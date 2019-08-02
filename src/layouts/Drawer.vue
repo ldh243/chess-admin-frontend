@@ -70,7 +70,7 @@ export default {
           path: '/dashboard/statistics'
         },
         {
-          title: 'Thống kê khóa học',
+          title: 'Quản lý khóa học',
           icon: 'fa-book',
           path: '/dashboard/courses'
         },

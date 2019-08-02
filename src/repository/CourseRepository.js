@@ -55,12 +55,27 @@ export default {
     }
     return Repository.put(`${resource}/update-course-status`, data)
   },
-
-  getCoursesPaginationCurrentInstructor(page, pageSize) {
+  getCoursesPagination(page, pageSize,nameCourse,statusId) {
     const data = {
       params: {
         page: page,
-        pageSize: pageSize
+        pageSize: pageSize,
+        nameCourse: nameCourse ? nameCourse : '',
+        statusId: statusId ? statusId : ''
+      }
+    }
+    return Repository.get(
+      `${resource}/get-course-pagination`,
+      data
+    )
+  },
+  getCoursesPaginationByInstructor(page, pageSize,nameCourse,statusId) {
+    const data = {
+      params: {
+        page: page,
+        pageSize: pageSize,
+        nameCourse: nameCourse ? nameCourse : '',
+        statusId: statusId ? statusId : ''
       }
     }
     return Repository.get(

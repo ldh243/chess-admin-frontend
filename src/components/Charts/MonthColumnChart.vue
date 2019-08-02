@@ -4,9 +4,12 @@
       <v-img height="50px" width="50px" :src="loadingImg"/>
     </div>
     <div v-if="!isLoading">
-      <select v-model="chartYear">
-        <option v-for="year in listYears">{{year}}</option>
-      </select>
+        <v-card-title>
+            <v-spacer></v-spacer>
+            <v-flex xs2>
+              <v-select label="Năm" :items="listYears" v-model="chartYear"/>
+            </v-flex>
+          </v-card-title>
       <ColumnChart :name="columnChartName" :columnSettings="monthChartColumns" :dataRows="chartData"/>
     </div>
   </div>

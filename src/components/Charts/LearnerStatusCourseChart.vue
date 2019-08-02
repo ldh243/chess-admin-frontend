@@ -4,9 +4,12 @@
     <v-img height="50px" width="50px" :src="loadingImg"/>
   </div>
   <div v-if="!isLoading">
-    <select v-model="pageSize">
-      <option v-for="pageSizeOption in pageSizeOptions">{{pageSizeOption}}</option>
-    </select>
+    <v-card-title>
+      <v-spacer></v-spacer>
+      <v-flex xs2>
+        <v-select label="Số lượng dòng" :items="pageSizeOptions" v-model="pageSize"/>
+      </v-flex>
+    </v-card-title>
     <TableChart 
     :name="name" 
     :columnSettings="columnSettings" 
@@ -90,6 +93,7 @@ export default {
     courseName:{
       handler:function(){
         if(this.courseName.trim().length >= 2 || this.courseName == ''){
+          this.page = 1
           this.getLeanerStatusCourse()
         }
       }

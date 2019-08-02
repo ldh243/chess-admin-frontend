@@ -3,22 +3,30 @@
     <v-img :src="backgroundImage"></v-img>
     <div class="avatar-container justify-center align-center">
       <v-avatar :size="100">
-      <img :src="$store.state.user.avatar" alt="avatar">
+      <img :src="user.avatar" alt="avatar">
     </v-avatar>
     </div>
     <v-card-text class="profile-highlight-container">
-      <p class="mb-0 headline font-weight-medium grey--text text--darken-2">{{$store.state.user.fullName}}</p>
-      <p class="body-1 font-weight-medium grey--text">{{$store.state.user.roleName}}</p>
+      <p class="mb-0 headline font-weight-medium grey--text text--darken-2">{{user.fullName}}</p>
+      <p class="body-1 font-weight-medium grey--text">{{user.roleName}}</p>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 export default {
+  props:{
+    userInput:{
+      required:false,
+      type:Object,
+      default:null
+    }
+  },
   data() {
     return {
       randomBg: 1,
-      backgroundImage: require(`@/assets/images/chess-user-bg1.jpg`)
+      backgroundImage: require(`@/assets/images/chess-user-bg1.jpg`),
+      user: this.userInput ? this.formatListUser([this.userInput])[0] : this.$store.state.user
     }
   },
   created() {
