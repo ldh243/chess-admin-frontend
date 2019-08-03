@@ -2,26 +2,17 @@
     <div>
         <div id="table_chart"></div>
         <br/>
-        <p v-if="dataRows.length == 0">Chưa có khóa học nào</p>
+        <p v-if="dataRows.length == 0" style="text-align: center;">Chưa có khóa học nào</p>
         <div v-if="dataRows.length != 0">
             <v-layout justify-center>
-                <v-pagination v-model="currentPage" :length="totalPages" circle></v-pagination>
+                <v-pagination color="amber accent-3" v-model="currentPage" :length="totalPages" circle></v-pagination>
             </v-layout>
         </div>
     </div>
 </template>
-
-<style scoped>
-    p {
-        text-align: center;
-    }
-    .google-visualization-table-td{
-        text-align: center !important;
-    }
-</style>
-
 <script>
 import {GoogleCharts} from 'google-charts'
+import Pagination from '@/components/kit/Pagination'
 export default {
     props:{
         name:{
@@ -103,3 +94,8 @@ export default {
     }
 }
 </script>
+<style>
+    .google-visualization-table-td{
+        text-align: center !important;
+    }
+</style>

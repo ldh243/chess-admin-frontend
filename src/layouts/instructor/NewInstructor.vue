@@ -2,50 +2,102 @@
     <v-container class="pa-6">
     <v-layout align-start justify-space-between v-if="user != null">
       <v-flex xs4>
-            <HighlightProfile/>
-            <v-card-actions class="mt-2">
+            <HighlightProfile :userInput="user"/>
+            <v-card-actions v-if="user && !user.reviewed && !user.active" class="mt-2">
                 <v-spacer></v-spacer>
-                <v-btn width="120" depressed large class="mr-2" color="success">Đồng ý</v-btn>
-                <v-btn width="120" depressed large color="error">Từ chối</v-btn>
+                <v-btn width="120" depressed large class="mr-2" color="success" @click="updateStatus(true)">Đồng ý</v-btn>
+                <v-btn width="120" depressed large color="error" @click="updateStatus(false)">Từ chối</v-btn>
                 <v-spacer></v-spacer>
             </v-card-actions>
       </v-flex>
       <v-flex xs8>
-        <ProfileInfo :isInstructor="true"/>
+        <ProfileInfo :isInstructor="true" :userInput="user" :isUpdate="isUpdate"/>
       </v-flex>
     </v-layout>
+    <Loader v-if="loader"/>
   </v-container>
 </template>
 
 <script>
 import HighlightProfile from '@/components/Profile/HighlightProfile'
 import ProfileInfo from '@/components/Profile/ProfileInfo'
+import Loader from '@/components/Loader'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+import Swal from 'sweetalert2'
+const userRepository = RepositoryFactory.get('user')
+
 export default {
     components: {
         HighlightProfile,
-        ProfileInfo
+        ProfileInfo,
+        Loader
     },
     data() {    
         return  {
-            user: {
-                userId:276,
-                email:"tuyetnganphamhoang@gmail.com",
-                fullName:"Julie Pham",
-                avatar:"https://lh4.googleusercontent.com/-c4efecSF-vM/AAAAAAAAAAI/AAAAAAAADdA/9h-G2HMkrOM/photo.jpg",
-                createdDate:"2019-06-22T04:17:42.000+0000",
-                point:1000,
-                roleId:3,
-                achievement:null,
-                certificates:[],
-                courseDetailViewModels:[],
-                provider:"google",
-                providerId:"100927363146913875662",
-                active:true,
-                roleName:"Quản trị viên",
-                status:"Kích hoạt"
-            }
+            userId:this.$route.params.userId,
+            user: null,
+            isUpdate:false,
+            loader:false
         }
     },
+    methods:{
+      async getUserById(){
+        this.loader = true
+        const data = await userRepository.getUserById(this.userId)
+        if(data.data){
+          this.user = data.data.data
+          this.loader = false
+          this.$forceUpdate()
+        }
+      },
+      async updateUserStatus(isActive){
+        this.loader = true
+        const data = await userRepository.updateUserStatus(this.userId,isActive)
+        if(data.data.data){
+          this.user.active = isActive
+          this.user.reviewed = true
+          Swal.fire({
+            title: this.user.fullName,
+            text: 'đã được lưu thành công',
+            type: 'success'
+          })
+          this.loader = false
+        }else{
+          Swal.fire({
+            title: 'Oops...',
+            text: 'đã có lỗi diễn ra trong quá trình lưu',
+            type: 'error'
+          })
+          this.loader = false
+        }
+      },
+      updateStatus(isActive){
+        if(!isActive){
+          Swal.fire({
+            title: 'Bạn có chắc không chấp nhận?',
+            text: "Điều này có thể khiến người dùng không thể vào trang!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Chấp nhận',
+            cancelButtonText: 'Hủy bỏ'
+          }).then((result) => {
+            if (result.value) {
+              this.updateUserStatus(isActive) 
+            }
+          })
+        }else{
+          this.updateUserStatus(isActive)
+        }
+      }
+    },
+    mounted(){
+      if(this.userId){
+        this.getUserById()
+      }
+    },
+    
 }
 </script>
 

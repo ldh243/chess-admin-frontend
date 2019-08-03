@@ -14,6 +14,29 @@ export default {
         title: {
             type: String,
             default: ''
+        },
+        searchInput:{
+            required:false,
+            type:String,
+            default:''
+        }
+    },
+    data(){
+        return{
+            search:this.searchInput
+        }
+    },
+    watch:{
+        search:{
+            handler:function(){
+                this.$emit('search',this.search)
+            }
+        },
+        searchInput:{
+            handler:function(){
+                this.search = this.searchInput
+            },
+            deep:true
         }
     }
 }

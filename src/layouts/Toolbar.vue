@@ -9,43 +9,7 @@
   >
     <v-breadcrumbs class="grey--text" :items="items" divider=">"></v-breadcrumbs>
     <v-spacer></v-spacer>
-    <v-menu
-      v-model="notification"
-      :close-on-content-click="false"
-      offset-y bottom left
-      transition="slide-y-transition"
-    >
-    <template v-slot:activator="{ on }">
-        <v-btn v-on="on" icon color="grey">
-      <v-badge color="red darken-1" right overlap>
-        <template v-slot:badge>0</template>
-        <v-icon>fa-bell</v-icon>
-      </v-badge>
-    </v-btn>
-      </template>
-        <v-list>
-          <v-list-item>
-            <v-list-item-avatar>
-              <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="body-2">John Leider đăng kí làm người hướng dẫn</v-list-item-title>
-              <v-list-item-subtitle>Ngay bây giờ</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item>
-            <v-list-item-avatar>
-              <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title class="body-2">John Leider đăng kí làm người hướng dẫn</v-list-item-title>
-              <v-list-item-subtitle>2 tiếng trước</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-    </v-menu>
+    <Notification :pageSize="defaultLoadNotifications"/>
     <v-toolbar-items class="align-center py-1 pr-3">
       <v-divider color="#BDBDBD" class="mx-4" vertical inset></v-divider>
         <v-menu bottom left offset-y transition="slide-y-transition">
@@ -74,8 +38,12 @@
 </template>
 
 <script>
+import Notification from '@/components/Notification/Notification'
 export default {
   name: 'Toolbar',
+  components:{
+    Notification
+  },
   data() {
     return {
       chessLogo: require('@/assets/images/chess.png'),
@@ -95,7 +63,8 @@ export default {
           disabled: true,
           href: 'breadcrumbs_link_2'
         }
-      ]
+      ],
+      defaultLoadNotifications:5
     }
   },
   methods: {
@@ -104,8 +73,9 @@ export default {
       localStorage.removeItem('access-token')
       this.$store.commit('changeUser', null)
       this.$router.push('/')
-    }
-  }
+    },
+
+  },
 }
 </script>
 
@@ -118,5 +88,8 @@ export default {
 }
 .v-menu__content {
   border-radius: 10px;
+}
+.unread_notification {
+  background-color: #edf2fa
 }
 </style>

@@ -41,7 +41,12 @@
         </td>
       </template>
     </v-data-table>
-    <Pagination :pages="pages"/>
+    <Pagination 
+    :currentPage="currentPage"
+    :pages="pages" 
+    :rowDataLength="listUsers.length" 
+    :isShowEmptyMessage="isShowEmptyMessage"
+    @triggerpaging="handlPaging($event)"/>
     <Loader v-if="loader"/>
     <v-dialog v-model="dialog" width="400">
       <v-card>
@@ -102,13 +107,6 @@ export default {
       pagination: {
         rowsPerPage: 10
       },
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      },
       headers: [
         { text: 'Họ và tên', value: 'fullName', align: 'left' },
         { text: 'Email', value: 'email', align: 'center' },
@@ -116,16 +114,9 @@ export default {
         { text: 'Trạng thái', value: 'status', align: 'center' },
         { text: '', value: 'action', sortable: false }
       ],
-      listUsers: []
-    }
-  },
-  computed: {
-    pages() {
-      const rowsPerPage = this.pagination.rowsPerPage
-      const totalItems = this.listUsers.length
-      if (rowsPerPage == null || totalItems == null) return 0
-
-      return Math.ceil(totalItems / rowsPerPage)
+      listUsers: [],
+      isShowEmptyMessage:false,
+      currentPage:1
     }
   },
   mounted() {
@@ -133,10 +124,20 @@ export default {
     this.getUsersPagination()
     this.loader = false
   },
+  computed: {
+    pages() {
+      const rowsPerPage = this.pagination.rowsPerPage
+      const totalItems = this.listUsers.length
+      if (rowsPerPage == null || totalItems == null) return 0
+      return Math.ceil(totalItems / rowsPerPage)
+    }
+  },
   methods: {
     async getUsersPagination() {
       const { data } = await userRepository.getUsersPagination(1, 500)
-      this.listUsers = this.formatListUser(data.data.content)
+      if(data.data){
+        this.listUsers = this.formatListUser(data.data.content)
+      }
     },
     async changeStatus() {
       this.loader++
@@ -155,6 +156,9 @@ export default {
         ? 'vô hiệu hóa'
         : 'kích hoạt'
       this.dialog = true
+    },
+    handlPaging(e){
+      alert('page:' + e)
     }
   }
 }

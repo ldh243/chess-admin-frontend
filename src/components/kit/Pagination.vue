@@ -1,7 +1,8 @@
 <template>
   <div class="text-xs-center pt-2">
     <v-layout justify-center>
-      <v-pagination color="amber accent-3" v-model="pagination.page" :length="pages" circle></v-pagination>
+      <p v-if="rowDataLength == 0 && isShowEmptyMessage">Không có dữ liệu</p>
+      <v-pagination v-if="rowDataLength != 0" color="amber accent-3" v-model="pagination.page" :length="pages" circle></v-pagination>
     </v-layout>
   </div>
 </template>
@@ -12,13 +13,41 @@ export default {
         pages: {
             type: Number,
             default: 0
+        },
+        rowDataLength:{
+          required:true,
+          type:Number
+        },
+        isShowEmptyMessage:{
+          required:false,
+          type:Boolean,
+          default:true
+        },
+        currentPage:{
+          required:false,
+          type:Number,
+          default:1
         }
     },
   data() {
     return {
       pagination: {
-        rowsPerPage: 10
+        page:1
       },
+    }
+  },
+  watch:{
+    pagination:{
+      handler:function(){
+        this.$emit('triggerpaging', this.pagination.page)
+      },
+      deep:true
+    },
+    currentPage:{
+      handler:function(){
+        this.pagination.page = this.currentPage
+      },
+      deep:true
     }
   }
 }
