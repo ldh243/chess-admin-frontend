@@ -37,10 +37,30 @@ export default Vue.mixin({
     removeClassNameOfElement(sourceClass, targetClass) {
       let arr = document.getElementsByClassName(sourceClass)
       if (arr != undefined && arr != null && arr.length !== 0) {
-        Array.prototype.forEach.call(arr, function(e) {
+        Array.prototype.forEach.call(arr, function (e) {
           e.classList.remove(targetClass)
         })
       }
+    },
+    removeHighlightForBoard(boardName) {
+      let board = document.getElementById(boardName)
+      let currentHighLight = board.getElementsByClassName('square-55d63')
+      Array.prototype.forEach.call(currentHighLight, function (square) {
+        square.classList.remove('highlight-white')
+      })
+    },
+    addHighlightForBoard(boardName, fromSquare, toSquare) {
+      let currentBoard = document.getElementById(boardName)
+      let fromSquareArr = currentBoard.getElementsByClassName(
+        `square-${fromSquare}`
+      )
+      let toSquareArr = currentBoard.getElementsByClassName(`square-${toSquare}`)
+      Array.prototype.forEach.call(fromSquareArr, function(square) {
+        square.classList.add('highlight-white')
+      })
+      Array.prototype.forEach.call(toSquareArr, function(square) {
+        square.classList.add('highlight-white')
+      })
     },
     getCurrentPage() {
       return window.location.href

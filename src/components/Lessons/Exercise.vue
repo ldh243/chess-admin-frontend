@@ -1,142 +1,165 @@
 <template>
   <div>
-    <v-container class="pa-6">
-      <v-layout>
-        <v-flex xs10>
-          <v-text-field
-            color="blue-grey darken-1"
-            v-model="lessonViewModel.name"
-            label="Tên bài học"
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs6 class="left-chess-info">
-          <v-card-text>
-            <v-card-title>
-              <span class="title font-weight-bold">Nước đi</span>
-            </v-card-title>
-            <div class="move-history-content">
-              <div v-for="(item, index) in moveHistory" :key="index">
-                <div class="index">{{ item.id }}</div>
-                <div :id="item.id" class="move" @click="loadFen(item.fen, $event)">{{ item.move }}</div>
-                <div
-                  v-if="item.blackMove"
-                  :id="item.id"
-                  class="move"
-                  @click="loadFen(item.fen, $event)"
-                >{{ item.move }}</div>
-              </div>
-            </div>
-            <v-text-field label="Thực hiện đúng" class="mt-3" solo hide-details></v-text-field>
-            <v-text-field label="Thực hiện sai" class="mt-1" solo hide-details></v-text-field>
-          </v-card-text>
-          <v-card-actions class="justify-center">
-            <v-btn
-              @click="exampleChess(exampleFen,currentStep)"
-              color="indigo"
-              class="white--text"
-            >Gợi ý nước đi</v-btn>
-            <v-btn @click color="teal" class="white--text">Sửa nước đi</v-btn>
-            <v-btn @click color="blue-grey" class="white--text">Xóa nước đi</v-btn>
-          </v-card-actions>
-        </v-flex>
-        <v-flex xs6 py-4 px-1 style="margin: auto">
-          <v-layout row>
-            <v-flex xs10>
-              <Chessboard
-                @onMove="showInfo"
-                :reset="isResetBoard"
-                :fen="fen"
-                :boardName="'exerciseBoard'"
-              />
-              <v-card-title>
-                <span class="title font-weight-bold">Thế cờ</span>
-              </v-card-title>
-              <div class="puzzle-content pa-3">
-                <div>
-                  <span class="heading font-weight-bold">Trắng:</span>
-                  <div class="piece-content mr-1" v-for="piece in whiteObj" :key="piece">{{piece}}</div>
-                </div>
-                <div>
-                  <span class="heading font-weight-bold">Đen:</span>
-                  <div class="piece-content mr-1" v-for="piece in blackObj" :key="piece">{{piece}}</div>
-                </div>
-              </div>
+    <v-container class="px-6 py-3">
+      <v-window v-model="step">
+        <v-window-item :value="1">
+          <v-layout wrap>
+            <v-flex xs6 class="left-chess-info">
+              <v-card-text class="pr-5 pt-0 pb-0 pl-0" style="position:relative">
+                <v-text-field
+                  color="blue-grey darken-1"
+                  v-model="lessonViewModel.name"
+                  label="Tên bài học"
+                ></v-text-field>
+                <v-text-field
+                  color="blue-grey darken-1"
+                  v-model="exercise.question"
+                  label="Câu hỏi"
+                ></v-text-field>
+                <v-tabs vertical color="amber" v-model="answersTabModel">
+                  <v-tab
+                    :disabled="checkboxChessbot"
+                    v-for="(item,i) in 3"
+                    :key="i"
+                    class="mr-2"
+                    :value="i"
+                    @click="changeTab(i)"
+                  >Đáp án</v-tab>
+                  <v-tab-item :disabled="checkboxChessbot" v-for="(item,i) in 3" :key="i">
+                    <v-flex xs12>
+                      <div class="move-history-content mt-2">
+                        <div v-for="(item, index) in moveHistories[i]" :key="index">
+                          <div class="index">{{ item.index }}</div>
+                          <div
+                            :id="`move-${item.whiteMove.moveCount}`"
+                            class="move"
+                            @click="loadFen(item.whiteMove.fen, item.whiteMove.moveCount, index, 'white')"
+                          >{{ item.whiteMove.move }}</div>
+                          <div
+                            v-if="item.blackMove"
+                            :id="`move-${item.blackMove.moveCount}`"
+                            class="move"
+                            @click="loadFen(item.blackMove.fen, item.blackMove.moveCount, index, 'black')"
+                          >{{ item.blackMove.move }}</div>
+                        </div>
+                      </div>
+                      <v-text-field
+                        v-model="moveRightRes"
+                        color="blue-grey darken-1"
+                        label="Thực hiện đúng"
+                        class="mt-3 answer-response"
+                        hide-details
+                        :disabled="checkboxChessbot || currentClickedMoveTurn !== orientation"
+                        :append-icon="isSavedRightRes ? 'check_circle' : ''"
+                        @keydown="isSavedRightRes = false"
+                        @keyup="saveRightRes"
+                      >
+                      </v-text-field>
+                      <v-text-field
+                      v-model="moveWrongRes"
+                        color="blue-grey darken-1"
+                        label="Thực hiện sai"
+                        class="mt-3 answer-response"
+                        hide-details
+                        :disabled="checkboxChessbot || currentClickedMoveTurn !== orientation"
+                        :append-icon="isSavedWrongRes ? 'check_circle' : ''"
+                        @keydown="isSavedWrongRes = false"
+                        @keyup="saveWrongRes"
+                      ></v-text-field>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="resetBoard" color="blue-grey" depressed class="white--text">Xóa toàn bộ</v-btn>
+                      </v-card-actions>
+                    </v-flex>
+                  </v-tab-item>
+                </v-tabs>
+                <v-checkbox v-model="checkboxChessbot" :label="'Sử dụng chế độ đánh tự động'"></v-checkbox>
+              </v-card-text>
             </v-flex>
-            <v-flex xs2 style="margin: auto">
-              <v-btn @click="editExerciseBoard = true" flat icon fab color="grey">
+            <v-flex xs5 pr-7 style="margin: auto; position:relative">
+              <Chessboard :reset="isReset" :orientation="orientation" :fen="fen" :boardName="'exerciseBoard'" @onMove="showInfo" />
+              <v-btn
+                style="transform: translate(35px, -50%); top: 50%"
+                absolute
+                right
+                @click="editFenDialog = true"
+                icon
+                fab
+                text
+                small
+                color="grey"
+              >
                 <v-icon>fa-pen</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
+        </v-window-item>
+        <v-window-item :value="2">
+          <PreviewExercise :orientation="orientation" :exercise="exercise" />
+        </v-window-item>
+      </v-window>
+      <v-layout wrap>
+        <v-flex xs11>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :disabled="step === 1" @click="removeExercise">Trở về</v-btn>
+            <v-btn :disabled="step === 2 || (moveHistories[0].length === 0 && moveHistories[1].length === 0 && moveHistories[2].length === 0 && !checkboxChessbot)" @click="prepareExercise">Xem trước</v-btn>
+          </v-card-actions>
         </v-flex>
       </v-layout>
     </v-container>
-    <v-dialog v-model="editExerciseBoard" persistent max-width="800px">
-      <v-card>
-        <v-toolbar card>
-          <v-card-title>
-            <span class="headline">Tạo thế cờ</span>
-          </v-card-title>
+    <v-dialog v-model="editFenDialog" persistent max-width="870px">
+      <v-card :elevation="8">
+        <v-toolbar :elevation="0" color="grey lighten-3">
+          <v-toolbar-title class="grey--text text--darken-3">Tạo thế cờ</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="editFenDialog = false"
+            class="btn-create-puzzle text-xs-center"
+            flat
+            icon
+            color="grey darken-3"
+            dark
+            depressed
+          >
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-toolbar>
-        <v-container>
-          <create-chess-puzzle @onChangeFen="getFen" :boardName="'exerciseCreateBoard'"></create-chess-puzzle>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              @click="editExerciseBoard = false"
-              class="btn-create-puzzle text-xs-center"
-              flat
-              color="blue darken-1"
-            >Đóng</v-btn>
-            <v-btn @click="saveFen" class="btn-create-puzzle" depressed color="info">Lưu</v-btn>
-          </v-card-actions>
+        <v-container class="py-3 px-5">
+          <v-flex xs12>
+            <create-chess-puzzle @onChangeFen="getFen" :resetBoard="isReset" :boardName="'exerciseCreateBoard'"></create-chess-puzzle>
+          </v-flex>
         </v-container>
       </v-card>
     </v-dialog>
+    <v-snackbar v-model="snackbar" top :timeout="3000">
+      {{snackbarContent}}
+      <v-btn icon fab @click="snackbar = false">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
 import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
 import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
+import PreviewExercise from '@/components/preview/PreviewExercise.vue'
 export default {
   name: 'CreateExercise',
   components: {
-    Chessboard
+    Chessboard,
+    CreateChessPuzzle,
+    PreviewExercise
   },
   data() {
     return {
-      editExerciseBoard: false,
-      chessColor: 'w',
-      selectCastling: [],
-      select: '',
-      dialog: false,
-      currentFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       defaultFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      editFenDialog: false,
+      initFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      emptyFen: '8/8/8/8/8/8/8/8',
       currentStep: 0,
-      exampleFen: [
-        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        'rnbq1b1r/ppp2kpp/8/3p4/3Pn3/8/PPP2PPP/RNBQKB1R w KQ - 0 6',
-        '3B1B1B/p7/7B/8/7B/8/k1K5/8 w - - 0 1'
-      ],
-      moveHistory: [],
-      content: '',
-      updateMove: true,
-      currentMove: 0,
-      totalMove: 0,
-      moveDirection: '',
-      turn: '',
-      interval: null,
-      isPlayerWin: false,
-      move: '',
-      moves: '',
-      isStart: false,
-      chessboardData: {},
-      gameStatus: '',
-      newestFen: '',
-      activeLesson: 0,
       lessonViewModel: {
         courseId: this.$route.params.courseId,
         name: '',
@@ -144,90 +167,126 @@ export default {
           initCode: '',
           steps: []
         }
-      }
+      },
+      whiteObj: [],
+      blackObj: [],
+      snackbar: false,
+      snackbarContent: '',
+      window: 0,
+      checkboxChessbot: false,
+      step: 1,
+      exercise: {
+        question: '',
+        fen: '',
+        answers: []
+      },
+      answer: {},
+      moveHistories: [[], [], []],
+      currentMoveHistory: [],
+      answersTabModel: 0,
+      answersTab: 0,
+      totalMove: 0,
+      currentMove: 0,
+      currentIndexMoveInArr: -1,
+      totalIndexMove: 0,
+      isSavedRightRes: false,
+      isSavedWrongRes: false,
+      moveRightRes: '',
+      moveWrongRes: '',
+      orientation: 'white',
+      nextMoveTurn: 'white',
+      currentClickedMoveTurn: '',
+      isReset: false
     }
   },
-  watch: {
-    chessColor: function(newColor) {
-      this.chessColor = newColor
-      console.log(this.chessColor)
-    }
+  updated() {
+    this.setCurrentMove()
   },
   created() {
-    this.currentFen = this.defaultFen
+    this.answersTab = 0
   },
   methods: {
-    getFen() {
-      this.chessboardData = data
-    },
-    exampleChess(exampleFen) {
-      this.currentFen = exampleFen[this.currentStep]
-      this.lessonViewModel.interactiveLesson.initCode =
-        exampleFen[this.currentStep++]
-      if (this.currentStep >= exampleFen.length) {
-        return (this.currentStep = 0)
+    getFen(data) {
+      if (
+        data['fen'] !== undefined &&
+        data['fen'].split(' ')[0] !== this.emptyFen
+      ) {
+        this.removeHighlightForBoard('exerciseBoard')
+        this.chessboardData = data
+        this.editFenDialog = false
+        this.fen = this.chessboardData.fen
+        this.initFen = this.chessboardData.fen
+        this.orientation = this.chessboardData.orientation
+        let posKey = Object.keys(this.chessboardData.object) //position of chess pieces
+        this.whiteObj = []
+        this.blackObj = []
+        posKey.forEach(e => {
+          let piece = this.chessboardData.object[e]
+          if (piece.charAt(0) === 'w') {
+            this.whiteObj.push(piece.charAt(1) + e)
+          } else {
+            this.blackObj.push(piece.charAt(1) + e)
+          }
+        })
+      } else {
+        this.editFenDialog = false
+        this.snackbarContent = 'Thế cờ không hợp lệ'
+        this.snackbar = true
       }
-      console.log(this.currentStep)
     },
-    test() {},
-    loadFen(fen, event) {
-      this.updateMove = false
-      this.currentFen = fen
-      if (event != undefined) {
-        const divTarget = event.srcElement
-        //Lấy id của nó parse sang int
-        this.currentMove = this.getIdNumberOfMove(divTarget)
-        this.setCurrentMove()
-      }
-      console.log(event)
+    loadFen(fen, moveId, indexMove, color) {
+      this.fen = fen
+      this.currentMove = moveId
+      this.currentIndexMoveInArr = indexMove
+      this.currentClickedMoveTurn = color
+      this.setCurrentMove()
     },
     showInfo(data) {
-      const black = 'black'
-      let moveHistory = this.moveHistory
-      let content = this.content
-      //Lấy nước đi mới
-      let newMove = data.history[data.history.length - 1]
-      let id = this.idChessBoard
-      //Lấy nước đi cuối cùng
-      let lastMove = moveHistory[moveHistory.length - 1]
-      let moveDirection = data.hisMoves.split(' ')
-      for (let index = 0; index < moveDirection.length; index++) {
-        this.moveDirection = moveDirection[index]
+      if (this.isReset) {
+        this.isReset = false
       }
-
-      // let content = this.lessonViewModel.interactiveLesson.steps.content
-      if (newMove === undefined || !this.currentFen) return
-      //   newMove = this.changeChessKey(newMove)
-      //Lấy turn hiện tại
+      const black = 'black'
+      let moveHistory = this.moveHistories[this.answersTab]
+      //Lấy nước đi cuối cùng
+      let lastMove
+      if (moveHistory.length > 0) {
+        lastMove = moveHistory[moveHistory.length - 1]
+      }
       const turn = data.turn
+      this.nextMoveTurn = data.turn
+      this.currentClickedMoveTurn = this.nextMoveTurn === black ? 'white' : 'black'
       this.totalMove++
+      this.fen = data.fen
       if (turn === black) {
         //tạo thêm turn mới
+        this.totalIndexMove++
         const newTurn = {
-          id: this.totalMove,
-          fen: data.fen,
-          move: newMove,
-          content: content,
-
-          moveDirection: this.moveDirection
+          index: this.totalIndexMove,
+          whiteMove: {
+            fen: data.fen,
+            move: data.move,
+            moveCount: this.totalMove,
+            moveDirection: data.moveDirection
+          },
+          blackMove: null
         }
         moveHistory.push(newTurn)
+        this.currentIndexMoveInArr++
       } else {
         //nước đi tiếp theo của turn cũ
-        lastMove = {
-          id: this.totalMove,
+        lastMove.blackMove = {
           fen: data.fen,
-          move: newMove,
-          content: content,
-          moveDirection: this.moveDirection
+          move: data.move,
+          moveCount: this.totalMove,
+          moveDirection: data.moveDirection
         }
-        moveHistory.push(lastMove)
       }
       console.log(data)
       this.currentMove = this.totalMove
     },
     setCurrentMove() {
       //set highlight div dựa trên this.current move hiện tại
+      console.log("call current-move")
       let arr = document.getElementsByClassName('move')
       if (arr != undefined && arr != null && arr.length !== 0) {
         Array.prototype.forEach.call(arr, function(move) {
@@ -244,87 +303,120 @@ export default {
     getMoveByIdNumber() {
       return document.getElementById('move-' + this.currentMove)
     },
-    turnToNextMove() {
-      if (this.currentMove !== this.totalMove) {
-        this.currentMove++
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
+    // resetBoardAndResetHistory() {
+    //   this.currentFen = ''
+    //   this.moveHistory = []
+    //   this.currentMove = 0
+    //   this.totalMove = 0
+    // },
+    prepareExercise() {
+      console.log(this.initFen)
+      this.exercise.fen = this.initFen
+      this.exercise.answers = this.moveHistories
+      console.log(this.exercise)
+      this.step++
+    },
+    removeExercise() {
+      this.exercise = {
+        question: '',
+        fen: '',
+        answers: []
+      }
+      this.step--
+    },
+    saveRightRes() {
+      let timeout = window.setTimeout(() => {
+        if (this.orientation === 'white') {
+          console.log(this.moveHistories[this.answersTab][this.currentIndexMoveInArr])
+          console.log(this.currentIndexMoveInArr)
+          this.moveHistories[this.answersTab][this.currentIndexMoveInArr].whiteMove['rightRes'] = this.moveRightRes
+        } else {
+          this.moveHistories[this.answersTab][this.currentIndexMoveInArr].blackMove['rightRes'] = this.moveRightRes
+        }
+        this.isSavedRightRes = true
+      }, 2000)
+    },
+    saveWrongRes() {
+      let timeout = window.setTimeout(() => {
+        if (this.orientation === 'white') {
+          this.moveHistories[this.answersTab][this.currentIndexMoveInArr].whiteMove['wrongRes'] = this.moveWrongRes
+        } else {
+          this.moveHistories[this.answersTab][this.currentIndexMoveInArr].blackMove['wrongRes'] = this.moveWrongRes
+        }
+        this.isSavedWrongRes = true
+      }, 2000) 
+    },
+    resetBoard() {
+      this.isReset = false //active clearBoard
+      this.isReset = true
+      this.fen = this.defaultFen
+      this.moveHistories = []
+      this.orientation = this.nextMoveTurn = 'white'
+      this.totalMove = this.currentMove = 0
+      this.currentIndexMoveInArr = -1
+      this.totalIndexMove = 0
+      this.isSavedRightRes = this.isSavedWrongRes = false
+      this.initFen = this.fen = this.defaultFen
+      this.answersTabModel = 0
+      this.answersTab = 0
+      this.moveRightRes = this.moveWrongRes = ''
+      this.currentClickedMoveTurn = ''
+      this.exercise = {
+        question: '',
+        fen: '',
+        answers: []
       }
     },
-    turnToLastMove() {
-      if (this.currentMove !== this.totalMove) {
-        this.currentMove = this.totalMove
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
+    changeTab(index) {
+      this.answersTab = index
+      console.log(this.moveHistories[this.answersTab].length)
+      if (this.moveHistories[this.answersTab].length > 0) {
+        let lastMove = this.moveHistories[this.answersTab][this.moveHistories[this.answersTab].length - 1]
+        let moveDirection
+        if (lastMove.blackMove !== null) {
+          this.fen = lastMove.blackMove.fen
+          moveDirection = lastMove.blackMove.moveDirection
+        } else {
+          this.fen = lastMove.whiteMove.fen
+          moveDirection = lastMove.whiteMove.moveDirection
+        }
+        let match = moveDirection.match(/([a-h][1-8])([a-h][1-8])([qrbn])?/)
+        this.addHighlightForBoard('exerciseBoard', match[1], match[2])
+      } else {
+        this.fen = this.initFen
+        this.removeHighlightForBoard('exerciseBoard')
       }
-    },
-    turnToPreviousMove() {
-      if (this.currentMove > 1) {
-        this.currentMove--
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
-      }
-    },
-    turnToFirstMove() {
-      if (this.currentMove > 1) {
-        this.currentMove = 1
-        const divTarget = this.getMoveByIdNumber()
-        divTarget.click()
-        this.updateMove = false
-        this.setCurrentMove()
-      }
-    },
-    turnToNextLesson() {
-      if (this.activeLesson < this.lessons.length - 1) {
-        this.activeLesson++
-        this.loader = true
-        this.resetBoardAndResetHistory()
-        this.getLessonById()
-        this.checkStatusDirectLesson()
-        this.loader = false
-      }
-    },
-    turnToPreviousLesson() {
-      if (this.activeLesson >= 1) {
-        this.activeLesson--
-        this.loader = true
-        this.resetBoardAndResetHistory()
-        this.getLessonById()
-        this.checkStatusDirectLesson()
-        this.loader = false
-      }
-    },
-    checkStatusDirectLesson() {
-      this.statusNextLesson = this.checkStatusNextLesson()
-      this.statusPreviousLesson = this.checkStatusPreviousLesson()
-    },
-    checkStatusNextLesson() {
-      if (this.activeLesson === this.lessons.length - 1) {
-        return true
-      }
-      return false
-    },
-    checkStatusPreviousLesson() {
-      if (this.activeLesson <= 0) {
-        return true
-      }
-      return false
-    },
-    resetBoardAndResetHistory() {
-      this.currentFen = ''
-      this.moveHistory = []
-      this.currentMove = 0
-      this.totalMove = 0
-    }
+    }  
   }
 }
 </script>
 
-<style src="@/assets/style/chessboard.css">
+<style scoped>
+.puzzle-content,
+.move-history-content {
+  border-radius: 4px;
+  /* border: 1px solid #ccc; */
+}
+.puzzle-color {
+  height: 40px;
+}
+.move-history-content {
+  height: 120px;
+}
+.move-answer {
+  background-color: rgba(255, 179, 25, 0.07);
+}
+.v-expansion-panel::before {
+  /* box-shadow: none; */
+}
+.v-expansion-panel-content__wrap {
+  padding: 0 0px 0px !important;
+}
+
 </style>
+<style>
+.answer-response i {
+  color: green !important;
+}
+</style>
+<style src="@/assets/style/chessboard.css"></style>

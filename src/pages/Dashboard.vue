@@ -1,9 +1,9 @@
 <template>
   <v-app id="sandbox">
-    <Toolbar/>
-    <Drawer/>
+    <Toolbar />
+    <Drawer />
     <v-content style="padding-top: 72px;padding-bottom: 80px;padding-left:256px">
-        <Content/>
+      <Content />
     </v-content>
   </v-app>
 </template>
@@ -23,7 +23,27 @@ export default {
 <style scoped>
 </style>
 <style>
-  *, html {
-    font-family: 'Heebo', sans-serif;
+*,
+html {
+  font-family: 'Heebo', sans-serif;
+}
+.v-btn__content {
+  font-family: 'Roboto', sans-serif;
+}
+.v-dialog--fullscreen {
+  overflow-y: hidden !important;
+}
+@-moz-document url-prefix() {
+  /* Disable scrollbar Firefox */
+  html {
+    scrollbar-width: none;
   }
+}
+*::-webkit-scrollbar {
+  /** Webkit */
+  width: 5px !important;
+}
+/* .cg-board .black, .cg-board .white, .blue.merida {
+  background-color: transparent !important;
+} */
 </style>
