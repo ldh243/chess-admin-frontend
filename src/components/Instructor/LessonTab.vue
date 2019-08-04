@@ -1,5 +1,15 @@
 <template>
-    <v-card :elevation="8">
+    <div>
+        <v-toolbar dark color="amber">
+          <v-btn icon dark @click="dialog = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Settings</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="dialog = false">Save</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
         <v-tabs centered fixed-tabs v-model="lessonTab" dark background-color="orange darken-1" >
             <v-tab class="font-weight-bold">Thêm bài thực hành</v-tab>
             <v-tab class="font-weight-bold">Thêm ván cờ</v-tab>
@@ -16,7 +26,7 @@
                 <UninteractiveLesson @onAddUninteractiveLesson="getAddUnteractiveResult"/>
             </v-tab-item>
         </v-tabs-items>
-    </v-card>
+    </div>
 </template>
 
 <script>
@@ -49,8 +59,8 @@ export default {
         }
     },
     methods: {
-        getAddUnteractiveResult(data) {
-            this.$emit('onAddUninteractiveLesson', data)
+        getAddUnteractiveResult(lesson) {
+            this.$emit('onAddUninteractiveLesson', lesson)
         }
     },
     created() {

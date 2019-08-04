@@ -20,8 +20,13 @@
     "firebase": "^6.3.0",
     "jquery": "^3.4.1",
     "node-sass": "^4.12.0",
+    "readline": "^1.3.0",
     "sass-loader": "^7.1.0",
+<<<<<<< HEAD
+    "stockfish": "^10.0.2",
+=======
     "sweetalert2": "^8.14.0",
+>>>>>>> 01c5a3eff2c045cc4f2f6f9f9adba623d4c77e86
     "vue": "^2.6.10",
     "vue-moment": "^4.0.0",
     "vue-quill-editor": "^3.0.6",

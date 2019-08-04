@@ -55,7 +55,11 @@ export default {
   watch: {
     fen: function(newFen) {
       this.fen = newFen
-      this.loadPosition()
+      this.board.set({
+        fen: this.fen
+      })
+      this.game.load(this.fen)
+      console.log("ahihi")
     },
     orientation: function(orientation) {
       console.log('watch orientation________', orientation)
@@ -210,6 +214,7 @@ export default {
       return threats
     },
     loadPosition() {
+      console.log("init load")
       // set a default value for the configuration object itself to allow call to loadPosition()
       this.game.load(this.fen)
       console.log(this.fen)
@@ -272,3 +277,8 @@ export default {
   }
 }
 </script>
+<style>
+.black, .white {
+  background-color: transparent !important;
+}
+</style>

@@ -1,19 +1,13 @@
 <template>
   <div>
-    <v-container class="pa-6">
-      <v-layout>
-        <v-flex xs5>
-          <v-text-field  color="blue-grey darken-1" v-model="lessonViewModel.name" label="Tên bài học"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout>
-        <v-flex xs6>
-          <v-card-text class="pa-0">
-            <v-flex class="move-history">
-              <v-card-title>
-                <span class="title font-weight-bold">Nước đi</span>
-              </v-card-title>
-              <div class="move-history-content">
+    <v-container class="px-6 py-3">
+      <v-window v-model="interactiveLessonStep">
+        <v-window-item :value="1">
+          <v-layout wrap>
+            <v-flex xs6 class="left-chess-info">
+              <v-card-text class="pr-5 pt-0 pb-0 pl-0" style="position:relative">
+                <v-text-field  color="blue-grey darken-1" v-model="lessonViewModel.name" label="Tên bài học"></v-text-field>
+                <div class="move-history-content">
                 <div v-for="(move1, index) in moveHistory" :key="index">
                   <template v-if="move1.depth === 1">
                     <div class="index">{{ move1.index }}</div>
@@ -73,39 +67,16 @@
                   </div>
                 </div>
               </div>
-            </v-flex>
-            <v-flex mb-2>
-              <v-layout row>
-                <v-btn flat @click="turnToFirstMove()">
-                  <v-icon>fa-fast-backward</v-icon>
-                </v-btn>
-                <v-btn flat class="main-button" @click="turnToPreviousMove()">
-                  <v-icon>fa-backward</v-icon>
-                </v-btn>
-
-                <v-btn flat class="main-button" @click="turnToNextMove()">
-                  <v-icon>fa-forward</v-icon>
-                </v-btn>
-                <v-btn flat @click="turnToLastMove()">
-                  <v-icon>fa-fast-forward</v-icon>
-                </v-btn>
-              </v-layout>
-            </v-flex>
-          </v-card-text>
-          <v-card-text>
-            <v-textarea v-model="moveContent" solo label="Nội dung:  "></v-textarea>
+              <v-textarea v-model="moveContent" class="mt-3" label="Nội dung:  "></v-textarea>
             <v-card-actions class="py-0">
               <v-spacer></v-spacer>
               <!-- <v-btn color="blue-grey" @click="removeMove" class="white--text">Xóa nước đi</v-btn> -->
               <v-btn color="primary" @click="resetBoard" class="white--text">Xóa toàn bộ</v-btn>
               <v-btn color="blue-grey" @click="addMoveContent" class="white--text">Lưu nội dung</v-btn>
             </v-card-actions>
-            <!-- <v-btn color="blue-grey" class="white--text">Xóa</v-btn> -->
-          </v-card-text>
-        </v-flex>
-        <v-flex xs6 py-4 px-1>
-          <v-layout row>
-            <v-flex xs10>
+              </v-card-text>
+            </v-flex>
+            <v-flex xs5 pr-7 style="margin: auto; position:relative">
               <Chessboard
                 @onMove="showInfo"
                 :orientation="orientation"
@@ -113,34 +84,34 @@
                 :fen="fen"
                 :boardName="'board'"
               />
-              <v-card-title>
-                <span class="title font-weight-bold">Thế cờ</span>
-              </v-card-title>
-              <div class="puzzle-content pa-3">
-                <div>
-                  <span class="heading font-weight-bold">Trắng:</span>
-                  <div class="piece-content mr-1" v-for="piece in whiteObj" :key="piece">{{piece}}</div>
-                </div>
-                <div>
-                  <span class="heading font-weight-bold">Đen:</span>
-                  <div class="piece-content mr-1" v-for="piece in blackObj" :key="piece">{{piece}}</div>
-                </div>
-              </div>
-            </v-flex>
-            <v-flex xs2 style="margin: auto">
-              <v-btn @click="editBoard = true" flat icon fab color="grey">
+              <v-btn
+                style="transform: translate(35px, -50%); top: 50%"
+                absolute
+                right
+                @click="editBoard = true"
+                icon
+                fab
+                text
+                small
+                color="grey"
+              >
                 <v-icon>fa-pen</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
+        </v-window-item>
+        <v-window-item :value="2">
+          <PreviewInteractiveLesson :initFen="initFen" :steps="lessonContent"/>
+        </v-window-item>
+      </v-window>
+      <v-flex xs11>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :disabled="interactiveLessonStep === 1" @click="interactiveLessonStep--">Trở về</v-btn>
+            <v-btn :disabled="moveHistory.length === 0" @click="interactiveLessonStep++">Xem trước</v-btn>
+          </v-card-actions>
         </v-flex>
-      </v-layout>
     </v-container>
-    <v-divider></v-divider>
-      <v-card-actions class="pa-6">
-        <v-spacer></v-spacer>
-        <v-btn color="indigo" class="white--text" @click="addLesson">Xong</v-btn>
-      </v-card-actions>
     <v-dialog v-model="editBoard" persistent max-width="800px">
       <v-card>
         <v-toolbar card>
@@ -187,11 +158,13 @@
 import Chessboard from '@/components/plugins/cols-chessboard'
 import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
+import PreviewInteractiveLesson from '@/components/preview/PreviewInteractiveLesson'
 const lessonRepository = RepositoryFactory.get('lesson')
 export default {
   components: {
     Chessboard,
-    CreateChessPuzzle
+    CreateChessPuzzle,
+    PreviewInteractiveLesson
   },
   data() {
     return {
@@ -226,7 +199,8 @@ export default {
       moveHisIndex: 0,
       moveDepth2HisIndex: 0,
       previousMove: {},
-      newHalfMove: {}
+      newHalfMove: {},
+      interactiveLessonStep: 1
     }
   },
   updated() {
@@ -856,5 +830,8 @@ export default {
 }
 .depth-3 > div {
   width: 100%;
+}
+.move-history-content {
+  height: 200px;
 }
 </style>

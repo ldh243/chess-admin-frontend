@@ -8,23 +8,23 @@
   src: url(../fonts/lichess.chess.woff2) format("woff2");
 }
 /* for learning-board ============================*/
-.move-history-content,
-.lesson-content, .puzzle-content {
-  background-color: #fff;
-  border-color: #fff;
+.content-area {
+  background-color: rgba(255, 179, 25, 0.07);
+  /* border-color: #fff; */
   color: rgba(0, 0, 0, 0.87);
   border-radius: 2px;
-  
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+.move-history-content,
+.lesson-content, .puzzle-content{
+  background-color: rgba(255, 179, 25, 0.07);
+  /* border-color: #fff; */
+  color: rgba(0, 0, 0, 0.87);
+  border-radius: 2px;
+  /* box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12); */
   overflow: auto;
 }
-.move-history-content, .lesson-content {
-  height: 150px;
-}
-.puzzle-content {
-  height: 100px;
-}
+
 .move-history-content div {
   flex-wrap: wrap;
   display: flex;
@@ -71,10 +71,17 @@
   background-color: transparent !important;
   border: unset !important;
 }
-.pick-color {
-  width: 50px;
-  height: 50px;
-  background-size: 100% 100%;
+.move-history-content {
+  height: 180px;
+}
+.review-move-btn-group {
+  height: 35px;
+}
+.move-information {
+  height: 240px;
+}
+.review-move-btn-group .v-btn {
+  width: 25%;
 }
 /*for playing page ===========================*/
 @media (min-width: 1904px) {
@@ -95,6 +102,12 @@
   .lesson-content {
     height: 310px;
   }
+  .move-history-content {
+    height: 330px;
+  }
+  .move-information {
+    height: 350px;
+  }
 }
 /*for create exercise page ==========================*/
 /*for create lesson page ============================*/
@@ -109,4 +122,13 @@
 }
 .piece-content {
   display: inline-flex;
+}
+
+.puzzle-content,
+.move-history-content {
+  border-radius: 4px;
+  /* border: 1px solid #ccc; */
+}
+.cg-board-wrap .black, .cg-board-wrap .white, .blue.merida {
+  background-color: transparent !important;
 }

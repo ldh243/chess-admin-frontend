@@ -77,7 +77,7 @@ export default {
   border-radius: var(--ck-border-radius);
 
   /* Set vertical boundaries for the document editor. */
-  max-height: 470px;
+  max-height: 420px;
 
   /* This element is a flex container for easier rendering. */
   display: flex;

@@ -3,7 +3,6 @@
     <v-layout align-center justify-center row wrap>
       <v-flex xs10>
         <v-form ref="form" lazy-validation>
-          <v-card-text>
             <v-text-field
               :rules="lessonNameRules"
               color="blue-grey darken-1"
@@ -12,13 +11,8 @@
             ></v-text-field>
             <v-alert dense outlined type="error" v-if="errors.length > 0">{{errors}}</v-alert>
             <ckeditor5 :content="content" />
-          </v-card-text>
         </v-form>
-      </v-flex>
-      <Loader v-if="loader" />
-    </v-layout>
-    <v-divider></v-divider>
-    <v-card-actions class="px-6">
+        <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
         color="orange darken-3"
@@ -28,6 +22,9 @@
         v-text="isEditing ? 'Lưu' : 'Thêm'"
       ></v-btn>
     </v-card-actions>
+      </v-flex>
+      <Loader v-if="loader" />
+    </v-layout>
   </div>
 </template>
 <script>

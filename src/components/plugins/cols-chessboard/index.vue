@@ -113,6 +113,7 @@ export default {
       })
     },
     loadPosition() {
+      console.log(this.currentFen)
       this.game.load(this.currentFen)
       let cfg = {
         position: this.game.fen(),
@@ -138,6 +139,8 @@ export default {
       this.currentFen = `8/8/8/8/8/8/8/8 ${
         this.orientation === 'white' ? 'w' : 'b'
       } KQkq - 0 1`
+    } else {
+      this.currentFen = this.fen
     }
   }
 }
