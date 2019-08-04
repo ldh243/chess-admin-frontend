@@ -3,7 +3,7 @@
     <v-layout align-start justify-space-between v-if="user != null">
       <v-flex xs4>
             <HighlightProfile :userInput="user"/>
-            <v-card-actions v-if="user && !user.reviewed && !user.active" class="mt-2">
+            <v-card-actions v-if="user && !user.reviewed && !user.active && $store.state.user.roleId == 3" class="mt-2">
                 <v-spacer></v-spacer>
                 <v-btn width="120" depressed large class="mr-2" color="success" @click="updateStatus(true)">Đồng ý</v-btn>
                 <v-btn width="120" depressed large color="error" @click="updateStatus(false)">Từ chối</v-btn>
@@ -97,7 +97,16 @@ export default {
         this.getUserById()
       }
     },
-    
+    watch:{
+      '$route.params.userId':{
+          handler:function(userId){
+            this.userId = userId
+            this.getUserById()
+          },
+          deep:true,
+          immediate: true
+        }
+    }
 }
 </script>
 

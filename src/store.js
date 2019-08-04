@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {RepositoryFactory} from './repository/RepositoryFactory'
-const courseRepository = RepositoryFactory.get('course')
 
 Vue.use(Vuex)
 
@@ -20,11 +18,19 @@ export default new Vuex.Store({
       registrator: '4'
     },
     user: JSON.parse(localStorage.getItem('user')),
-    currentLessonList: []
+    currentLessonList: [],
+    unreadNotifications: sessionStorage.getItem('unread-notification-counter') ? sessionStorage.getItem('unread-notification-counter') : 0,
+    notificationUpdatedId:0
   },
   mutations: {
     changeUser(state, payload) {
       state.user = payload
+    },
+    changeUnreadNotifications(state,unreadNotifications){
+      state.unreadNotifications = unreadNotifications
+    },
+    changeNotificationUpdatedId(state,notificationUpdatedId){
+      state.notificationUpdatedId = notificationUpdatedId
     }
   },
   actions: {}

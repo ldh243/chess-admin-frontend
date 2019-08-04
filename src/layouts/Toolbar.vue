@@ -9,7 +9,24 @@
   >
     <v-breadcrumbs class="grey--text" :items="items" divider=">"></v-breadcrumbs>
     <v-spacer></v-spacer>
-    <Notification :pageSize="defaultLoadNotifications"/>
+    <v-menu
+        :close-on-content-click="true"
+        offset-y bottom left
+        transition="slide-y-transition"
+        :eager="true"
+        :close-on-click="true"
+        >
+        <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon color="grey">
+        <v-badge color="red darken-1" right overlap>
+            <template v-slot:badge>{{$store.state.unreadNotifications}}</template>
+            <v-icon>fa-bell</v-icon>
+        </v-badge>
+        </v-btn>
+        </template>
+        <ListNotification 
+            :pageSize="defaultLoadNotifications" />
+    </v-menu>
     <v-toolbar-items class="align-center py-1 pr-3">
       <v-divider color="#BDBDBD" class="mx-4" vertical inset></v-divider>
         <v-menu bottom left offset-y transition="slide-y-transition">
@@ -38,11 +55,11 @@
 </template>
 
 <script>
-import Notification from '@/components/Notification/Notification'
+import ListNotification from '@/components/Notification/ListNotification'
 export default {
   name: 'Toolbar',
   components:{
-    Notification
+    ListNotification
   },
   data() {
     return {
@@ -74,7 +91,6 @@ export default {
       this.$store.commit('changeUser', null)
       this.$router.push('/')
     },
-
   },
 }
 </script>
@@ -88,8 +104,5 @@ export default {
 }
 .v-menu__content {
   border-radius: 10px;
-}
-.unread_notification {
-  background-color: #edf2fa
 }
 </style>

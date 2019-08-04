@@ -125,6 +125,13 @@ export default {
         this.currentPage = 0
         this.currentPage = 1
       }
+    },
+    '$route.query.status':{
+      handler:function(status){
+        this.filterStatusItem = status
+      },
+      deep:true,
+      immediate: true
     }
   }
 }

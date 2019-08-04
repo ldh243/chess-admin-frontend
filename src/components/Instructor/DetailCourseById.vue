@@ -82,7 +82,7 @@
 import LessonTab from '@/components/Instructor/LessonTab'
 import InteractiveLesson from '@/components/Lessons/InteractiveLesson'
 import Exercise from '@/components/Lessons/Exercise'
-import UninteractiveLesson from '@/components/Lessons/UninteractiveLessonForm'
+import UninteractiveLesson from '@/components/Lessons/uninteractiveLessonForm'
 import CourseBackground from '@/components/Instructor/CourseBackground'
 import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'

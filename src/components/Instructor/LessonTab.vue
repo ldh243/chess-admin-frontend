@@ -22,7 +22,7 @@
 <script>
 import InteractiveLesson from '@/components/Lessons/InteractiveLesson'
 import Exercise from '@/components/Lessons/Exercise'
-import UninteractiveLesson from '@/components/Lessons/UninteractiveLessonForm'
+import UninteractiveLesson from '@/components/Lessons/uninteractiveLessonForm'
 export default {
     props: {
         courseId: {
