@@ -1198,7 +1198,7 @@ import $ from 'jquery'
       // animation complete
       function complete () {
         drawPositionInstant()
-        $draggedPiece.css('display', 'none')
+        // $draggedPiece.css('display', 'none')
 
         // run their onSnapbackEnd function
         if (isFunction(config.onSnapbackEnd)) {
@@ -1303,6 +1303,7 @@ import $ from 'jquery'
       // create the dragged piece
       $draggedPiece.attr('src', buildPieceImgSrc(piece)).css({
         display: '',
+        'z-index': 100000,
         position: 'absolute',
         left: x - squareSize / 2,
         top: y - squareSize / 2

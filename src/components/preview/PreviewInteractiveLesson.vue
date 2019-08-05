@@ -11,7 +11,7 @@
               <div class="index">{{ moved1.index }}</div>
               <div
                 v-if="moved1.whiteMove"
-                :id="moved1.whiteMove.id"
+                :id="`pv-${moved1.whiteMove.id}`"
                 :preId="moved1.whiteMove.preId"
                 :nextId="moved1.whiteMove.nextId"
                 :preFen="moved1.whiteMove.preFen"
@@ -23,7 +23,7 @@
 
               <div
                 v-if="moved1.blackMove"
-                :id="moved1.blackMove.id"
+                :id="`pv-${moved1.blackMove.id}`"
                 :preId="moved1.blackMove.preId"
                 :nextId="moved1.blackMove.nextId"
                 :class="moved1.blackMove.class"
@@ -33,13 +33,13 @@
                 @click="loadFen(null, $event, moved1.blackMove.content)"
               >{{ moved1.blackMove.move }}</div>
             </template>
-            <div v-if="moved1.depth === 2" class="depth_2">
+            <div v-if="moved1.depth === 2" class="depth-2">
               <template v-for="(moved2, index2) in moved1.moveHistory">
                 <div v-if="moved2.depth === 2" :key="index2">
                   <div class="index">{{ moved2.index }}</div>
                   <div
                     v-if="moved2.whiteMove"
-                    :id="moved2.whiteMove.id"
+                    :id="`pv-${moved2.whiteMove.id}`"
                     :preId="moved2.whiteMove.preId"
                     :nextId="moved2.whiteMove.nextId"
                     :class="moved2.whiteMove.class"
@@ -52,7 +52,7 @@
                   >{{ moved2.whiteMove.move }}</div>
                   <div
                     v-if="moved2.blackMove"
-                    :id="moved2.blackMove.id"
+                    :id="`pv-${moved2.blackMove.id}`"
                     :preId="moved2.blackMove.preId"
                     :nextId="moved2.blackMove.nextId"
                     :class="moved2.blackMove.class"
@@ -64,12 +64,12 @@
                             "
                   >{{ moved2.blackMove.move }}</div>
                 </div>
-                <div v-if="moved2.depth === 3" :key="index2" class="depth_3">
+                <div v-if="moved2.depth === 3" :key="index2" class="depth-3">
                   <template v-for="(moved3, index3) in moved2.moveHistory">
                     <div :key="index3" class="index">{{ moved3.index }}</div>
                     <div
                       v-if="moved3.whiteMove"
-                      :id="moved3.whiteMove.id"
+                      :id="`pv-${moved3.whiteMove.id}`"
                       :key="index3"
                       :preId="moved3.whiteMove.preId"
                       :nextId="moved3.whiteMove.nextId"
@@ -83,7 +83,7 @@
                     >{{ moved3.whiteMove.move }}</div>
                     <div
                       v-if="moved3.blackMove"
-                      :id="moved3.blackMove.id"
+                      :id="`pv-${moved3.blackMove.id}`"
                       :key="index3"
                       :preId="moved3.blackMove.preId"
                       :nextId="moved3.blackMove.nextId"
@@ -123,6 +123,8 @@
 
 <script>
 import Chessboard from '@/components/plugins/vue-chessboard'
+import MoveHistory from '@/library/ChessHistory.js'
+import  Vue from 'vue'
 export default {
   components: {
     Chessboard
@@ -133,245 +135,63 @@ export default {
       default: []
     },
     initFen: {
-        type: String,
-        default: ''
+      type: String,
+      default: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
     }
   },
   watch: {
-    moveHistory: function(newHis) {
-      this.moveHistory = newHis
-        this.convertListToDisplay()
+    steps: function(newHis) {
+      this.steps = newHis
+      this.fakeSteps = this.steps.map(e => ({...e}))
+      this.loadMoveHistory()
     }
   },
   data() {
     return {
-        defaultFen: '',
+      defaultFen: '',
       currentFen: '',
       move: '',
-    firstId: 0,
-    moveHistory: []
+      firstId: 0,
+      moveHistory: [],
+      currentId: 0,
+      fakeSteps: [],
+      status: ''
     }
   },
+  computed: {
+    statusNextMove() {
+      if (this.currentMove === this.totalMove) {
+        return true
+      }
+      return false
+    },
+    statusPreviousMove() {
+      if (this.currentMove <= 1) {
+        return true
+      }
+      return false
+    }
+  },
+  updated() {},
+  created() {
+    this.currentFen = this.initFen
+    this.moveHistory = []
+    this.fakeSteps = this.steps.map(e => ({...e}))
+    this.loadMoveHistory()
+  },
   methods: {
-    convertListToDisplay() {
-        this.defaultFen = this.initFen
-        this.currentFen = this.defaultFen
-        this.firstId = this.steps[0].id
-        this.loadMoveHistoryByLesson()
-    },
-    refactorPreviousFen() {
-      this.steps.forEach(el => {
-        el.class = 'move'
-        const parent = this.steps.find(pr => pr.id === el.preId)
-        if (this.isEmpty(parent)) {
-          el.preFen = this.initCode
-        } else {
-          el.preFen = parent.fen
-        }
-      })
-      this.steps[0].fen = this.initCode
-    },
-    loadMoveHistoryByLesson() {
-      this.loadFen(this.initCode)
-      this.refactorPreviousFen()
-      const firstStep = this.steps[0]
-      this.dfs(null, firstStep, 1)
-      this.refactorDepth2()
-      this.refactorDepth3()
-    },
-    dfs(parent, move, depth) {
-      if (depth === 2) {
-        if (this.isEmpty(parent.depth2)) {
-          parent.depth2 = []
-        }
-        parent.depth2.push(move)
-      } else if (depth === 3) {
-        if (this.isEmpty(parent.depth3)) {
-          parent.depth3 = []
-        }
-        parent.depth3.push(move)
-      }
-      // move.move = `${move.move} ${depth}`
-      this.addMoveHistory(move, depth)
-      let index = depth - 1
-      let firstBranch = null
-      this.steps.forEach(el => {
-        if (el.preId === move.id) {
-          index++
-          if (this.isEmpty(move.nextId)) {
-            move.nextId = el.id
-          }
-          if (index === depth) {
-            this.dfs(parent, el, index)
-            firstBranch = el
-          } else {
-            this.dfs(firstBranch, el, index)
-          }
-        }
-      })
-    },
-    refactorDepth2() {
-      let queue = []
-      for (let index = 0; index < this.moveHistory.length; index++) {
-        const el = this.moveHistory[index]
-        if (el.depth === 1) {
-          if (
-            !this.isEmpty(el.whiteMove) &&
-            !this.isEmpty(el.whiteMove.depth2)
-          ) {
-            const newMove = {
-              index: el.index,
-              whiteMove: {
-                move: '...',
-                nextId: null,
-                preId: null,
-                class: 'empty-move'
-              },
-              blackMove: el.blackMove,
-              depth: 1
-            }
-            el.whiteMove.class = 'move single-move-white'
-            queue.push({ index: el.index, move: el.whiteMove, pos: index + 1 })
-            queue.push({ oldMove: el, newMove: newMove, pos: index + 1 })
-          }
-          if (
-            !this.isEmpty(el.blackMove) &&
-            !this.isEmpty(el.blackMove.depth2)
-          ) {
-            const oddMove = {
-              move: '...',
-              nextId: null,
-              preId: null,
-              class: 'empty-move'
-            }
-            el.blackMove.depth2.unshift(oddMove)
-            queue.push({ index: el.index, move: el.blackMove, pos: index + 1 })
-          }
+    loadMoveHistory() {
+      this.loadFen(this.initFen)
+      console.log(this.initFen)
+      let lessonDetails = {
+        interactiveLesson: {
+          initCode: this.initFen,
+          steps: this.fakeSteps
         }
       }
-      while (queue.length > 0) {
-        const el = queue.pop()
-        if (this.isEmpty(el.index)) {
-          el.oldMove.blackMove = null
-          this.moveHistory.splice(el.pos, 0, el.newMove)
-        } else {
-          const depth2 = {
-            depth: 2,
-            moveHistory: []
-          }
-          el.move.depth2.forEach(childStep => {
-            const newTurn = {
-              index: el.index + depth2.moveHistory.length,
-              whiteMove: childStep,
-              blackMove: null,
-              depth: 2
-            }
-            const turn = this.getTurnOfFen(childStep.preFen)
-            if (turn === 'w') {
-              newTurn.whiteMove.class = 'move single-move-white'
-              depth2.moveHistory.push(newTurn)
-            } else {
-              let lastMove = depth2.moveHistory[depth2.moveHistory.length - 1]
-              lastMove.whiteMove.class = 'move'
-              if (lastMove.whiteMove.move === '...') {
-                lastMove.whiteMove.class = 'empty-move'
-              }
-              lastMove.blackMove = childStep
-            }
-          })
-          this.moveHistory.splice(el.pos, 0, depth2)
-        }
-      }
-    },
-    refactorDepth3() {
-      let queue = []
-      this.moveHistory.forEach(el => {
-        if (el.depth === 2) {
-          const listDepth2 = el.moveHistory
-          listDepth2.forEach((moved2, pos) => {
-            if (
-              !this.isEmpty(moved2.whiteMove) &&
-              !this.isEmpty(moved2.whiteMove.depth3)
-            ) {
-              const newMove = {
-                index: moved2.index,
-                whiteMove: {
-                  move: '...',
-                  nextId: null,
-                  preId: null,
-                  class: 'empty-move'
-                },
-                blackMove: moved2.blackMove,
-                depth: 2
-              }
-              moved2.whiteMove.class = 'move single-move-white'
-              queue.push({
-                index: moved2.index,
-                move: moved2.whiteMove,
-                pos: pos + 1,
-                list: listDepth2
-              })
-              queue.push({
-                oldMove: moved2,
-                newMove: newMove,
-                pos: pos + 1,
-                list: listDepth2
-              })
-            }
-            if (
-              !this.isEmpty(moved2.blackMove) &&
-              !this.isEmpty(moved2.blackMove.depth3)
-            ) {
-              const oddMove = {
-                move: '...',
-                nextId: null,
-                preId: null,
-                class: 'empty-move'
-              }
-              moved2.blackMove.depth3.unshift(oddMove)
-              queue.push({
-                index: moved2.index,
-                move: moved2.blackMove,
-                pos: pos + 1,
-                list: listDepth2
-              })
-            }
-          })
-        }
-      })
-      while (queue.length > 0) {
-        const el = queue.pop()
-        if (this.isEmpty(el.index)) {
-          el.oldMove.blackMove = null
-          el.list.splice(el.pos, 0, el.newMove)
-        } else {
-          const depth3 = {
-            depth: 3,
-            moveHistory: []
-          }
-          el.move.depth3.forEach(childStep => {
-            const newTurn = {
-              index: el.index + depth3.moveHistory.length,
-              whiteMove: childStep,
-              blackMove: null,
-              depth: 2
-            }
-            const turn = this.getTurnOfFen(childStep.preFen)
-            if (turn === 'w') {
-              newTurn.whiteMove.class = 'move single-move-white'
-              depth3.moveHistory.push(newTurn)
-            } else {
-              let lastMove = depth3.moveHistory[depth3.moveHistory.length - 1]
-              lastMove.whiteMove.class = 'move'
-              if (lastMove.whiteMove.move === '...') {
-                lastMove.whiteMove.class = 'empty-move'
-              }
-              lastMove.blackMove = childStep
-            }
-          })
-          el.list.splice(el.pos, 0, depth3)
-        }
-      }
+      const moveHistory = new MoveHistory(lessonDetails)
+      moveHistory.formatMoveHistory()
+      this.moveHistory = moveHistory.getMoveHistory
     },
     showInfo(data) {
       console.log(data.history[data.history.length - 1])
@@ -382,13 +202,15 @@ export default {
         const divTarget = event.srcElement
         if (divTarget.id) {
           this.stepContent = content
-          this.currentId = divTarget.id
+          this.currentId = divTarget.id.replace('pv-', '')
+          console.log(this.currentId)
           this.currentFen = divTarget.getAttribute('preFen')
           this.move = divTarget.getAttribute('move')
           this.setCurrentMove()
         }
       } else {
         this.currentFen = fen
+        console.log(this.currentFen)
       }
     },
     setCurrentMove() {
@@ -398,7 +220,7 @@ export default {
         Array.prototype.forEach.call(arr, function(move) {
           move.classList.remove('current-move')
         })
-        let currentMove = document.getElementById(this.currentId)
+        let currentMove = document.getElementById(`pv-${this.currentId}`)
         if (!this.isEmpty(currentMove)) {
           currentMove.classList.add('current-move')
           // document.getElementsByClassName('move-history-content')[0].scrollTop =
@@ -407,22 +229,22 @@ export default {
       }
     },
     getPreMoveById(id) {
-      const preId = document.getElementById(id).getAttribute('preId')
-      return document.getElementById(preId)
+      const preId = document.getElementById(`pv-${id}`).getAttribute('preId')
+      return document.getElementById(`pv-${preId}`)
     },
     getNextMoveById(id) {
       let nextId = null
       if (id === 0) {
         nextId = this.firstId
       } else {
-        nextId = document.getElementById(id).getAttribute('nextId')
+        nextId = document.getElementById(`pv-${id}`).getAttribute('nextId')
       }
-      return document.getElementById(nextId)
+      return document.getElementById(`pv-${nextId}`)
     },
     getLastMoveById(id) {
       const nextStep = this.steps.find(el => el.id == id)
       if (this.isEmpty(nextStep.nextId)) {
-        return document.getElementById(nextStep.id)
+        return document.getElementById(`pv-${nextStep.id}`)
       }
       return this.getLastMoveById(nextStep.nextId)
     },
@@ -457,10 +279,34 @@ export default {
       this.currentId = 0
       this.currentFen = this.defaultFen
       this.setCurrentMove()
+    },
+    getTurnOfFen(fen) {
+      if (this.isEmpty(fen)) {
+        return 'w'
+      }
+      const arr = fen.split(' ')
+      return arr[1]
+    },
+    addMoveHistory(newMove, depth) {
+      if (depth === 1) {
+        let turn = this.getTurnOfFen(newMove.preFen)
+        this.totalMove++
+        //tạo thêm turn mới
+        const newTurn = {
+          index: this.moveHistory.length + 1,
+          depth: 1,
+          whiteMove: newMove,
+          blackMove: null
+        }
+        if (turn === 'w') {
+          this.moveHistory.push(newTurn)
+        } else {
+          let lastMove = this.moveHistory[this.moveHistory.length - 1]
+          //nước đi tiếp theo của turn cũ
+          lastMove.blackMove = newMove
+        }
+      }
     }
-  },
-  created() {
-      this.convertListToDisplay()
   }
 }
 </script>

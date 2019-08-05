@@ -31,15 +31,12 @@ export default new Router({
           path: 'createcourse',
           component: CreateCourse
         },
-        {
-          path: 'instructorCourse/:courseId',
-          component: DetailCourseById
-        },
         { path: 'profile', component: Profile },
         { path: 'statistics', component: Statistics },
         { path: 'courses', component: CourseManagement },
         { path: 'courses?:courseName=&:status', component: CourseManagement },
         { path: 'courses?:courseName=', component: CourseManagement },
+        { path: 'courses/:courseId', component: DetailCourseById},
         { path: 'accounts', component: UserManagement },
         { path: 'category', component: CategoryManagement },
         { path: 'instructor-request', component: NewInstructorManagement },

@@ -73,7 +73,7 @@
                     </v-flex>
                   </v-tab-item>
                 </v-tabs>
-                <v-checkbox v-model="checkboxChessbot" :label="'Sử dụng chế độ đánh tự động'"></v-checkbox>
+                <v-checkbox color="amber darken-2" v-model="checkboxChessbot" :label="'Sử dụng chế độ đánh tự động'"></v-checkbox>
               </v-card-text>
             </v-flex>
             <v-flex xs5 pr-7 style="margin: auto; position:relative">

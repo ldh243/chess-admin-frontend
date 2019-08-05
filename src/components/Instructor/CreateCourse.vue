@@ -84,7 +84,7 @@
 
 <script>
 import CreateInteractiveLesson from '@/components/Instructor/CreateInteractiveLesson'
-import CourseBackground from '@/components/Instructor/CourseBackground'
+import CourseBackground from '@/components/Courses/CourseBackground'
 import Loader from '@/components/Loader'
 import { mapState } from 'vuex'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'

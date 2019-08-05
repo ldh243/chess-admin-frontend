@@ -34,7 +34,10 @@ export default {
   watch: {
     content: function() {
         this.editorData = this.content
+        console.log(this.editorData)
     }
+  },
+  updated() {
   },
   data() {
     return {

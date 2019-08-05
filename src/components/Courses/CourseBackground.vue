@@ -4,7 +4,9 @@
       <v-spacer></v-spacer>
       <v-flex shrink>
         <p class="mb-1 display-1 text-uppercase font-weight-medium">{{title}}</p>
-        <p class="mb-0 white--text title">{{point}}</p>
+        <p class="white--text title mb-0" v-show="point !== -1 || requiredPoint !== -1">Điểm:</p>
+        <p class="mb-0 white--text title" v-show="point !== -1 || requiredPoint !== -1">
+          <v-icon dark>fa-user-plus</v-icon> {{requiredPoint}} <v-icon dark>fa-user-minus</v-icon> {{point}}</p>
       </v-flex>
     </v-layout>
   </v-img>
@@ -18,8 +20,12 @@ export default {
       default: ''
     },
     point: {
-        type: String,
-        default: ''
+      type: Number,
+      default: -1
+    },
+    requiredPoint: {
+      type: Number,
+      default: -1
     }
   },
   data() {

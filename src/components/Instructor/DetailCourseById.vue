@@ -1,7 +1,11 @@
 <template>
   <v-container class="pa-6">
     <v-card :elevation="8">
-      <CourseBackground :title="course.name" :point="`${course.requiredPoint} điểm`" />
+      <CourseBackground
+        :title="course.name"
+        :point="course.point"
+        :requiredPoint="course.requiredPoint"
+      />
       <v-form>
         <v-container class="pa-5" grid-list-xs>
           <v-layout wrap>
@@ -35,7 +39,24 @@
               <v-card-actions class="px-0">
                 <p>Loại: {{lessonTypeName[item.lessonType - 1]}}</p>
                 <v-spacer></v-spacer>
-                <v-btn @click="showEditingLesson(item)" fab dark small color="yellow darken-3">
+                <v-btn
+                  @click="previewLesson(item.lessonId, item.lessonType)"
+                  fab
+                  dark
+                  small
+                  color="orange darken-3"
+                >
+                  <v-icon dark>play_arrow</v-icon>
+                </v-btn>
+                <v-btn
+                  v-if="$store.state.user.roleId == 1"
+                  @click="showEditingLesson(item)"
+                  class="ml-2"
+                  fab
+                  dark
+                  small
+                  color="yellow darken-3"
+                >
                   <v-icon dark>edit</v-icon>
                 </v-btn>
                 <v-btn
@@ -45,6 +66,7 @@
                   dark
                   small
                   color="orange darken-3"
+                  v-if="$store.state.user.roleId == 1"
                 >
                   <v-icon dark>delete</v-icon>
                 </v-btn>
@@ -52,7 +74,11 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-layout wrap class="btn-add-lesson-group justify-space-between">
+        <v-layout
+          v-if="$store.state.user.roleId == 1"
+          wrap
+          class="btn-add-lesson-group justify-space-between"
+        >
           <v-flex xs4>
             <v-card color="amber" style="border-radius:4px;">
               <a @click="openLessonDialog(1)">
@@ -75,6 +101,23 @@
             </v-card>
           </v-flex>
         </v-layout>
+        <v-btn fixed
+          bottom
+          right
+          style="top:50%" @click="actionSheet = true" dark fab color="pink">
+              <v-icon>settings</v-icon>
+            </v-btn>
+        <v-bottom-sheet v-model="actionSheet" inset>
+      <v-sheet class="text-center pt-6" height="200px">
+        <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn depressed dark color="error">Từ chối</v-btn>
+          <v-btn depressed dark color="success">Đồng ý</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-sheet>
+    </v-bottom-sheet>
       </v-container>
     </v-card>
     <v-dialog
@@ -85,14 +128,47 @@
     >
       <v-toolbar dark color="amber darken-2">
         <v-btn icon dark @click="addLessonDialog = false">
-          <v-icon class="test">close</v-icon>
+          <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>{{lessonTypeName[lessonType - 1]}}</v-toolbar-title>
       </v-toolbar>
       <v-container fluid style="background-color:#fff;height:100%">
-        <Exercise v-if="lessonType === 1" />
-        <InteractiveLesson v-if="lessonType === 2" />
-        <UninteractiveLesson :editingLessonId="editingUninteractiveLessonId" @onEditUninteractiveLesson="editUninteractiveLesson" @onAddUninteractiveLesson="addUninteractiveLesson" v-if="lessonType === 3" />
+        <Exercise v-if="addLessonDialog === true && lessonType === 1" />
+        <InteractiveLesson
+          @onAddUninteractiveLesson="addInteractiveLesson"
+          v-if="addLessonDialog === true && lessonType === 2"
+        />
+        <UninteractiveLesson
+          :editingLessonId="editingUninteractiveLessonId"
+          @onEditUninteractiveLesson="editUninteractiveLesson"
+          @onAddUninteractiveLesson="addUninteractiveLesson"
+          v-if="addLessonDialog === true && lessonType === 3"
+        />
+      </v-container>
+    </v-dialog>
+    <v-dialog
+      v-model="previewLessonDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-toolbar dark color="amber darken-2">
+        <v-btn icon dark @click="previewLessonDialog = false;lessonType = 0;">
+          <v-icon>close</v-icon>
+        </v-btn>
+        <v-card-title>{{previewLessonObj.name}}</v-card-title>
+      </v-toolbar>
+      <v-container fluid style="background-color:#fff;height:100%">
+        <PreviewExercise v-if="previewLessonDialog === true && lessonType === 1" />
+        <PreviewInteractiveLesson
+          :steps="previewLessonObj.interactiveLesson.steps"
+          :initFen="previewLessonObj.interactiveLesson.initCode"
+          v-if="previewLessonDialog === true && lessonType === 2"
+        />
+        <PreviewUninteractiveLesson
+          :content="previewLessonObj.uninteractiveLesson.content"
+          v-if="previewLessonDialog === true && lessonType === 3"
+        />
       </v-container>
     </v-dialog>
     <v-snackbar v-model="snackbar" top :timeout="5000">
@@ -119,8 +195,11 @@
 import LessonTab from '@/components/Instructor/LessonTab'
 import InteractiveLesson from '@/components/Lessons/InteractiveLesson'
 import Exercise from '@/components/Lessons/Exercise'
-import UninteractiveLesson from '@/components/Lessons/UninteractiveLessonForm'
-import CourseBackground from '@/components/Instructor/CourseBackground'
+import UninteractiveLesson from '@/components/Lessons/uninteractiveLessonForm'
+import PreviewExercise from '@/components/preview/PreviewExercise'
+import PreviewInteractiveLesson from '@/components/preview/PreviewInteractiveLesson'
+import PreviewUninteractiveLesson from '@/components/preview/PreviewUninteractiveLesson'
+import CourseBackground from '@/components/Courses/CourseBackground'
 import Loader from '@/components/Loader'
 import CustomButton from '@/components/kit/CustomButton'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
@@ -132,6 +211,9 @@ export default {
     InteractiveLesson,
     Exercise,
     UninteractiveLesson,
+    PreviewExercise,
+    PreviewInteractiveLesson,
+    PreviewUninteractiveLesson,
     Loader,
     CourseBackground,
     LessonTab,
@@ -146,9 +228,9 @@ export default {
       listCategorys: [],
       createLesson: '',
       isCreatingLesson: false,
-      isEditingLesson: false,
+      isEditingLesson: 0,
       listLessons: [],
-      lessonTypeName: ['Thêm bài thực hành', 'Thêm trận đấu', 'Thêm bài đọc'],
+      lessonTypeName: ['Bài thực hành', 'Trận đấu', 'Bài đọc'],
       courseId: 0,
       snackbar: false,
       snackbarContent: '',
@@ -158,8 +240,10 @@ export default {
       confirmRemove: false,
       lessonListPanel: -1,
       addLessonDialog: false,
-      addInteractiveDialog2: false,
-      lessonType: 0
+      previewLessonDialog: false,
+      lessonType: 0,
+      previewLessonObj: {},
+      actionSheet: true
     }
   },
   mounted() {
@@ -175,7 +259,6 @@ export default {
     showCreateLesson() {
       this.isCreatingLesson = true
       this.currentLessonTypeTab = 0
-      this.editingLessonId = 0
       this.isEditingLesson = 0
     },
     showEditingLesson(lesson) {
@@ -209,24 +292,41 @@ export default {
       this.listCategorys = data.data.listCategorys
       this.listLessons = data.data.lessonViewModels
     },
+    async addInteractiveLesson(course) {
+      let newCourse = course
+      newCourse['courseId'] = this.courseId
+      const data = await lessonRepository
+        .createInteractiveLesson(newCourse)
+        .then(async res => {
+          if (res.status === 200) {
+            const lesson = await courseRepository.getById(courseId)
+            this.course = data.data
+            this.listLessons = data.data.lessonViewModels
+            this.addLessonDialog = false
+            this.snackbarContent = 'Thêm bài học thành công'
+            this.snackbar = true
+            this.isEditingLesson = 2
+            this.lessonListPanel = this.listLessons.length - 1
+            this.lessonType = 0
+          }
+        })
+    },
     async addUninteractiveLesson(course) {
       let newCourse = course
       newCourse['courseId'] = this.courseId
       const data = await lessonRepository
         .createUninteractiveLesson(newCourse)
-        .then(res => {
+        .then(async res => {
           if (res.status === 200) {
-            newCourse['lessonId'] = res.data.data.savedId
-            newCourse['lessonOrdered'] = this.listLessons.length
-            newCourse['lessonType'] = 3
-            this.editingLessonId = res.data.data.savedId
-            this.listLessons.push(newCourse)
+            const lesson = await courseRepository.getById(courseId)
+            this.course = data.data
+            this.listLessons = data.data.lessonViewModels
             this.snackbarContent = 'Thêm bài học thành công'
             this.snackbar = true
             this.addLessonDialog = false
             this.isEditingLesson = 3
-            this.editingUninteractiveLessonId = newCourse.lessonId
             this.lessonListPanel = this.listLessons.length - 1
+            this.lessonType = 0
           }
         })
     },
@@ -245,17 +345,24 @@ export default {
         })
     },
     openLessonDialog(lessonType) {
+      this.editingUninteractiveLessonId = 0
       this.addLessonDialog = true
       this.lessonType = lessonType
     },
-    
+    async previewLesson(lessonId, lessonType) {
+      this.lessonType = lessonType
+      const { data } = await lessonRepository.getById(lessonId).then(res => {
+        this.previewLessonDialog = true
+        this.previewLessonObj = res.data.data
+      })
+    }
   }
 }
 </script>
 
 <style scoped>
 .v-expansion-panel-header--active {
-  background: #FFE082;
+  background: #ffe082;
   opacity: 1 !important;
 }
 .v-expansion-panel-header--active::before {

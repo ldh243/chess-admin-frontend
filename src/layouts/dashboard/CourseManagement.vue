@@ -9,7 +9,7 @@
 
 <script>
 import PageTitle from '@/components/kit/PageTitle'
-import CourseOverview from '@/components/Instructor/CourseOverview'
+import CourseOverview from '@/components/Courses/CourseOverview'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const courseRepository = RepositoryFactory.get('course')
 
