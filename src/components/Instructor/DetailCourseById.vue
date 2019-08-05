@@ -101,23 +101,20 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <v-btn fixed
-          bottom
-          right
-          style="top:50%" @click="actionSheet = true" dark fab color="pink">
-              <v-icon>settings</v-icon>
-            </v-btn>
+        <v-btn fixed bottom right style="top:50%" @click="actionSheet = true" dark fab color="pink">
+          <v-icon>settings</v-icon>
+        </v-btn>
         <v-bottom-sheet v-model="actionSheet" inset>
-      <v-sheet class="text-center pt-6" height="200px">
-        <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn depressed dark color="error">Từ chối</v-btn>
-          <v-btn depressed dark color="success">Đồng ý</v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-sheet>
-    </v-bottom-sheet>
+          <v-sheet class="text-center pt-6" height="200px">
+            <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn depressed dark color="error">Từ chối</v-btn>
+              <v-btn depressed dark color="success">Đồng ý</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-sheet>
+        </v-bottom-sheet>
       </v-container>
     </v-card>
     <v-dialog
@@ -135,11 +132,13 @@
       <v-container fluid style="background-color:#fff;height:100%">
         <Exercise v-if="addLessonDialog === true && lessonType === 1" />
         <InteractiveLesson
-          @onAddUninteractiveLesson="addInteractiveLesson"
+        :editingLessonId="editingLessonId"
+          @onAddInteractiveLesson="addInteractiveLesson"
+          @onUpdateInteractiveLesson="editInteractiveLesson"
           v-if="addLessonDialog === true && lessonType === 2"
         />
         <UninteractiveLesson
-          :editingLessonId="editingUninteractiveLessonId"
+          :editingLessonId="editingLessonId"
           @onEditUninteractiveLesson="editUninteractiveLesson"
           @onAddUninteractiveLesson="addUninteractiveLesson"
           v-if="addLessonDialog === true && lessonType === 3"
@@ -236,6 +235,8 @@ export default {
       snackbarContent: '',
       currentLessonTypeTab: -1,
       editingUninteractiveLessonId: 0,
+      editInteractiveLessonId: 0,
+      editingLessonId: 0,
       currentLessonId: -1,
       confirmRemove: false,
       lessonListPanel: -1,
@@ -243,7 +244,7 @@ export default {
       previewLessonDialog: false,
       lessonType: 0,
       previewLessonObj: {},
-      actionSheet: true
+      actionSheet: false
     }
   },
   mounted() {
@@ -263,13 +264,15 @@ export default {
     },
     showEditingLesson(lesson) {
       this.lessonType = lesson.lessonType
-      switch (lesson.lessonType) {
-        case 1:
-        case 2:
-        case 3:
-          this.editingUninteractiveLessonId = lesson.lessonId
-          this.addLessonDialog = true
-      }
+      // switch (lesson.lessonType) {
+      //   case 1:
+      //   case 2:
+      //   case 3:
+      //     this.editingUninteractiveLessonId = lesson.lessonId
+      //     this.addLessonDialog = true
+      // }
+      this.editingLessonId = lesson.lessonId
+      this.addLessonDialog = true
     },
     async removeLesson() {
       const data = await lessonRepository
@@ -294,47 +297,72 @@ export default {
     },
     async addInteractiveLesson(course) {
       let newCourse = course
-      newCourse['courseId'] = this.courseId
+      let courseId = this.$route.params.courseId
+      newCourse['courseId'] = courseId
       const data = await lessonRepository
         .createInteractiveLesson(newCourse)
         .then(async res => {
           if (res.status === 200) {
-            const lesson = await courseRepository.getById(courseId)
-            this.course = data.data
-            this.listLessons = data.data.lessonViewModels
-            this.addLessonDialog = false
-            this.snackbarContent = 'Thêm bài học thành công'
-            this.snackbar = true
-            this.isEditingLesson = 2
-            this.lessonListPanel = this.listLessons.length - 1
-            this.lessonType = 0
+            const lesson = await courseRepository
+              .getById(courseId)
+              .then(res => {
+                if (res.status === 200) {
+                  this.course = res.data.data
+                  this.listLessons = res.data.data.lessonViewModels
+                  this.addLessonDialog = false
+                  this.snackbarContent = 'Thêm bài học thành công'
+                  this.snackbar = true
+                  this.isEditingLesson = 2
+                  this.lessonListPanel = this.listLessons.length - 1
+                  this.lessonType = 0
+                }
+              })
           }
         })
     },
     async addUninteractiveLesson(course) {
       let newCourse = course
-      newCourse['courseId'] = this.courseId
+      let courseId = this.$route.params.courseId
+      newCourse['courseId'] = courseId
       const data = await lessonRepository
         .createUninteractiveLesson(newCourse)
         .then(async res => {
           if (res.status === 200) {
-            const lesson = await courseRepository.getById(courseId)
-            this.course = data.data
-            this.listLessons = data.data.lessonViewModels
-            this.snackbarContent = 'Thêm bài học thành công'
-            this.snackbar = true
-            this.addLessonDialog = false
-            this.isEditingLesson = 3
-            this.lessonListPanel = this.listLessons.length - 1
-            this.lessonType = 0
+            const lesson = await courseRepository
+              .getById(courseId)
+              .then(res => {
+                if (res.status === 200) {
+                  this.course = res.data.data
+                  this.listLessons = res.data.data.lessonViewModels
+                  this.snackbarContent = 'Thêm bài học thành công'
+                  this.snackbar = true
+                  this.addLessonDialog = false
+                  this.isEditingLesson = 3
+                  this.lessonListPanel = this.listLessons.length - 1
+                  this.lessonType = 0
+                }
+              })
           }
         })
     },
     async editUninteractiveLesson(lesson) {
       //only get lesson infor from component and add lessonId in here
-      lesson['lessonId'] = this.editingUninteractiveLessonId
+      lesson['lessonId'] = this.editingLessonId
       const data = await lessonRepository
         .updateUninteractiveLesson(lesson)
+        .then(res => {
+          if (res.status === 200) {
+            this.getCourseById()
+            this.addLessonDialog = false
+            this.snackbarContent = 'Sửa bài học thành công'
+            this.snackbar = true
+          }
+        })
+    },
+    async editInteractiveLesson(lesson) {
+      lesson['lessonId'] = this.editingLessonId
+      const data = await lessonRepository
+        .updateInteractiveLesson(lesson)
         .then(res => {
           if (res.status === 200) {
             this.getCourseById()

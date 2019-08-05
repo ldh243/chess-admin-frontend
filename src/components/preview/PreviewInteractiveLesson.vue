@@ -173,7 +173,7 @@ export default {
     }
   },
   updated() {},
-  created() {
+  mounted() {
     this.currentFen = this.initFen
     this.moveHistory = []
     this.fakeSteps = this.steps.map(e => ({...e}))

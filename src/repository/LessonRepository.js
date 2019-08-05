@@ -20,6 +20,9 @@ export default {
   updateUninteractiveLesson(data){
     return Repository.put(`${resource}/update-uninteractive-lesson`,data)
   },
+  updateInteractiveLesson(data) {
+    return Repository.put(`${resource}/update-interactive-lesson`, data)
+  },
   removeLesson(lessonId) {
     const data = {
       lessonId: lessonId

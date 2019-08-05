@@ -6,65 +6,110 @@
           <v-layout wrap>
             <v-flex xs6 class="left-chess-info">
               <v-card-text class="pr-5 pt-0 pb-0 pl-0" style="position:relative">
-                <v-text-field
-                  color="blue-grey darken-1"
-                  v-model="lessonName"
-                  label="Tên bài học"
-                ></v-text-field>
+                <v-form ref="form" v-model="interactiveLessonForm" lazy-validation>
+                  <v-text-field
+                    color="blue-grey darken-1"
+                    :rules="nameRules"
+                    v-model="lessonName"
+                    label="Tên bài học"
+                  ></v-text-field>
+                </v-form>
                 <div class="move-history-content">
-                  <div v-for="(move1, index) in moveHistory" :key="index">
-                    <template v-if="move1.depth === 1">
-                      <div class="index">{{ move1.index }}</div>
+                  <div v-for="(moved1, index) in moveHistory" :key="index">
+                    <template v-if="moved1.depth === 1">
+                      <div class="index">{{ moved1.index }}</div>
                       <div
-                        v-if="move1.whiteMove !== null"
-                        :id="`il-${move1.whiteMove.moveId}`"
-                        class="il-move"
-                        @click="loadFen(move1, 'white', index, $event)"
-                      >{{ move1.whiteMove.move }}</div>
-                      <div v-if="move1.whiteMove === null" class="il-move">...</div>
+                        v-if="moved1.whiteMove"
+                        :id="`il-${moved1.whiteMove.id}`"
+                        :preId="moved1.whiteMove.preId"
+                        :nextId="moved1.whiteMove.nextId"
+                        :preFen="moved1.whiteMove.preFen"
+                        :fen="moved1.whiteMove.fen"
+                        :move="moved1.whiteMove.moveDirection"
+                        :class="`il-${moved1.whiteMove.class}`"
+                        :depth="moved1.depth"
+                        @click="loadFen(null, $event, moved1.whiteMove.content)"
+                      >{{ moved1.whiteMove.move }}</div>
+
                       <div
-                        v-if="move1.blackMove"
-                        :id="`il-${move1.blackMove.moveId}`"
-                        class="il-move"
-                        @click="loadFen(move1, 'black', index, $event)"
-                      >{{ move1.blackMove.move }}</div>
+                        v-if="moved1.blackMove"
+                        :id="`il-${moved1.blackMove.id}`"
+                        :preId="moved1.blackMove.preId"
+                        :nextId="moved1.blackMove.nextId"
+                        :class="`il-${moved1.blackMove.class}`"
+                        :preFen="moved1.blackMove.preFen"
+                        :fen="moved1.blackMove.fen"
+                        :move="moved1.blackMove.moveDirection"
+                        :depth="moved1.depth"
+                        @click="loadFen(null, $event, moved1.blackMove.content)"
+                      >{{ moved1.blackMove.move }}</div>
                     </template>
-                    <div v-if="move1.depth === 2" class="depth-2">
-                      <template v-for="(move2, index2) in move1.moveHistory">
-                        <div :key="index2" v-if="move2.depth === 2">
-                          <div class="index">{{move2.index}}</div>
+                    <div v-if="moved1.depth === 2" class="depth-2">
+                      <template v-for="(moved2, index2) in moved1.moveHistory">
+                        <div v-if="moved2.depth === 2" :key="index2">
+                          <div class="index">{{ moved2.index }}</div>
                           <div
-                            v-if="move2.whiteMove !== null"
-                            :id="`il-${move2.whiteMove.moveId}`"
-                            class="il-move"
-                            @click="loadFen(move2, 'white', index, index2, $event)"
-                          >{{ move2.whiteMove.move }}</div>
-                          <div v-if="move2.whiteMove === null" class="il-move">...</div>
+                            v-if="moved2.whiteMove"
+                            :id="`il-${moved2.whiteMove.id}`"
+                            :preId="moved2.whiteMove.preId"
+                            :nextId="moved2.whiteMove.nextId"
+                            :class="`il-${moved2.whiteMove.class}`"
+                            :preFen="moved2.whiteMove.preFen"
+                            :fen="moved2.whiteMove.fen"
+                            :move="moved2.whiteMove.moveDirection"
+                            :depth="moved2.depth"
+                            @click="
+                              loadFen(null, $event, moved2.whiteMove.content)
+                            "
+                          >{{ moved2.whiteMove.move }}</div>
                           <div
-                            v-if="move2.blackMove"
-                            :id="`il-${move2.blackMove.moveId}`"
-                            class="il-move"
-                            @click="loadFen(move2, 'black', index, index2, $event)"
-                          >{{ move2.blackMove.move }}</div>
+                            v-if="moved2.blackMove"
+                            :id="`il-${moved2.blackMove.id}`"
+                            :preId="moved2.blackMove.preId"
+                            :nextId="moved2.blackMove.nextId"
+                            :class="`il-${moved2.blackMove.class}`"
+                            :preFen="moved2.blackMove.preFen"
+                            :fen="moved2.blackMove.fen"
+                            :move="moved2.blackMove.moveDirection"
+                            :depth="moved2.depth"
+                            @click="
+                              loadFen(null, $event, moved2.blackMove.content)
+                            "
+                          >{{ moved2.blackMove.move }}</div>
                         </div>
-                        <div :key="index2" v-if="move2.depth === 3" class="depth-3">
-                          <template v-for="(move3, index3) in move2.moveHistory">
-                            <div :key="index3" v-if="move3.depth === 3">
-                              <div class="index">{{move3.index}}</div>
-                              <div
-                                v-if="move3.whiteMove !== null"
-                                :id="`il-${move3.whiteMove.moveId}`"
-                                class="il-move"
-                                @click="loadFen(move3, 'white', index, index2, index3, $event)"
-                              >{{ move3.whiteMove.move }}</div>
-                              <div v-if="move3.whiteMove === null" class="il-move">...</div>
-                              <div
-                                v-if="move3.blackMove"
-                                :id="`il-${move3.blackMove.moveId}`"
-                                class="il-move"
-                                @click="loadFen(move3, 'black', index, index2, index3, $event)"
-                              >{{ move3.blackMove.move }}</div>
-                            </div>
+                        <div v-if="moved2.depth === 3" :key="index2" class="depth-3">
+                          <template v-for="(moved3, index3) in moved2.moveHistory">
+                            <div :key="index3" class="index">{{ moved3.index }}</div>
+                            <div
+                              v-if="moved3.whiteMove"
+                              :id="`il-${moved3.whiteMove.id}`"
+                              :key="index3"
+                              :preId="moved3.whiteMove.preId"
+                              :nextId="moved3.whiteMove.nextId"
+                              :class="`il-${moved3.whiteMove.class}`"
+                              :preFen="moved3.whiteMove.preFen"
+                              :fen="moved3.whiteMove.fen"
+                              :move="moved3.whiteMove.moveDirection"
+                              :depth="moved3.depth"
+                              @click="
+                                loadFen(null, $event, moved3.whiteMove.content)
+                              "
+                            >{{ moved3.whiteMove.move }}</div>
+                            <div
+                              v-if="moved3.blackMove"
+                              :id="`il-${moved3.blackMove.id}`"
+                              :key="index3"
+                              :preId="moved3.blackMove.preId"
+                              :nextId="moved3.blackMove.nextId"
+                              :class="`il-${moved3.blackMove.class}`"
+                              :preFen="moved3.blackMove.preFen"
+                              :fen="moved3.blackMove.fen"
+                              :move="moved3.blackMove.moveDirection"
+                              :depth="moved3.depth"
+                              @click="
+                                loadFen(null, $event, moved3.blackMove.content)
+                              "
+                            >{{ moved3.blackMove.move }}</div>
                           </template>
                         </div>
                       </template>
@@ -81,12 +126,15 @@
                   :disabled="currentMove === 0 || moveHistory.length === 0"
                 ></v-textarea>
                 <v-card-actions class="py-0" style="align-items:unset">
-                  <v-alert v-if="isSavedContent" class="xs6 py-1" dense text type="success">
-                  Đã lưu
-                </v-alert>
+                  <v-alert v-if="isSavedContent" class="xs6 py-1" dense text type="success">Đã lưu</v-alert>
                   <v-spacer></v-spacer>
                   <!-- <v-btn color="blue-grey" @click="removeMove" class="white--text">Xóa nước đi</v-btn> -->
-                  <v-btn color="amber darken-2" depressed @click="resetBoard" class="white--text">Xóa toàn bộ</v-btn>
+                  <v-btn
+                    color="amber darken-2"
+                    depressed
+                    @click="resetBoard"
+                    class="white--text"
+                  >Xóa toàn bộ</v-btn>
                 </v-card-actions>
               </v-card-text>
             </v-flex>
@@ -121,8 +169,20 @@
       <v-flex xs11>
         <v-card-actions class="mt-3">
           <v-spacer></v-spacer>
-          <v-btn depressed class="white--text" color="amber darken-2" :disabled="interactiveLessonStep === 1" @click="back">Trở về</v-btn>
-          <v-btn depressed class="white--text" color="amber darken-2" :disabled="moveHistory.length === 0" @click="interactiveLessonStep === 1 ? preview() : addLesson()">{{interactiveLessonStep === 1 ? 'Xem trước' : 'Lưu'}}</v-btn>
+          <v-btn
+            depressed
+            class="white--text"
+            color="amber darken-2"
+            :disabled="interactiveLessonStep === 1"
+            @click="interactiveLessonStep--"
+          >Trở về</v-btn>
+          <v-btn
+            depressed
+            class="white--text"
+            color="amber darken-2"
+            :disabled="moveHistory.length === 0"
+            @click="interactiveLessonStep === 1 ? preview() : addLesson()"
+          >{{interactiveLessonStep === 1 ? 'Xem trước' : 'Lưu'}}</v-btn>
         </v-card-actions>
       </v-flex>
     </v-container>
@@ -162,9 +222,10 @@
           <v-spacer></v-spacer>
           <v-btn
             color="amber darken-2"
-            :disabled="depth === 3" text
-            @click="currentOtherMove !== null && currentOtherMove !== moveData.move ? replaceOtherMove() : addOrtherMove()"
-          >{{ currentOtherMove !== null && currentOtherMove !== moveData.move ? 'Thay nước khác' : 'Thêm nước khác'}}</v-btn>
+            :disabled="depth === 3"
+            text
+            @click="currentMoveWithSamePreId.length > 1 ? replaceOtherMove() : addOtherMove()"
+          >{{ currentMoveWithSamePreId.length > 1 ? 'Thay nước khác' : 'Thêm nước khác'}}</v-btn>
           <v-btn color="amber darken-1" class="white--text" depressed @click="editMove">Thay đổi</v-btn>
         </v-card-actions>
       </v-card>
@@ -178,76 +239,85 @@ import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import PreviewInteractiveLesson from '@/components/preview/PreviewInteractiveLesson'
 const lessonRepository = RepositoryFactory.get('lesson')
+import MoveHistory from '@/library/ChessHistory.js'
+
 export default {
   components: {
     Chessboard,
     CreateChessPuzzle,
     PreviewInteractiveLesson
   },
+  props: {
+    editingLessonId: {
+      type: Number,
+      default: -1
+    }
+  },
   data() {
     return {
-      lessonViewModel: '',
       lessonContent: [],
       moveHistory: [],
-      currentHistory: [],
       editBoard: false, //editBoard dialog
       initFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      currentFen: '',
       orientation: '',
       chessboardData: {},
       whiteObj: [],
       blackObj: [],
-      turn: '',
       totalMove: 0, //total of move
       currentMove: 0, // move index is clicked,
-      currentMoveObj: {},
-      currentMoveIndex: 0,
-      currentMoveIndexInArr: -1,
-      currentNextToMoveObj: {},
-      currentNextToMove: '',
-      currentOtherMove: '',
+      lastMove: 0,
+      currentMoveWithSamePreId: [],
       totalMoveIndex: 0,
       preId: null,
       moveContent: '',
-      isNew: true, //check the move is newMove or editedMove
       isResetBoard: false,
       depth: 1, //depth of current Move
       editMoveDialog: false,
-      newMove: {},
       moveData: {},
-      currentColorMove: '',
-      moveHisIndex: 0,
-      moveDepth2HisIndex: 0,
-      previousMove: {},
       newHalfMove: {},
       interactiveLessonStep: 1,
       isSavedContent: false,
-      showingLesson: [],
-      lessonName: ''
+      lessonName: '',
+      nameRules: [
+        v => !!v || 'Tên bài học không được để trống',
+        v => (v && v.length > 6) || 'Tên bài học phải nhiều hơn 6 kí tự'
+      ],
+      interactiveLessonForm: true,
+      isEditing: false,
+      interactiveLessonId: -1,
+    }
+  },
+  watch: {
+    editingLessonId: function(newId) {
+      this.editingLessonId = newId
+      if (this.editingLessonId > 0) {
+        console.log("is editing")
+        this.getById(this.editingLessonId)
+        this.isEditing = true
+      }
+    }
+  },
+  created() {
+    if (this.editingLessonId > 0) {
+      this.getById(this.editingLessonId)
+      this.isEditing = true
     }
   },
   updated() {
-    this.setCurrentMove()
-  },
-  created() {
-    this.currentHistory = this.moveHistory
+    if (this.currentMove > 0) {
+      this.setCurrentMove()
+    }
   },
   methods: {
     saveContent() {
       let timeOut = window.setTimeout(() => {
-        const black = 'black'
-        if (this.currentColorMove === black) {
-        this.currentMoveObj.blackMove.content = this.moveContent
-      } else {
-        this.currentMoveObj.whiteMove.content = this.moveContent
-      }
-      let currentHalfMove = this.lessonContent.find(halfMove => {
-        return halfMove.id === this.currentMove
-      })
-      currentHalfMove.content = this.moveContent
-      this.isSavedContent = true
-      }, 2000);
+        let currentHalfMove = this.lessonContent.find(halfMove => {
+          return halfMove.id == this.currentMove
+        })
+        currentHalfMove.content = this.moveContent
+        this.isSavedContent = true
+      }, 2000)
     },
     getFen(data) {
       this.chessboardData = data
@@ -259,16 +329,10 @@ export default {
     resetValue() {
       this.moveHistory = []
       this.currentMove = 0
-      this.currentHistory = this.moveHistory
-      this.currentMoveIndex = 0
-      this.currentMoveIndexInArr = -1
-      this.depth = 1
-      this.newMove = {}
       this.moveData = {}
-      this.currentColorMove = ''
       this.lessonContent = []
       this.preId = null
-    }, 
+    },
     resetBoard() {
       this.isResetBoard = true
       this.resetValue()
@@ -293,156 +357,84 @@ export default {
     showInfo(data) {
       this.moveData = data
       this.fen = data.fen
-      const black = 'black'
-      this.turn = data.turn
-      if (this.isResetBoard) {
-        this.isResetBoard = !this.isResetBoard
-      }
-      //init move data
-      this.newHalfMove = {
-        id: null,
-        fen: data.fen,
-        move: data.move,
-        moveDirection: data.moveDirection,
-        preId: this.preId,
-        content: ''
-      }
-      this.newMove = {
-        index: null,
-        depth: this.depth,
-        whiteMove: null,
-        blackMove: null
-      }
-      let lastMoveId, lastMove
-      let sameDepthMoveArr = this.getSameDepthMoveArr()
-      if (this.currentHistory.length > 0) {
-        lastMove = sameDepthMoveArr[sameDepthMoveArr.length - 1]
-        lastMoveId =
-          lastMove.blackMove !== null
-            ? lastMove.blackMove.moveId
-            : lastMove.whiteMove.moveId
-      }
-      //empty his or newest Move
-      if (this.currentHistory.length === 0 || lastMoveId === this.currentMove) {
+      if (parseInt(this.currentMove) === this.lastMove) {
         this.totalMove++
-        this.newHalfMove.id = this.totalMove
+        let newHalfMove = {
+          id: this.totalMove,
+          fen: data.fen,
+          move: data.move,
+          moveDirection: data.moveDirection,
+          preId: this.preId,
+          content: ''
+        }
         this.preId = this.totalMove
         this.moveContent = '' //set moveContent to '' for newMove
-        //for first move is black move
-        if (this.currentHistory.length === 0 && this.turn !== black) {
-          this.currentMoveIndex++
-          this.newMove.index = this.currentMoveIndex
-          this.newMove.blackMove = {
-            moveId: this.totalMove,
-            move: data.move,
-            fen: data.fen,
-            content: '',
-            preId: this.preId
-          }
-          this.currentHistory.push(this.newMove)
-          this.currentMoveObj = this.newMove
-        } else {
-          if (this.turn === black) {
-            //tạo thêm turn mới
-            this.currentMoveIndex++
-            this.newMove.index = this.currentMoveIndex
-            this.newMove.whiteMove = {
-              moveId: this.totalMove,
-              move: data.move,
-              fen: data.fen,
-              content: '',
-              preId: this.preId
-            }
-            this.currentHistory.push(this.newMove)
-            this.currentMoveObj = this.newMove
-          } else {
-            //nước đi tiếp theo của turn cũ
-            lastMove.blackMove = {
-              move: data.move,
-              fen: data.fen,
-              moveId: this.totalMove,
-              content: '',
-              preId: this.preId
-            }
-            this.currentMoveObj = lastMove
-          }
-        }
-        this.fen = data.fen
+        this.lessonContent.push(newHalfMove)
         this.currentMove = this.totalMove
-        this.currentMoveIndexInArr++
-        this.lessonContent.push(this.newHalfMove)
-        console.log(this.lessonContent)
+        this.lastMove = this.totalMove
       } else {
-        let nextToMoveObj, nextToMove, otherMove
-        let otherMoveObj = this.getMoveByIndexAndDepth(
-          this.currentColorMove === black
-            ? this.currentMoveIndex + 1
-            : this.currentMoveIndex,
-          this.depth + 1
-        )
-        console.log(otherMoveObj)
-        if (this.currentColorMove === black) {
-          nextToMoveObj = this.getMoveByIndex(this.currentMoveIndex + 1)
-          this.currentNextToMove = nextToMoveObj.whiteMove.move
-          this.currentOtherMove =
-            otherMoveObj !== undefined
-              ? otherMoveObj.moveHistory[0].whiteMove.move
-              : null
+        let nextMove = this.lessonContent.find(e => {
+          return e.preId == this.currentMove
+        })
+        if (nextMove.moveDirection === data.moveDirection) {
+          let nextMoveEl = document.getElementById(`il-${nextMove.id}`)
+          nextMoveEl.click()
+          this.currentMove = nextMove.id
         } else {
-          //get current move contain this black move
-          nextToMoveObj = this.getMoveByIndex(this.currentMoveIndex)
-          this.currentNextToMove = nextToMoveObj.blackMove.move
-          this.currentOtherMove =
-            otherMoveObj !== undefined
-              ? otherMoveObj.moveHistory[0].blackMove.move
-              : null
-        }
-        if (data.move === this.currentNextToMove) {
-          this.loadNextToMove(nextToMoveObj)
-        } else if (
-          this.currentOtherMove !== null &&
-          data.move === this.currentOtherMove
-        ) {
-          this.currentColorMove =
-            this.currentColorMove === 'black' ? 'white' : 'black'
-          this.depth = this.depth + 1
-          if (this.depth === 2) {
-            let moveHisIndex = this.currentHistory.indexOf(otherMoveObj)
-            this.loadFen(
-              otherMoveObj.moveHistory[0],
-              this.currentColorMove,
-              moveHisIndex
-            )
-          } else if (this.depth === 3) {
-            //this.depth === 3
-            let currentMoveObj = this.moveHistory.find(move => {
-              return (
-                move.index === this.currentMoveIndex &&
-                move.depth === this.depth - 1
-              )
-            })
-            let moveHisIndex = this.moveHistory.indexOf(currentMoveObj)
-            let moveDepth2HisIndex = this.currentHistory.indexOf(otherMoveObj)
-            this.loadFen(
-              otherMoveObj.moveHistory[0],
-              this.currentColorMove,
-              moveHisIndex,
-              moveDepth2HisIndex
-            )
-          }
-        } else {
+          this.currentMoveWithSamePreId = this.lessonContent.filter(e => {
+            return e.preId == this.currentMove
+          })
           this.editMoveDialog = true
         }
       }
+      this.loadMoveHistory(this.lessonContent)
     },
-    loadNextToMove(nextToMoveObj) {
-      this.currentColorMove =
-        this.currentColorMove === 'black' ? 'white' : 'black'
-      this.loadFen(nextToMoveObj, this.currentColorMove)
+    loadMoveHistory(lessonContent) {
+      console.log(lessonContent)
+      let lessonDetails = {
+        interactiveLesson: {
+          initCode: this.initFen,
+          steps: lessonContent.map(e => ({ ...e }))
+        }
+      }
+      console.log(lessonDetails)
+      this.moveHistoryObj = new MoveHistory(lessonDetails)
+      this.moveHistoryObj.formatMoveHistory()
+      this.moveHistory = this.moveHistoryObj.getMoveHistory
+      console.log(this.moveHistory)
     },
-    loadNextToOtherMove() {},
     editMove() {
-      const black = 'black'
+      this.totalMove++
+      this.preId = parseInt(this.currentMove)
+      let newHalfMove = {
+        id: this.totalMove,
+        move: this.moveData.move,
+        moveDirection: this.moveData.moveDirection,
+        content: '',
+        preId: this.preId,
+        fen: this.moveData.fen
+      }
+      this.lessonContent = this.lessonContent.filter(halfMove => {
+        return halfMove.preId < this.preId
+      })
+      this.currentMove = this.totalMove
+      this.lastMove = this.totalMove
+      this.preId = this.currentMove
+      this.lessonContent.push(newHalfMove)
+      this.loadMoveHistory(this.lessonContent)
+      this.editMoveDialog = false
+    },
+    replaceOtherMove() {
+      let movesWithSamePreId = this.lessonContent.filter(e => {
+        return e.preId == this.currentMove
+      })
+      let otherMove = movesWithSamePreId.sort((a, b) => {
+        return a.id - b.id
+      })[1]
+      this.lessonContent = this.lessonContent.filter(e => {
+        return e.preId < otherMove.id
+      })
+      this.preId = parseInt(this.currentMove)
       this.totalMove++
       let newHalfMove = {
         id: this.totalMove,
@@ -452,116 +444,39 @@ export default {
         preId: this.preId,
         fen: this.moveData.fen
       }
-      if (this.currentColorMove === black) {
-        let otherMoveGroup = []
-        if (this.depth < 3) {
-          otherMoveGroup = this.getMoveArrByIndexAndDepth(
-            this.currentMoveIndex + 1,
-            this.depth + 1
-          )
-        }
-        this.currentHistory = this.filterMoveArrWithLowerIndex(
-          this.currentMoveIndex
-        )
-        this.newMove.index = this.currentMoveIndex + 1
-        this.currentMoveIndex++
-        this.newMove.whiteMove = {
-          moveId: this.totalMove,
-          move: this.moveData.move,
-          fen: this.moveData.fen,
-          content: '',
-          preId: this.preId
-        }
-        this.currentHistory.push(this.newMove)
-        this.currentMoveObj = this.newMove
-        if (this.depth < 3 && otherMoveGroup !== undefined) {
-          this.currentHistory.push(otherMoveGroup)
-        }
-      } else {
-        this.currentHistory = this.filterMoveArrWithLowerIndex(
-          this.currentMoveIndex
-        )
-        let sameDepthMoveArr = this.getSameDepthMoveArr()
-        let lastMove = sameDepthMoveArr[sameDepthMoveArr.length - 1]
-        this.currentMoveObj = lastMove
-        lastMove.blackMove = {
-          move: this.moveData.move,
-          fen: this.moveData.fen,
-          moveId: this.totalMove,
-          content: ''
-        }
-      }
-      this.fen = this.moveData.fen
+      this.lessonContent[this.lessonContent.indexOf(otherMove)] = newHalfMove
       this.currentMove = this.totalMove
-      console.log(this.currentHistory)
+      this.lastMove = this.totalMove
+      this.preId = this.currentMove
+      this.loadMoveHistory(this.lessonContent)
       this.editMoveDialog = false
-      if (this.depth === 1) {
-        this.moveHistory = this.currentHistory
-      } else if (this.depth === 2) {
-        this.moveHistory[this.moveHisIndex].moveHistory = this.currentHistory
-      } else {
-        this.moveHistory[this.moveHisIndex].moveHistory[
-          this.moveDepth2HisIndex
-        ].moveHistory = this.currentHistory
-      }
-      //edit in lessonContent
-      this.lessonContent = this.lessonContent.filter(halfMove => {
-        return halfMove.preId < this.preId
-      })
-      this.lessonContent.push(newHalfMove)
     },
-    replaceOtherMove() {
-      const black = 'black'
-      this.currentHistory.splice(this.currentMoveIndexInArr + 2, 1)
-      console.log(this.currentHistory)
-      this.addOrtherMove()
-    },
-    loadFen(
-      currentMoveObj,
-      color,
-      moveHisIndex,
-      moveDepth2HisIndex,
-      moveDepth3HisIndex
-    ) {
-      console.log('reload Move')
-      this.currentMoveObj = currentMoveObj
-      const black = 'black'
-      let currentMoveInfo =
-        color === black ? currentMoveObj.blackMove : currentMoveObj.whiteMove
-      this.fen = currentMoveInfo.fen
-      this.preId = currentMoveInfo.moveId
-      this.currentMove = currentMoveInfo.moveId
-      this.currentMoveIndex = currentMoveObj.index
-      this.currentColorMove = color
-      this.depth = currentMoveObj.depth
-      this.setCurrentMove()
-      this.moveHisIndex = moveHisIndex
-      this.moveDepth2HisIndex = moveDepth2HisIndex
-      this.moveDepth3HisIndex = moveDepth3HisIndex
-      if (this.depth === 1) {
-        this.currentHistory = this.moveHistory
-        //after click move
-        this.currentMoveIndexInArr = this.moveHisIndex
-      } else if (this.depth === 2) {
-        this.moveHisIndex = moveHisIndex
-        this.currentHistory = this.moveHistory[moveHisIndex].moveHistory
-        this.currentMoveIndexInArr = this.moveDepth2HisIndex
+    loadFen(fen, event, content) {
+      if (event != undefined) {
+        const divTarget = event.srcElement
+        if (divTarget.id) {
+          this.stepContent = content
+          this.currentId = divTarget.id.replace('il-', '')
+          this.currentMove = this.currentId
+          this.preId = parseInt(this.currentMove)
+          if (this.currentMove == 1) {
+            this.fen = document
+              .getElementById(`il-${divTarget.getAttribute('nextId')}`)
+              .getAttribute('preFen')
+          } else {
+            this.fen = divTarget.getAttribute('fen')
+          }
+          this.move = divTarget.getAttribute('move')
+          this.setCurrentMove()
+        }
       } else {
-        this.moveHisIndex = moveHisIndex
-        this.moveDepth2HisIndex = moveDepth2HisIndex
-        this.currentHistory = this.moveHistory[moveHisIndex].moveHistory[
-          moveDepth2HisIndex
-        ].moveHistory
-        this.currentMoveIndexInArr = this.moveDepth3HisIndex
+        this.fen = fen
       }
-      this.moveContent =
-        this.currentColorMove === black
-          ? this.currentMoveObj.blackMove.content
-          : this.currentMoveObj.whiteMove.content
     },
     closeEditMoveDialog() {
       this.editMoveDialog = false
-      this.loadFen(this.currentMoveObj, this.currentColorMove)
+      let currentMove = document.getElementById(`il-${this.currentMove}`)
+      currentMove.click()
     },
     setCurrentMove() {
       let arr = document.getElementsByClassName('il-move')
@@ -574,15 +489,9 @@ export default {
         // currentMove.parentNode.parentNode.scrollTop = currentMove.offsetTop
       }
     },
-    addOrtherMove() {
+    addOtherMove() {
       this.totalMove++
-      const black = 'black'
-      this.depth = this.depth + 1 //increase depth
-      let newOtherMove = {
-        depth: this.depth,
-        index: 0,
-        moveHistory: []
-      }
+      this.preId = parseInt(this.currentMove)
       let newHalfOtherMove = {
         id: this.totalMove,
         move: this.moveData.move,
@@ -591,118 +500,48 @@ export default {
         content: '',
         preId: this.preId
       }
-      this.newMove.depth = this.depth
-      if (this.currentColorMove === black) {
-        this.currentColorMove = 'white'
-        newOtherMove.index = this.currentMoveIndex + 1
-        this.newMove.index = this.currentMoveIndex + 1
-        this.currentMoveIndex++
-        this.newMove.whiteMove = {
-          moveId: this.totalMove,
-          move: this.moveData.move,
-          fen: this.moveData.fen,
-          preId: this.preId,
-          content: ''
-        }
-        this.currentHistory.splice(
-          this.currentMoveIndexInArr + 2,
-          0,
-          newOtherMove
-        )
-        if (this.depth === 2) {
-          this.moveHisIndex = this.currentMoveIndexInArr + 2
-        } else {
-          this.moveDepth2HisIndex = this.currentMoveIndexInArr + 2
-        }
-      } else {
-        this.currentColorMove = 'black'
-        newOtherMove.index = this.currentMoveIndex
-        this.newMove.index = this.currentMoveIndex
-        this.newMove.whiteMove = null
-        this.newMove.blackMove = {
-          moveId: this.totalMove,
-          move: this.moveData.move,
-          fen: this.moveData.fen,
-          content: '',
-          preId: this.preId
-        }
-        this.currentHistory.splice(
-          this.currentMoveIndexInArr + 1,
-          0,
-          newOtherMove
-        )
-        if (this.depth === 2) {
-          this.moveHisIndex = this.currentMoveIndexInArr + 1
-        } else {
-          this.moveDepth2HisIndex = this.currentMoveIndexInArr + 1
-        }
-      }
-      this.currentMoveObj = this.newMove
-      this.currentMoveIndexInArr = 0
-      this.fen = this.moveData.fen
-      newOtherMove.moveHistory.push(this.newMove)
       this.lessonContent.push(newHalfOtherMove)
-      this.preId = this.totalMove
       this.currentMove = this.totalMove
-      this.currentHistory = newOtherMove.moveHistory
+      this.lastMove = this.currentMove
+      this.preId = this.currentMove
       this.editMoveDialog = false
-    },
-    getPreviousMoveWithLowerDepth(moveHistory, depth) {
-      this.previousMove = moveHistory.find(move => {
-        return move.depth === depth && move.index === this.currentMoveIndex
-      })
+      this.loadMoveHistory(this.lessonContent)
     },
     addLesson() {
-      const lessonViewModel = {
-        name: this.lessonName,
-        interactiveLesson: {
-          steps: this.lessonContent,
-          initCode: this.initFen
+      if (this.$refs.form.validate()) {
+        this.lessonContent = this.lessonContent.sort((a, b) => {
+          return a.id - b.id
+        })
+        const lesson = {
+          name: this.lessonName,
+          interactiveLesson: {
+            steps: this.lessonContent,
+            initCode: this.initFen
+          }
+        }
+        if (this.editingLessonId > 0) {
+          lesson.interactiveLesson['interactiveLessonId'] = this.interactiveLessonId
+          this.$emit('onUpdateInteractiveLesson', lesson)
+        } else {
+          this.$emit('onAddInteractiveLesson', lesson)
         }
       }
-      this.$emit('onAddUninteractiveLesson', lessonViewModel)
     },
     preview() {
-      this.showingLesson = this.lessonContent
-      console.log(this.lessonContent)
       this.interactiveLessonStep++
     },
-    back() {
-      this.interactiveLessonStep--
-    },
-    getSameDepthMoveArr() {
-      return this.currentHistory.filter(move => {
-        return move.depth === this.depth
+    async getById(lessonId) {
+      const data = await lessonRepository.getById(lessonId).then(res => {
+        console.log(res)
+        this.lessonName = res.data.data.name
+        this.lessonContent = res.data.data.interactiveLesson.steps
+        this.initFen = res.data.data.interactiveLesson.initCode
+        this.interactiveLessonId = res.data.data.interactiveLesson.interactiveLessonId
+        this.totalMove = parseInt(this.lessonContent[this.lessonContent.length - 1].id)
+        this.lastMove = this.totalMove
+        this.loadMoveHistory(this.lessonContent)
       })
     },
-    getMoveByIndex(index) {
-      return this.currentHistory.find(move => {
-        return move.index == parseInt(index)
-      })
-    },
-    getOtherMoveObj() {
-      return this.currentHistory.find(move => {
-        return (
-          move.index == parseInt(this.currentMoveIndex + 1) &&
-          move.depth == parseInt(this.depth + 1)
-        )
-      })
-    },
-    getMoveByIndexAndDepth(index, depth) {
-      return this.currentHistory.find(move => {
-        return move.index == parseInt(index) && move.depth == parseInt(depth)
-      })
-    },
-    getMoveArrByIndexAndDepth(index, depth) {
-      return this.currentHistory.find(move => {
-        return move.index === index && move.depth === depth
-      })
-    },
-    filterMoveArrWithLowerIndex(index) {
-      return this.currentHistory.filter(move => {
-        return move.index <= index
-      })
-    }
   }
 }
 </script>
@@ -710,26 +549,6 @@ export default {
 <style scoped src="@/assets/style/chessboard.css" >
 </style>
 <style scoped>
-.depth-2 {
-  background-color: hsla(0, 59%, 85%, 0.85);
-  margin: 5pt 0 5pt 5pt;
-  flex: 0 0 100%;
-}
-.depth-2 > div {
-  flex: 0 0 100%;
-}
-.depth-2 > div > div {
-  color: #c00;
-}
-.depth-3 {
-  background-color: rgba(196, 240, 196, 0.85) !important;
-  color: #080;
-  margin: 5pt 0 5pt 5pt;
-  flex: 0 0 100%;
-}
-.depth-3 > div {
-  width: 100%;
-}
 .move-history-content {
   height: 200px;
 }

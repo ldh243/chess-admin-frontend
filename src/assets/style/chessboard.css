@@ -154,7 +154,7 @@
   width: 100%;
 }
 .move,
-.empty-move {
+.empty-move, .il-empty-move {
   flex: 0 0 43%;
   font-size: 1.185em;
   padding-left: 10px;

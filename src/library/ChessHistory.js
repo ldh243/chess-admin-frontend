@@ -2,7 +2,7 @@ export default class MoveHistory {
   constructor(lessonDetails) {
     this.lessonDetails = lessonDetails
     this.moveHistory = []
-    this.steps = [...lessonDetails.interactiveLesson.steps]
+    this.steps = lessonDetails.interactiveLesson.steps
     this.totalMove = 0
   }
   formatMoveHistory() {
