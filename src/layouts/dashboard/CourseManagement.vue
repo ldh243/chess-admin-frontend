@@ -39,6 +39,15 @@ export default {
         return courseRepository.getCoursesPagination(page, pageSize,nameCourse,statusId)
       }
     }
+  },
+  watch:{
+    '$route.query.courseName':{
+      handler:function(search){
+        this.search = search
+      },
+      deep:true,
+      immediate: true
+    }
   }
 }
 </script>

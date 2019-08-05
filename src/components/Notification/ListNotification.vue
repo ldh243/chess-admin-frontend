@@ -1,38 +1,26 @@
 <template>
-    <v-menu
-      v-model="notification"
-      :close-on-content-click="false"
-      offset-y bottom left
-      transition="slide-y-transition"
-    >
-    <template v-slot:activator="{ on }">
-        <v-btn v-on="on" icon color="grey">
-      <v-badge color="red darken-1" right overlap>
-        <template v-slot:badge>{{unreadNotifications}}</template>
-        <v-icon>fa-bell</v-icon>
-      </v-badge>
-    </v-btn>
-      </template>
-        <v-list>
-          <div v-for="(item,index) in notifications" :key="index" :class=" !item.viewed ? 'unread_notification' : ''">
+<v-list :two-line="true" :min-width="isLoadAll ? '1000' : '500'">
+          <div v-for="(item,index) in notifications" :key="index" :style=" !item.viewed ? 'background-color: #edf2fa' : ''">
             <v-list-item @click="redirectToNotificationItem(index)">
               <v-list-item-avatar>
                 <img :src="item.objectAvatar" :alt="item.objectName">
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title class="body-2">{{item.objectName}} {{item.content}}</v-list-item-title>
+                <v-list-item-title class="body-2"><strong>{{item.objectName}}</strong> {{item.content}}</v-list-item-title>
                 <v-list-item-subtitle>{{moment(item.createDate).add(VNTimeZone,'hours').fromNow()}}</v-list-item-subtitle>
               </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
           </div>
-          <div class="text-xs-center pt-2">
+          <div v-if="isLoading">
+            <v-img height="50px" width="50px" :src="loadingImg"/>
+          </div>
+          <div class="text-xs-center pt-2" v-if="!isLoadAll">
             <v-layout justify-center>
-              <a>Xem tất cả</a>
+              <a @click="redirectToNotificationPage()">Xem tất cả</a>
             </v-layout>
           </div>
         </v-list>
-    </v-menu>
 </template>
 
 <script>
@@ -55,6 +43,11 @@ export default {
             required:false,
             type:String,
             default:''
+        },
+        isLoadAll:{
+          required:false,
+          type:Boolean,
+          default:false
         }
     },
     data(){
@@ -68,15 +61,23 @@ export default {
           User:0,
           Course:1,
           Review:4
-        }
+        },
+        loadingImg: require('@/assets/images/loading.gif'),
+        isLoading: false,
+        totalPages:0
       }
     },
     methods:{
         async getNotification(){
+            this.isLoading = true
             const data = await notificationRepository.getNotificationPagination(this.page,this.pageSize,this.sortBy,this.sortDirection)
             if(data.data.data){
                 this.unreadNotifications = data.data.data.totalNotViewedElements
-                this.notifications = data.data.data.data.content
+                this.handleUnreadNotifications(this.unreadNotifications)
+                this.notifications = this.notifications.concat(data.data.data.data.content)
+                this.page++
+                this.isLoading = false
+                this.totalPages = data.data.data.data.totalPages
             }
         },
         async updateIsViewed(notificationIds){
@@ -90,6 +91,7 @@ export default {
             this.updateIsViewed(notificationIds)
             this.notifications[index].viewed = true
             this.unreadNotifications--
+            this.handleUnreadNotifications(this.unreadNotifications,this.notifications[index].notificationId)
           }
           this.handleRedirect(this.notifications[index])
         },
@@ -117,15 +119,43 @@ export default {
             }
           }
         },
+        handleUnreadNotifications(counterUnread,notificationId){
+          sessionStorage.setItem('unread-notification-counter',counterUnread)
+          this.$store.commit('changeUnreadNotifications',counterUnread)
+          this.$store.commit('changeNotificationUpdatedId',notificationId)  
+        },
+        redirectToNotificationPage(){
+          this.$router.push('/dashboard/notifications')
+        },
+        onScrollAction(){
+          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            if(this.totalPages >= this.page){
+              this.getNotification()
+            }
+          }
+        }
     },
     mounted(){
         this.getNotification()
+        if(this.isLoadAll){
+          window.onscroll = this.onScrollAction
+        }
     },
     watch:{
         pageSize:{
             handler:function(){
                 this.getNotification()
             }
+        },
+        '$store.state.notificationUpdatedId':{
+          handler:function(notificationId){
+            for(var i = 0; i < this.notifications.length;i++){
+              if(this.notifications[i].notificationId == notificationId){
+                this.notifications[i].viewed = true
+              }
+            }
+          },
+          deep:true
         }
     }
 }

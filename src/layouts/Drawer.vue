@@ -88,6 +88,11 @@ export default {
           title: 'Xét duyệt giảng viên',
           icon: 'fa-users-cog',
           path: '/dashboard/instructor-request'
+        },
+        {
+          title: 'Thông báo',
+          icon: 'fa-bell',
+          path: '/dashboard/notifications',
         }
       ],
       items2: [
@@ -105,6 +110,11 @@ export default {
           title: 'Thêm khóa học',
           icon: 'fa-plus-circle',
           path: '/dashboard/createcourse',
+        },
+        {
+          title: 'Thông báo',
+          icon: 'fa-bell',
+          path: '/dashboard/notifications',
         }
       ],
       dialog: false,

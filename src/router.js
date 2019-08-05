@@ -17,6 +17,8 @@ import Router from 'vue-router'
 import CreateCourse from '@/components/Instructor/CreateCourse'
 import DetailCourseById from '@/components/Instructor/DetailCourseById'
 
+//notification
+import Notification from '@/layouts/dashboard/Notification'
 Vue.use(Router)
 export default new Router({
   mode: 'history',
@@ -42,7 +44,8 @@ export default new Router({
         { path: 'instructor-request', component: NewInstructorManagement },
         { path: 'instructor-request?:email', component: NewInstructorManagement },
         { path: 'instructorCourse', component: CourseDetailByInstructor },
-        { path: 'new-ins-profile/:userId', component: NewInstructor}
+        { path: 'new-ins-profile/:userId', component: NewInstructor},
+        { path: 'notifications', component: Notification}
       ]
     },
     { path: '*', redirect: '/' }
