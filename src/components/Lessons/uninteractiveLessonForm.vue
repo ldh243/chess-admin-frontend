@@ -111,13 +111,14 @@ export default {
     createUninteractiveLesson() {
       if (this.editor.methods.getText().length === 0) {
         this.errors = 'Nội dung bài học không được bỏ trống'
-      }
-      if (this.$refs.form.validate()) {
+      } else {
+        if (this.$refs.form.validate()) {
         const lesson = {
           content: this.editor.methods.getVal(),
           name: this.lessonName
         }
         this.$emit('onAddUninteractiveLesson', lesson)
+      }
       }
     },
     async getById(lessonId) {

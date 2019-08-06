@@ -358,6 +358,7 @@ export default {
       this.moveData = data
       this.fen = data.fen
       if (parseInt(this.currentMove) === this.lastMove) {
+        console.log("add new for edit")
         this.totalMove++
         let newHalfMove = {
           id: this.totalMove,
@@ -509,6 +510,10 @@ export default {
     },
     addLesson() {
       if (this.$refs.form.validate()) {
+        // this.lessonContent = this.lessonContent.map(e => {
+        //   e.id = parseInt(e.id)
+        //   e.preId = parseInt(e.preId)
+        // })
         this.lessonContent = this.lessonContent.sort((a, b) => {
           return a.id - b.id
         })
@@ -521,6 +526,7 @@ export default {
         }
         if (this.editingLessonId > 0) {
           lesson.interactiveLesson['interactiveLessonId'] = this.interactiveLessonId
+          console.log(this.lessonContent)
           this.$emit('onUpdateInteractiveLesson', lesson)
         } else {
           this.$emit('onAddInteractiveLesson', lesson)
@@ -535,10 +541,18 @@ export default {
         console.log(res)
         this.lessonName = res.data.data.name
         this.lessonContent = res.data.data.interactiveLesson.steps
+        this.lessonContent = this.lessonContent.map(e => {
+          let obj = e
+          obj['id'] = parseInt(e.id)
+          obj['preId'] = parseInt(e.preId)
+          return obj
+        })
         this.initFen = res.data.data.interactiveLesson.initCode
         this.interactiveLessonId = res.data.data.interactiveLesson.interactiveLessonId
-        this.totalMove = parseInt(this.lessonContent[this.lessonContent.length - 1].id)
+        this.totalMove = this.lessonContent.length > 0 ? parseInt(this.lessonContent[this.lessonContent.length - 1].id) : 0
+        console.log(this.totalMove)
         this.lastMove = this.totalMove
+        console.log(this.lessonContent)
         this.loadMoveHistory(this.lessonContent)
       })
     },

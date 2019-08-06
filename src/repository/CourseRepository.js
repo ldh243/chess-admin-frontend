@@ -82,5 +82,11 @@ export default {
       `${resource}/get-course-paginations-current-instructor`,
       data
     )
+  },
+  publishCourse(courseId) {
+    const data = {
+      courseId: courseId
+    }
+    return Repository.put(`${resource}/publish-course`, data)
   }
 }

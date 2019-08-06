@@ -5,6 +5,7 @@
         :title="course.name"
         :point="course.point"
         :requiredPoint="course.requiredPoint"
+        :statusId="course.statusId"
       />
       <v-form>
         <v-container class="pa-5" grid-list-xs>
@@ -105,12 +106,13 @@
           <v-icon>settings</v-icon>
         </v-btn>
         <v-bottom-sheet v-model="actionSheet" inset>
-          <v-sheet class="text-center pt-6" height="200px">
+          <v-sheet class="text-center pt-6" height="200px" >
             <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn depressed dark color="error">Từ chối</v-btn>
-              <v-btn depressed dark color="success">Đồng ý</v-btn>
+              <v-btn depressed dark v-if="$store.state.user.roleId == 3" color="error">Từ chối</v-btn>
+              <v-btn depressed dark v-if="$store.state.user.roleId == 3" color="success">Đồng ý</v-btn>
+              <v-btn depressed @click="publishCourse" dark color="amber darken-2">Công khai</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-sheet>
@@ -124,7 +126,7 @@
       transition="dialog-bottom-transition"
     >
       <v-toolbar dark color="amber darken-2">
-        <v-btn icon dark @click="addLessonDialog = false">
+        <v-btn icon dark @click="addLessonDialog = false;lessonType = 0;editingLessonId = 0">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>{{lessonTypeName[lessonType - 1]}}</v-toolbar-title>
@@ -356,11 +358,14 @@ export default {
             this.addLessonDialog = false
             this.snackbarContent = 'Sửa bài học thành công'
             this.snackbar = true
+            this.lessonType = 0
+            this.editingLessonId = 0
           }
         })
     },
     async editInteractiveLesson(lesson) {
       lesson['lessonId'] = this.editingLessonId
+      console.log(lesson)
       const data = await lessonRepository
         .updateInteractiveLesson(lesson)
         .then(res => {
@@ -369,6 +374,8 @@ export default {
             this.addLessonDialog = false
             this.snackbarContent = 'Sửa bài học thành công'
             this.snackbar = true
+            this.lessonType = 0
+            this.editingLessonId = 0
           }
         })
     },
@@ -382,6 +389,16 @@ export default {
       const { data } = await lessonRepository.getById(lessonId).then(res => {
         this.previewLessonDialog = true
         this.previewLessonObj = res.data.data
+      })
+    },
+    async publishCourse() {
+      const courseId = this.$route.params.courseId
+      const data  = await courseRepository.publishCourse(courseId).then(res => {
+        if (res.status === 200) {
+          this.snackbarContent = 'Khóa học đang được xét duyệt, xin vui lòng chờ.'
+          this.snackbar = true
+          this.actionSheet = false
+        }
       })
     }
   }
