@@ -3,17 +3,8 @@ import Repository from '@/repository/Repository'
 const resource = '/lesson'
 
 export default {
-  createInteractiveLesson(
-    courseId,
-    name,
-    interactiveLesson,
-    initCode,
-    interactiveLessonid
-  ) {
-    const data = {
-      name: name
-    }
-    // return Repository.post(`${resource}/create-course`, data)
+  createInteractiveLesson(data) {
+    return Repository.post(`${resource}/create-interactive-lesson`, data)
   },
   createUninteractiveLesson(data){
     return Repository.post(`${resource}/create-uninteractive-lesson`,data)
@@ -28,6 +19,9 @@ export default {
   },
   updateUninteractiveLesson(data){
     return Repository.put(`${resource}/update-uninteractive-lesson`,data)
+  },
+  updateInteractiveLesson(data) {
+    return Repository.put(`${resource}/update-interactive-lesson`, data)
   },
   removeLesson(lessonId) {
     const data = {

@@ -31,7 +31,7 @@ html {
   font-family: 'Roboto', sans-serif;
 }
 .v-dialog--fullscreen {
-  overflow-y: hidden !important;
+  /* overflow-y: hidden !important; */
 }
 @-moz-document url-prefix() {
   /* Disable scrollbar Firefox */

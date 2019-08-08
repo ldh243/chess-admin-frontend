@@ -49,7 +49,6 @@ export default {
       type: Number,
       default: 0
     },
-
     courseIdInput: {
       required: false,
       type: Number,
@@ -62,7 +61,6 @@ export default {
   },
   data() {
     return {
-      lessonIdCreated: 0,
       content: '',
       lessonName: '',
       editor: ckeditor5,
@@ -79,12 +77,6 @@ export default {
   watch: {
     //help passing data from child to parent after created
     // id and name will help you display in list lesson
-    lessonIdCreated: {
-      handler: function() {
-        this.$emit('newdata', [this.lessonIdCreated, this.name])
-      },
-      deep: true
-    },
     name: {
       handler: function() {
         this.isUpdatedName = false
@@ -101,6 +93,7 @@ export default {
     editingLessonId: function(newId) {
       this.editingLessonId = newId
       if (this.editingLessonId > 0) {
+        console.log("is editing")
         this.getById(this.editingLessonId)
         this.isEditing = true
       }
@@ -110,24 +103,22 @@ export default {
     if (this.editingLessonId > 0) {
       this.getById(this.editingLessonId)
       this.isEditing = true
+    } else {
+      this.content = ''
     }
-  },
-  mounted() {
-    // if (this.isEditting) {
-    //   this.getById(this.lessonId)
-    // }
   },
   methods: {
     createUninteractiveLesson() {
       if (this.editor.methods.getText().length === 0) {
         this.errors = 'Nội dung bài học không được bỏ trống'
-      }
-      if (this.$refs.form.validate()) {
+      } else {
+        if (this.$refs.form.validate()) {
         const lesson = {
           content: this.editor.methods.getVal(),
           name: this.lessonName
         }
         this.$emit('onAddUninteractiveLesson', lesson)
+      }
       }
     },
     async getById(lessonId) {

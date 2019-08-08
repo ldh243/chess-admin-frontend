@@ -45,7 +45,7 @@
   align-content: center;
   font-size: 15px;
 }
-.move {
+.move, .il-move {
   flex: 0 0 43%;
   font-size: 1.185em;
   padding-left: 10px;
@@ -54,12 +54,12 @@
   font-size: 18px;
   font-family: chessfont;
 }
-.move:hover {
+.move:hover, .il-move:hover {
   cursor: pointer;
   background-color: #1b83e4;
   color: white;
 }
-.current-move {
+.current-move, .il-current-move {
   font-weight: bold;
   background: #d1e6fa;
   color: #1f1f1f;
@@ -73,6 +73,7 @@
 }
 .move-history-content {
   height: 180px;
+  overflow-x: hidden;
 }
 .review-move-btn-group {
   height: 35px;
@@ -131,4 +132,33 @@
 }
 .cg-board-wrap .black, .cg-board-wrap .white, .blue.merida {
   background-color: transparent !important;
+}
+.depth-2 {
+  background-color: hsla(0, 59%, 85%, 0.85);
+  margin: 5pt 0 5pt 5pt;
+  flex: 0 0 100%;
+}
+.depth-2 > div {
+  flex: 0 0 100%;
+}
+.depth-2 > div > div {
+  color: #c00;
+}
+.depth-3 {
+  background-color: rgba(196, 240, 196, 0.85) !important;
+  color: #080;
+  margin: 5pt 0 5pt 5pt;
+  flex: 0 0 100%;
+}
+.depth-3 > div {
+  width: 100%;
+}
+.move,
+.empty-move, .il-empty-move {
+  flex: 0 0 43%;
+  font-size: 1.185em;
+  padding-left: 10px;
+  height: 30px;
+  align-content: center;
+  font-size: 18px;
 }

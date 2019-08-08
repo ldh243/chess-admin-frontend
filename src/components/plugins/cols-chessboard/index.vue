@@ -39,10 +39,12 @@ export default {
   },
   watch: {
     fen: function(newFen) {
-      if (this.fen !== this.game.fen()) {
+      if (newFen !== this.game.fen()) {
         this.fen = newFen
         this.board.position(this.fen)
         this.game.load(this.fen)
+        console.log("reloadFen")
+        console.log(this.fen)
       }
     },
     reset: function(reset) {
@@ -74,15 +76,17 @@ export default {
       }
     },
     getMove(source, target, piece, newPos, oldPos, orientation) {
+      let data = {}
       let move = this.game.move({
         from: source,
         to: target,
         promotion: 'q'
       })
+      console.log(move)
+      console.log(move === null)
       if (move === null) {
         return 'snapback'
       } else {
-        let data = {}
         data['moveDirection'] = `${source}${target}`
         data['move'] = this.game.pgn().split(' ')[
           this.game.pgn().split(' ').length - 1

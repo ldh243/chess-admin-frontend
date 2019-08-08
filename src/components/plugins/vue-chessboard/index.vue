@@ -54,12 +54,13 @@ export default {
   },
   watch: {
     fen: function(newFen) {
-      this.fen = newFen
+      if (this.status !== 'new') {
+        this.fen = newFen
       this.board.set({
         fen: this.fen
       })
       this.game.load(this.fen)
-      console.log("ahihi")
+      }
     },
     orientation: function(orientation) {
       console.log('watch orientation________', orientation)
@@ -95,6 +96,7 @@ export default {
     this.promotions = []
     this.promoteTo = 'q'
     this.hisMoves = ''
+    console.log('craetd')
   },
   methods: {
     possibleMoves() {
@@ -161,7 +163,7 @@ export default {
         }
         this.game.move({ from: orig, to: dest, promotion: this.promoteTo }) // promote to queen for simplicity
         this.board.set({
-          fen: this.game.fen(),
+          // fen: this.game.fen(),
           turnColor: this.toColor(),
           movable: {
             color: this.toColor(),
@@ -217,7 +219,6 @@ export default {
       console.log("init load")
       // set a default value for the configuration object itself to allow call to loadPosition()
       this.game.load(this.fen)
-      console.log(this.fen)
       this.hisMoves = ''
       this.board = Chessground(this.$refs.board, {
         fen: this.game.fen(),

@@ -38,7 +38,7 @@ export default {
   createCourse(data) {
     return Repository.post(`${resource}/create-course`, data).then(res => {
       const courseId = res.data.data.savedId
-      router.push({path: `/dashboard/instructorCourse/${courseId}`})
+      router.push({path: `/dashboard/courses/${courseId}`})
     })
   },
   removeCourse(courseId) {
@@ -83,5 +83,11 @@ export default {
       `${resource}/get-course-paginations-by-userid`,
       data
     )
+  },
+  publishCourse(courseId) {
+    const data = {
+      courseId: courseId
+    }
+    return Repository.put(`${resource}/publish-course`, data)
   }
 }
