@@ -69,17 +69,18 @@ export default {
       data
     )
   },
-  getCoursesPaginationByInstructor(page, pageSize,nameCourse,statusId) {
+  getCoursesPaginationByUserId(page, pageSize,nameCourse,statusId,userId) {
     const data = {
       params: {
         page: page,
         pageSize: pageSize,
         nameCourse: nameCourse ? nameCourse : '',
-        statusId: statusId ? statusId : ''
+        statusId: statusId ? statusId : '',
+        userId: userId
       }
     }
     return Repository.get(
-      `${resource}/get-course-paginations-current-instructor`,
+      `${resource}/get-course-paginations-by-userid`,
       data
     )
   }

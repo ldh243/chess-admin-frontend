@@ -13,13 +13,11 @@
       :monthChartName="userRegisterMonthLineChartName" 
       :chartCaptions="userRegisterChartCaption" 
       :fnGetDataAPI="getUsersRegister"/>
-
       <MonthColumnChart 
-      :name="RateWinnableChartName" 
-      :monthChartColumns="RateWinnableColumnSettings"
-      :fnGetDataAPI="getRateWinnable" @newdata="handleYearTrigger($event)"/>
-
-      <table class="columns">
+            :name="RateWinnableChartName" 
+            :monthChartColumns="RateWinnableColumnSettings"
+            :fnGetDataAPI="getRateWinnable" @newdata="handleYearTrigger($event)"/>
+      <table>
         <tr>
           <td>
             <RateWinnableLevelChart
@@ -27,15 +25,7 @@
             :year="yearExchangeComponents"
             :id="winLevelChartId"
             />
-            <div id="winLevelChart"/>
-          </td>
-          <td>
-            <RateWinnableLevelChart
-            :nameChart="loseRateLevelChartName"
-            :year="yearExchangeComponents"
-            :id="loseLevelChartId"
-            />
-            <div id="loseLevelChart"/>
+            <div id="LevelChart"/>
           </td>
         </tr>
       </table>
@@ -60,17 +50,17 @@ export default {
         userRegisterChartCaption:["Tháng","Google"],
         enrollmentMonthLineChartNmae: "Biểu đồ lượt đăng ký",
         enrollmentChartCaption:["Tháng","Lượt đăng ký"],
-        RateWinnableChartName:"Biểu đồ lượt thắng/thua bot",
+        RateWinnableChartName:"Biểu đồ kết quả chơi cờ với bot",
         RateWinnableColumnSettings:[
           ["string","Tháng"],
+          ["number","bỏ cuộc"],
+          ["number","Thua"],
+          ["number","Hòa"],
           ["number","Thắng"],
-          ["number","Thua"]
         ],
-        winRateLevelChartName: "Biểu đồ tỉ lệ thắng bot theo level",
-        winLevelChartId:"winLevelChart",
+        winRateLevelChartName: "Biểu đồ kết quả chơi cờ với bot theo level",
+        winLevelChartId:"LevelChart",
         yearExchangeComponents:dt.getFullYear(),
-        loseRateLevelChartName: "Biểu đồ tỉ lệ thua bot theo level",
-        loseLevelChartId:"loseLevelChart",
         courseNameSearch:""
       }
   },

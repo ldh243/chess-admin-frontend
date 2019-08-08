@@ -34,7 +34,7 @@ export default {
     },
     async getDataAPI(page, pageSize,nameCourse,statusId){
       if(this.$store.state.user.roleId == 1){
-        return courseRepository.getCoursesPaginationByInstructor(page, pageSize,nameCourse,statusId)
+        return courseRepository.getCoursesPaginationByUserId(page, pageSize,nameCourse,statusId,this.$store.state.user.userId)
       }else if(this.$store.state.user.roleId == 3){
         return courseRepository.getCoursesPagination(page, pageSize,nameCourse,statusId)
       }

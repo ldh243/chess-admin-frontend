@@ -13,16 +13,16 @@ export default {
             required:true,
             type:Array
         },
-        height:{
-            required:false,
-            type:Number,
-            default:500
-        },
-        width:{
-            required:false,
-            type:Number,
-            default:608
-        },
+        // height:{
+        //     required:false,
+        //     type:Number,
+        //     default:500
+        // },
+        // width:{
+        //     required:false,
+        //     type:Number,
+        //     default:608
+        // },
         id:{
             required:true,
             type:String
@@ -35,8 +35,8 @@ export default {
 
         var options = {
           title: this.name,
-          width:this.width,
-          height:this.height
+        //   width:this.width,
+        //   height:this.height
         };
 
         var chart = new GoogleCharts.api.visualization.PieChart(document.getElementById(this.id));
