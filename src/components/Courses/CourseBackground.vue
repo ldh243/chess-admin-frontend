@@ -6,8 +6,8 @@
         <p class="mb-1 display-1 text-uppercase font-weight-medium">{{title}}
           <v-chip label dark :color="courseStatusColor[statusId - 1]" small v-show="statusId !== -1">{{courseStatusName[statusId - 1]}}</v-chip>
           </p>
-        <p class="white--text title mb-0" v-show="point !== -1 || requiredPoint !== -1">Điểm:</p>
-        <p class="mb-0 white--text title" v-show="point !== -1 || requiredPoint !== -1">
+        <p class="white--text title mb-0" v-show="point !== 0 || requiredPoint !== 0">Điểm:</p>
+        <p class="mb-0 white--text title" v-show="point !== 0 || requiredPoint !== 0">
           <v-icon dark>fa-user-plus</v-icon> {{requiredPoint}} <v-icon dark>fa-user-minus</v-icon> {{point}}</p>
       </v-flex>
     </v-layout>

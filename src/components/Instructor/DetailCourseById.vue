@@ -110,9 +110,9 @@
             <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn depressed dark v-if="$store.state.user.roleId == 3" color="error">Từ chối</v-btn>
-              <v-btn depressed dark v-if="$store.state.user.roleId == 3" color="success">Đồng ý</v-btn>
-              <v-btn depressed @click="publishCourse" dark color="amber darken-2">Công khai</v-btn>
+              <v-btn depressed dark @click="rejectCourse" v-if="$store.state.user.roleId == 3" color="error">Từ chối</v-btn>
+              <v-btn depressed dark @click="approveCourse" v-if="$store.state.user.roleId == 3" color="success">Đồng ý</v-btn>
+              <v-btn depressed @click="publishCourse" dark v-if="$store.state.user.roleId == 1" color="amber darken-2">Công khai</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-sheet>
@@ -396,6 +396,26 @@ export default {
       const data  = await courseRepository.publishCourse(courseId).then(res => {
         if (res.status === 200) {
           this.snackbarContent = 'Khóa học đang được xét duyệt, xin vui lòng chờ.'
+          this.snackbar = true
+          this.actionSheet = false
+        }
+      })
+    },
+    async approveCourse() {
+      const courseId = this.$route.params.courseId
+      const data  = await courseRepository.updateCourseStatus(courseId, 2).then(res => {
+        if (res.status === 200) {
+          this.snackbarContent = 'Khóa học đã được công khai.'
+          this.snackbar = true
+          this.actionSheet = false
+        }
+      })
+    },
+    async rejectCourse() {
+      const courseId = this.$route.params.courseId
+      const data  = await courseRepository.updateCourseStatus(courseId, 5).then(res => {
+        if (res.status === 200) {
+          this.snackbarContent = 'Khóa học đã bị từ chối.'
           this.snackbar = true
           this.actionSheet = false
         }

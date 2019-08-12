@@ -459,6 +459,12 @@ export default {
           this.stepContent = content
           this.currentId = divTarget.id.replace('il-', '')
           this.currentMove = this.currentId
+          // let afterMove = this.lessonContent.find(move => {
+          //   move.preId == this.currentMove
+          // })
+          // if (afterMove === undefined) {
+          //   this.lastMove = parseInt(this.currentMove)
+          // }
           this.preId = parseInt(this.currentMove)
           if (this.currentMove == 1) {
             this.fen = document
