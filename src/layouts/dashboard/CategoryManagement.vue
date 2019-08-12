@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    <PageTitle :title="'Quản lý danh mục'"/>
+    <PageTitle :title="'Quản lý danh mục'" @search="handleSearch($event)" :searchInput="search"/>
     <v-flex xs12 justify-center ma-auto>
         <v-container>
           <v-card class="pa-5" :elevation="8">
-            <CategoryDataTable/>
+            <CategoryDataTable :search="search"/>
           </v-card>
         </v-container>
     </v-flex>    
@@ -18,6 +18,16 @@ export default {
   components: {
     PageTitle,
     CategoryDataTable
+  },
+  data() {
+    return {
+      search:''
+    }
+  },
+  methods:{
+    handleSearch(e){
+      this.search = e
+    },
   }
 }
 </script>

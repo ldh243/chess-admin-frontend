@@ -89,5 +89,19 @@ export default {
       courseId: courseId
     }
     return Repository.put(`${resource}/publish-course`, data)
+  },
+  updateCourseStatus(courseId,reasonReject,statusId){
+    const data = {
+      courseId: courseId,
+      reasonReject: reasonReject,
+      statusId: statusId
+    }
+    return Repository.put(`${resource}/update-course-status`, data)
+  },
+  changeStatusCourseToDrafting(courseId){
+    const data = {
+      courseId: courseId
+    }
+    return Repository.put(`${resource}/change-status-to-drafting`, data)
   }
 }

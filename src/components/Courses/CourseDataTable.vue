@@ -101,7 +101,6 @@ export default {
       listStatus: [
         { statusId: 1, statusName: 'Đang soạn thảo' },
         { statusId: 2, statusName: 'Công khai' },
-        { statusId: 3, statusName: 'Đã xóa' },
         { statusId: 4, statusName: 'Chờ duyệt' },
         { statusId: 5, statusName: 'Từ chối' }
       ],

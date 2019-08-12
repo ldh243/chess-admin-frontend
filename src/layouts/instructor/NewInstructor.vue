@@ -74,7 +74,7 @@ export default {
       updateStatus(isActive){
         if(!isActive){
           Swal.fire({
-            title: 'Bạn có chắc không chấp nhận?',
+            title: 'Cảnh báo',
             text: "Điều này có thể khiến người dùng không thể vào trang!",
             type: 'warning',
             showCancelButton: true,
