@@ -10,6 +10,7 @@
       sort-icon="mdi-menu-down"
       :items-per-page="5"
       hide-default-footer
+      :page="currentPage"
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.fullName }}</td>
@@ -179,7 +180,7 @@ export default {
       this.dialog = true
     },
     handlPaging(e){
-      alert('page:' + e)
+      this.currentPage = e
     }
   }
 }
