@@ -4,7 +4,6 @@
       :headers="headers"
       :items="listUsers"
       :search="search"
-      hide-actions
       :pagination.sync="pagination"
       prev-icon="mdi-menu-left"
       next-icon="mdi-menu-right"
@@ -17,7 +16,7 @@
         <td class="text-xs-center" style="width: 25%">{{ props.item.email }}</td>
         <td class="text-xs-center" style="width: 25%">{{ props.item.roleName }}</td>
         <td class="text-xs-center" style="width: 20%">{{ props.item.status }}</td>
-        <td class="justify-center layout px-0">
+        <!-- <td class="justify-center layout px-0">
           <v-btn
             icon
             flat
@@ -38,7 +37,29 @@
           >
             <v-icon>fa-lock</v-icon>
           </v-btn>
-        </td>
+        </td> -->
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-btn
+            icon
+            flat
+            color="success"
+            v-if="!item.isActive"
+            class="btn-active-deactive"
+            @click="confirmChangeStatus(true, item)"
+          >
+            <v-icon>fa-lock-open</v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            flat
+            color="error"
+            v-if="item.isActive"
+            class="btn-active-deactive"
+            @click="confirmChangeStatus(false, item)"
+          >
+            <v-icon>fa-lock</v-icon>
+          </v-btn>
       </template>
     </v-data-table>
     <Pagination 
@@ -112,7 +133,7 @@ export default {
         { text: 'Email', value: 'email', align: 'center' },
         { text: 'Vai trò', value: 'roleName', align: 'center' },
         { text: 'Trạng thái', value: 'status', align: 'center' },
-        { text: '', value: 'action', sortable: false }
+        { text: 'Actions', value: 'action', sortable: false }
       ],
       listUsers: [],
       isShowEmptyMessage:false,

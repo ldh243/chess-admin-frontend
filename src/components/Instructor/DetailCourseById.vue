@@ -105,14 +105,25 @@
         <v-btn fixed bottom right style="top:50%" @click="actionSheet = true" dark fab color="pink">
           <v-icon>settings</v-icon>
         </v-btn>
-        <v-bottom-sheet v-model="actionSheet" inset>
+        <v-bottom-sheet v-model="actionSheet" inset :retain-focus="false">
           <v-sheet class="text-center pt-6" height="200px" >
             <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn depressed dark @click="rejectCourse" v-if="$store.state.user.roleId == 3" color="error">Từ chối</v-btn>
-              <v-btn depressed dark @click="approveCourse" v-if="$store.state.user.roleId == 3" color="success">Đồng ý</v-btn>
-              <v-btn depressed @click="publishCourse" dark v-if="$store.state.user.roleId == 1" color="amber darken-2">Công khai</v-btn>
+              <div v-if="$store.state.user.roleId == 3">
+                <v-btn depressed dark v-if="course.statusId == 4" color="error" @click="rejectCourse">Từ chối</v-btn>
+                <v-btn depressed dark v-if="course.statusId == 4" color="success" @click="publishCourseByAdmin">Đồng ý</v-btn>
+                <v-btn depressed v-if="course.statusId != 4 && course.statusId != 2" @click="publishCourseByAdmin" dark color="green">Công khai</v-btn>
+                <v-btn depressed v-if="course.statusId != 4 && course.statusId != 5" @click="rejectCourse" dark color="red darken-3">Ngưng công khai</v-btn>
+              </div>
+              <div v-if="$store.state.user.roleId == 1 && $store.state.user.userId == course.author.userId">
+                <v-btn depressed v-if="course.statusId != 2 && course.statusId == 1" @click="publishCourse" dark color="green">Công khai</v-btn>
+                <v-btn depressed v-if="course.statusId != 5 && course.statusId == 2" @click="draftCourseStatus" dark color="red darken-3">Ngưng công khai</v-btn>
+                <v-btn depressed v-if="course.statusId == 4" @click="draftCourseStatus" dark color="yellow darken-4">Soạn thảo</v-btn>
+              </div>
+              <div v-if="$store.state.user.roleId == 1 && $store.state.user.userId != course.author.userId">
+                <v-card-text>Chỉ chủ khóa học mới thay đổi trạng thái khóa học</v-card-text>
+              </div>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-sheet>
@@ -205,6 +216,7 @@ import Loader from '@/components/Loader'
 import CustomButton from '@/components/kit/CustomButton'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import Chessboard from '@/components/plugins/cols-chessboard'
+import Swal from 'sweetalert2'
 const courseRepository = RepositoryFactory.get('course')
 const lessonRepository = RepositoryFactory.get('lesson')
 export default {
@@ -308,6 +320,7 @@ export default {
             const lesson = await courseRepository
               .getById(courseId)
               .then(res => {
+                console.log(res)
                 if (res.status === 200) {
                   this.course = res.data.data
                   this.listLessons = res.data.data.lessonViewModels
@@ -398,6 +411,74 @@ export default {
           this.snackbarContent = 'Khóa học đang được xét duyệt, xin vui lòng chờ.'
           this.snackbar = true
           this.actionSheet = false
+          this.course.statusId = 4
+          this.$forceUpdate()
+        }
+      })
+    },
+    async rejectCourse(){
+      const courseId = this.$route.params.courseId
+      Swal.fire({
+        text: 'Nhập lí do từ chối',
+        input: 'textarea',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
+        inputValidator: (value) => {
+          if (!value && value.length < 6) {
+            return 'Lí do phải từ 6 kí tự trở lên'
+          }
+        },
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        showLoaderOnConfirm: true,
+        preConfirm: async(rejectMessage) => {
+          await this.updateCourseStatus(courseId,5,rejectMessage,'Khóa học đã được từ chối')
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      })
+    },
+    async publishCourseByAdmin(){
+      const courseId = this.$route.params.courseId
+      await this.updateCourseStatus(courseId,2,'','Khóa học đã được công khai')
+    },
+    async updateCourseStatus(courseId,statusId,rejectMessage,onSuccessMessage){
+        const data  = await courseRepository.updateCourseStatus(courseId,rejectMessage,statusId).then(res => {
+          if (res.status === 200) {
+            this.snackbarContent = onSuccessMessage 
+            this.snackbar = true
+            this.course.statusId = statusId
+            this.actionSheet = false
+            this.$forceUpdate()
+          }
+        })
+    },
+    async draftCourseStatus(){
+      Swal.fire({
+        title: 'Cảnh báo',
+        text: this.course.statusId == 4 ? "Điều này có thể khiến Admin không nhìn thấy request của bạn nữa!" 
+        : "Điều này có thể khiến học viên không thể nhìn thấy khóa học này nữa!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Chấp nhận',
+        cancelButtonText: 'Hủy bỏ'
+      }).then(async (result) => {
+        if (result.value) {
+          const courseId = this.$route.params.courseId
+          await courseRepository.changeStatusCourseToDrafting(courseId).then(res => {
+            if (res.status === 200) {
+              this.snackbarContent = 'Khóa học đã được chuyển sang trạng thái soạn thảo.'
+              this.snackbar = true
+              this.actionSheet = false
+              this.course.statusId = 1
+              this.$forceUpdate()
+            }
+          })
         }
       })
     },

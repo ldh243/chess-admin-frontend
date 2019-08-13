@@ -13,7 +13,8 @@
             <UserDataTable :search="search"/>
           </v-card>
         </v-container>
-    </v-flex>    
+    </v-flex>
+        
   </v-container>
 </template>
 

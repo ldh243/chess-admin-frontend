@@ -10,17 +10,23 @@
     </v-card-actions>
       <v-data-table
       :headers="headers"
-      :items="listCategory"
-      :search="search"
-      hide-actions
+      :items="listCategoryItems"
       hide-default-footer
-      :items-per-page="5"
-      :pagination.sync="pagination"
+      :items-per-page="rowsPerPage"
     >
-      <template v-slot:items="props">
-        <td style="width: 70%">{{ props.item.name}}</td>
-        <td>
-          <v-btn
+      <template v-slot:item.action="{item}">
+          <v-icon
+            class="mr-2"
+            @click="confirmEditCategory(item)"
+          >
+            edit
+          </v-icon>
+          <v-icon
+            @click="confirmRemoveCategory(item)"
+          >
+          delete
+          </v-icon>
+          <!-- <v-btn
             @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
             color="" icon small
           ><v-icon>fa-list</v-icon></v-btn>
@@ -29,32 +35,33 @@
           </v-btn>
           <v-btn icon flat class="btn-active-deactive" @click="confirmRemoveCategory(props.item)">
             <v-icon>fa-trash</v-icon>
-          </v-btn>
-        </td>
+          </v-btn> -->
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
       <v-layout justify-center>
-      <v-pagination v-model="pagination.page" :length="pages" circle></v-pagination>
+      <v-pagination v-model="page" :length="pages" circle></v-pagination>
       </v-layout>
     </div>
 
     <!-- Create Category -->
     <v-dialog persistent v-model="dialog" max-width="500px">
       <v-card>
-        <v-card-text>
-          <v-text-field type="text" v-model="createdCategory.name" label="Danh mục"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
-          <v-btn
-            flat
-            color="primary"
-            @click="createCategory(), refreshPage(), dialog = false"
-          >Đồng Ý</v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
+        <v-form ref="createdForm" lazy-validation>
+          <v-card-text>
+            <v-text-field :rules="categoryNameRules" :counter="50" type="text" v-model="createdCategory.name" label="Danh mục"></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
+            <v-btn
+              flat
+              color="primary"
+              @click="createCategory()"
+            >Đồng Ý</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
     <!-- Show Detail Course of Catagory -->
@@ -85,11 +92,11 @@
             </v-layout>
           </v-container>
         </v-card-text>
-        <v-card-actions @click>
+        <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn @click="editDialog = false" color="blue darken-1" flat>Hủy</v-btn>
           <v-btn
-            @click="updateCategory(), editDialog = false, refreshPage()"
+            @click="updateCategory(), editDialog = false"
             color="blue darken-1"
             flat
           >Đồng Ý</v-btn>
@@ -114,7 +121,7 @@
           <v-spacer></v-spacer>
           <v-btn @click="removeDialog = false" color="blue darken-1" flat>Hủy</v-btn>
           <v-btn
-            @click="removeCategory(removedCategory.categoryId), removeDialog = false, refreshPage()"
+            @click="removeCategory(removedCategory.categoryId), removeDialog = false"
             color="blue darken-1"
             flat
           >Đồng Ý</v-btn>
@@ -133,6 +140,13 @@ import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const categoryRepository = RepositoryFactory.get('category')
 const courseRepository = RepositoryFactory.get('course')
 export default {
+  props:{
+    search:{
+      required:false,
+      type:String,
+      default:''
+    },
+  },
   components: {
     BasicCourse,
     Loader
@@ -145,10 +159,8 @@ export default {
       removeDialog: false,
       detailContainer: false,
       categoryId: '',
-      search: '',
-      pagination: {
-        rowsPerPage: 10
-      },
+      page:1,
+      rowsPerPage:10,
       headers: [
         {
           text: 'Tên Danh Mục Khóa Học ',
@@ -156,23 +168,26 @@ export default {
           align: 'left',
           sortable: false
         },
-        { text: '', value: 'action', sortable: false }
+        { text: 'Actions', value: 'action',align: 'right', sortable: false },
       ],
       listCourses: [],
       listCategory: [],
+      filterListCategory:[],
+      listCategoryItems:[],
       editedCategory: [],
       createdCategory: [],
       removedCategory: [],
-      detailCategory: []
+      detailCategory: [],
+      categoryNameRules: [v => !!v || 'Tên Category không được bỏ trống',
+      v => (v && v.length >= 6 || 'Tên Category phải có ít nhất 6 kí tự')],
     }
   },
   computed: {
     pages() {
-      const rowsPerPage = this.pagination.rowsPerPage
-      const totalItems = this.listCategory.length
-      if (rowsPerPage == null || totalItems == null) return 0
+      const totalItems = this.filterListCategory.length
+      if (this.rowsPerPage == null || totalItems == null) return 0
 
-      return Math.ceil(totalItems / rowsPerPage)
+      return Math.ceil(totalItems / this.rowsPerPage)
     }
   },
   mounted() {
@@ -181,12 +196,11 @@ export default {
     this.loader = false
   },
   methods: {
-    refreshPage() {
-      window.location.reload()
-    },
     async getCategories() {
       const { data } = await categoryRepository.getCategories()
       this.listCategory = this.formatListCourse(data.data)
+      this.filterListCategory = this.listCategory
+      this.renderPaging()
     },
     async getCourseByCategoryId() {
       const { data } = await courseRepository.getCourseByCategoryId(
@@ -197,20 +211,35 @@ export default {
       this.listCourses = this.formatListCourse(data.data.content)
     },
     async createCategory() {
-      const { data } = await categoryRepository.createCategory(
-        this.createdCategory.name
-      )
+      var self = this
+      if (this.$refs.createdForm.validate()) {
+        const { data } = await categoryRepository.createCategory(
+          this.createdCategory.name
+        ).then(res => {
+          if (res.status === 200) {
+            self.listCategory.push({categoryId:res.data.data.savedId,name:self.createdCategory.name})
+            self.handleFilter()
+            self.dialog = false  
+          }
+        })
+      }
     },
     async updateCategory() {
+      var self = this
       const { data } = await categoryRepository.updateCategory(
         this.editedCategory.categoryId,
         this.editedCategory.name
       )
       if (data.data) {
-        let category = this.listCategory.find(
+        let category = this.filterListCategory.find(
+          category => this.editedCategory.categoryId === category.categoryId
+        )
+        let categoryAll = this.listCategory.find(
           category => this.editedCategory.categoryId === category.categoryId
         )
         category.name = this.editedCategory.name
+        categoryAll.name = this.editedCategory.name
+        self.handleFilter()
       }
     },
     async removeCategory() {
@@ -218,24 +247,55 @@ export default {
         this.removedCategory.categoryId,
         this.removedCategory.name
       )
+      if(data.data){
+        for(var i = 0; i < this.listCategory.length;i++){
+          if(this.listCategory[i].categoryId == this.removedCategory.categoryId){
+            this.listCategory.splice(i,1)
+          }
+        }
+        this.handleFilter()
+      }
     },
     confirmEditCategory(item) {
-      this.editedCategory = this.listCategory.find(
+      this.editedCategory = this.filterListCategory.find(
         category => category.categoryId === item.categoryId
       )
       this.editDialog = true
     },
     confirmRemoveCategory(item) {
-      this.removedCategory = this.listCategory.find(
+      this.removedCategory = this.filterListCategory.find(
         category => category.categoryId === item.categoryId
       )
       this.removeDialog = true
     },
     confirmDetailCategory(item) {
-      this.detailCategory = this.listCategory.find(
+      this.detailCategory = this.filterListCategory.find(
         category => category.categoryId === item.categoryId
       )
       this.detailContainer = true
+    },
+    renderPaging(){
+      var itemIndex = (this.page - 1) * this.rowsPerPage
+      this.listCategoryItems = this.filterListCategory
+      .slice(itemIndex,itemIndex + this.rowsPerPage)
+    },
+    handleFilter(){
+      this.filterListCategory = this.listCategory.filter(
+        category => category.name.indexOf(this.search) > -1
+      )
+      this.renderPaging()
+    }
+  },
+  watch:{
+    page:{
+      handler:function(){
+        this.renderPaging()
+      }
+    },
+    search:{
+      handler:function(){
+        this.handleFilter()
+      }
     }
   }
 }
@@ -251,7 +311,7 @@ export default {
 .btn-active-deactive i {
   font-size: 17px !important;
 }
->>> .v-menu__activator {
+.v-menu__activator {
   justify-content: center;
 }
 .div1 {

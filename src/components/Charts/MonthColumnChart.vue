@@ -79,7 +79,7 @@ export default {
             this.chartData = []
 
             for(var i = 0; i < lengthMonthReport;i++){
-                this.chartData.push(["Tháng " + (i + 1),data[i],data[i + 12]])
+                this.chartData.push(["Tháng " + (i + 1),data[i],data[i + 12],data[i + 12 * 2],data[i + 12 * 3]])
             }
         },
     },

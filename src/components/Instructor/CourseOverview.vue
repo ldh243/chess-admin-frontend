@@ -66,7 +66,6 @@ export default {
         {text:'Tất cả',value:'0'},
         {text:'Đang soạn thảo',value:'1'},
         {text:'Công khai',value:'2'},
-        {text:'Đã xóa',value:'3'},
         {text:'Chờ xét duyệt',value:'4'},
         {text:'Đã từ chối',value:'5'},
         ],

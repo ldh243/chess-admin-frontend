@@ -102,7 +102,7 @@ export default {
                 this.$router.push(`/dashboard/instructor-request?email=${notification.objectName}`)
               break
               case this.ObjectType.Course:
-                this.$router.push(`/dashboard/courses?courseName=${notification.objectName}&status=4`)
+                this.$router.push(`/dashboard/courses?courseName=${notification.objectName}`)
               break
             }
           }else if(this.$store.state.user.roleId == 1){

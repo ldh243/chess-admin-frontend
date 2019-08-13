@@ -69,17 +69,18 @@ export default {
       data
     )
   },
-  getCoursesPaginationByInstructor(page, pageSize,nameCourse,statusId) {
+  getCoursesPaginationByUserId(page, pageSize,nameCourse,statusId,userId) {
     const data = {
       params: {
         page: page,
         pageSize: pageSize,
         nameCourse: nameCourse ? nameCourse : '',
-        statusId: statusId ? statusId : ''
+        statusId: statusId ? statusId : '',
+        userId: userId
       }
     }
     return Repository.get(
-      `${resource}/get-course-paginations-current-instructor`,
+      `${resource}/get-course-paginations-by-userid`,
       data
     )
   },
@@ -88,5 +89,19 @@ export default {
       courseId: courseId
     }
     return Repository.put(`${resource}/publish-course`, data)
+  },
+  updateCourseStatus(courseId,reasonReject,statusId){
+    const data = {
+      courseId: courseId,
+      reasonReject: reasonReject,
+      statusId: statusId
+    }
+    return Repository.put(`${resource}/update-course-status`, data)
+  },
+  changeStatusCourseToDrafting(courseId){
+    const data = {
+      courseId: courseId
+    }
+    return Repository.put(`${resource}/change-status-to-drafting`, data)
   }
 }
