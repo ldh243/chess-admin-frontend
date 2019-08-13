@@ -86,6 +86,7 @@ export default {
         },
         {
           title: 'Xét duyệt giảng viên',
+<<<<<<< HEAD
           icon: 'fa-users-cog',
           path: '/dashboard/instructor-request'
         },
@@ -93,9 +94,18 @@ export default {
           title: 'Thông báo',
           icon: 'fa-bell',
           path: '/dashboard/notifications',
+=======
+          icon: 'fa-chalkboard-teacher',
+          path: '/dashboard/requestInstructor'
+        },
+        {
+          title: 'Xét duyệt khóa học',
+          icon: 'fa-book-reader',
+          path: '/dashboard/requestCourses'
+>>>>>>> 213ddd884bc54c7baed038a947b94fe079bfe66c
         }
       ],
-      items2: [
+      itemsInstructor: [
         {
           title: 'Thống kê',
           icon: 'fa-chart-line',
@@ -104,17 +114,25 @@ export default {
         {
           title: 'Danh sách khóa học',
           icon: 'fa-address-book',
+<<<<<<< HEAD
           path: '/dashboard/courses',
+=======
+          path: '/dashboard/instructorCourse'
+>>>>>>> 213ddd884bc54c7baed038a947b94fe079bfe66c
         },
         {
           title: 'Thêm khóa học',
           icon: 'fa-plus-circle',
+<<<<<<< HEAD
           path: '/dashboard/createcourse',
         },
         {
           title: 'Thông báo',
           icon: 'fa-bell',
           path: '/dashboard/notifications',
+=======
+          path: '/dashboard/createcourse'
+>>>>>>> 213ddd884bc54c7baed038a947b94fe079bfe66c
         }
       ],
       dialog: false,
@@ -165,7 +183,6 @@ export default {
 >>> .primary--text {
   max-width: 300px;
 }
-
 </style>
 <style>
 .v-navigation-drawer__image {

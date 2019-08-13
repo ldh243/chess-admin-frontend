@@ -99,6 +99,8 @@ export default {
   data() {
     return {
       image: [],
+      Loader,
+      valid: true,
       valueName: '',
       email: this.$store.state.user.email,
       loader: false,
@@ -108,8 +110,19 @@ export default {
         point: 0,
         description: '',
         listCategoryIds: [],
-        image: ''
+        image: '',
+        point: ''
       },
+      nameRules: [
+        v => !!v || 'Tên khóa học không được để trống',
+        v => (v && v.length <= 100) || 'Tên khóa học không được quá 100 ký tự'
+      ],
+      descriptionRules: [v => !!v || 'Mô tả khóa học không được để trống'],
+      imageRules: [v => !!v || 'Chọn hình ảnh cho khóa học'],
+      pointRules: [
+        v => !!v || 'Vui lòng nhập số điểm',
+        v => /^[+]?\d*$/.test(v) || 'Điểm cho khóa học không hợp lệ'
+      ],
       listCategories: [],
       imageName: '',
       imageUrl: '',

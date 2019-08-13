@@ -235,6 +235,7 @@ export default {
   },
   data() {
     return {
+      dialog: false,
       dialogLessonInteractive: false,
       loader: false,
       course: {},

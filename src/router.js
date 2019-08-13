@@ -7,6 +7,8 @@ import CategoryManagement from '@/layouts/dashboard/CategoryManagement'
 import NewInstructorManagement from '@/layouts/dashboard/NewInstructorManagement'
 import NewInstructor from '@/layouts/instructor/NewInstructor'
 import CourseDetailByInstructor from '@/layouts/dashboard/CourseDetailByInstructor'
+import RequestInstructor from '@/layouts/dashboard/RequestInstructor'
+import RequestCourse from '@/layouts/dashboard/RequestCourse'
 import Dashboard from '@/pages/Dashboard.vue'
 //page
 import Login from '@/pages/Login'

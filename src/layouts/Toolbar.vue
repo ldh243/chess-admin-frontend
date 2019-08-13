@@ -58,6 +58,7 @@
 import ListNotification from '@/components/Notification/ListNotification'
 export default {
   name: 'Toolbar',
+<<<<<<< HEAD
   components:{
     ListNotification
   },
@@ -92,6 +93,13 @@ export default {
       this.$router.push('/')
     },
   },
+=======
+  data() {
+    return {
+      chessLogo: require('@/assets/images/chess.png')
+    }
+  }
+>>>>>>> 213ddd884bc54c7baed038a947b94fe079bfe66c
 }
 </script>
 

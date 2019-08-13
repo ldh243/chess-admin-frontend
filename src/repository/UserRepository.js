@@ -15,6 +15,26 @@ export default {
       } }
     return Repository.get(`${resource}/get-users-pagination`, data)
   },
+  // Get List Instructor
+  getUsersRequestInstructor(page, pageSize, isActive, role) {
+    const data = {
+      params: {
+        page: page,
+        pageSize: pageSize,
+        isActive: isActive,
+        role: role
+      }
+    }
+    return Repository.get(`${resource}/get-users-pagination`, data)
+  },
+  getUsersById(userId) {
+    const data = {
+      params: {
+        userId: userId
+      }
+    }
+    return Repository.get(`${resource}/get-by-id`, data)
+  },
   updateStatus(data) {
     return Repository.put(`${resource}/update-status`, data)
   },

@@ -45,7 +45,7 @@
     </div>
 
     <!-- Create Category -->
-    <v-dialog persistent v-model="dialog" max-width="500px">
+    <v-dialog v-model="createCategoryDialog" max-width="500px">
       <v-card>
         <v-form ref="createdForm" lazy-validation>
           <v-card-text>
@@ -68,17 +68,17 @@
     <v-dialog v-model="detailContainer" max-width="1000px">
       <v-card>
         <v-card-text>
-          <h2 class="basic">Các khóa học {{detailCategory.name}}</h2>
+          <h2 class="basic">Các khóa học {{ detailCategory.name }}</h2>
         </v-card-text>
-        <hr>
+        <hr />
         <v-card>
-          <BasicCourse :listCourses="listCourses"></BasicCourse>
+          <BasicCourse :list-courses="listCourses"></BasicCourse>
         </v-card>
       </v-card>
     </v-dialog>
 
     <!-- Dialog Update Category -->
-    <v-dialog persistent v-model="editDialog" max-width="500px">
+    <v-dialog v-model="editDialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">CHỈNH SỬA DANH MỤC</span>
@@ -105,33 +105,32 @@
     </v-dialog>
 
     <!-- Dialog Remove Category-->
-    <v-dialog persistent v-model="removeDialog" max-width="500px">
+    <v-dialog v-model="removeDialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">XÓA DANH MỤC</span>
         </v-card-title>
         <v-card-text>
-          <v-container grid-list-md>
-            <v-flex>
-              <v-card-text>Bạn có chắc chắn muốn xóa danh mục {{removedCategory.name}}</v-card-text>
-            </v-flex>
-          </v-container>
+          Bạn có chắc chắn muốn xóa danh mục
+          <b>{{ selectedCategory.name }}</b>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="removeDialog = false" color="blue darken-1" flat>Hủy</v-btn>
+          <v-btn color="error" flat @click="removeDialog = false">Hủy</v-btn>
           <v-btn
             @click="removeCategory(removedCategory.categoryId), removeDialog = false"
             color="blue darken-1"
             flat
+            @click="
+              removeCategory(selectedCategory), (removeDialog = false)
+            "
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <Loader v-if="loader"/>
+    <Loader v-if="loader" />
   </div>
 </template>
-
 
 <script>
 import BasicCourse from '@/components/Category/BasicCourse'
@@ -153,7 +152,8 @@ export default {
   },
   data() {
     return {
-      dialog: false,
+      valid: true,
+      createCategoryDialog: false,
       loader: false,
       editDialog: false,
       removeDialog: false,
@@ -166,7 +166,7 @@ export default {
           text: 'Tên Danh Mục Khóa Học ',
           value: 'name',
           align: 'left',
-          sortable: false
+          sortable: true
         },
         { text: 'Actions', value: 'action',align: 'right', sortable: false },
       ],
@@ -241,11 +241,13 @@ export default {
         categoryAll.name = this.editedCategory.name
         self.handleFilter()
       }
+      this.editDialog = fals
+      e
     },
     async removeCategory() {
       const { data } = await categoryRepository.removeCategory(
-        this.removedCategory.categoryId,
-        this.removedCategory.name
+        this.selectedCategory.categoryId,
+        this.selectedCategory.name
       )
       if(data.data){
         for(var i = 0; i < this.listCategory.length;i++){
