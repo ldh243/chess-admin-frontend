@@ -15,40 +15,11 @@ export default {
       } }
     return Repository.get(`${resource}/get-users-pagination`, data)
   },
-  // Get List Instructor
-  getUsersRequestInstructor(page, pageSize, isActive, role) {
-    const data = {
-      params: {
-        page: page,
-        pageSize: pageSize,
-        isActive: isActive,
-        role: role
-      }
-    }
-    return Repository.get(`${resource}/get-users-pagination`, data)
-  },
-  getUsersById(userId) {
-    const data = {
-      params: {
-        userId: userId
-      }
-    }
-    return Repository.get(`${resource}/get-by-id`, data)
-  },
   updateStatus(data) {
     return Repository.put(`${resource}/update-status`, data)
   },
-  getCurrentUserDetail(){
-    var user = localStorage.getItem('user');
-
-    if(!user){
-      var data = Repository.get(`${resource}/get-current-user-detail`)
-      user = data.data.data
-    }else{
-      user = JSON.parse(user)
-    }
-
-    return user
+  getCurrentUserDetail() {
+    return Repository.get(`${resource}/get-current-user-detail`)
   },
   getUserById(userId){
     const data = {

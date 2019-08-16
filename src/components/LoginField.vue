@@ -15,7 +15,6 @@
               <v-btn
                 v-if="!isLogin"
                 black--text
-                round
                 color="white"
                 :style="btnLoginGoogle"
                 class="mr-0"

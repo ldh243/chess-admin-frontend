@@ -1,6 +1,6 @@
 <template>
-  <v-app id="sandbox">
-    <Toolbar />
+  <v-app>
+    <Toolbar/>
     <Drawer />
     <v-content style="padding-top: 72px;padding-bottom: 80px;padding-left:256px">
       <Content />
@@ -8,14 +8,24 @@
   </v-app>
 </template>
 <script>
-import Drawer from '@/layouts/Drawer'
-import Content from '@/layouts/Content'
-import Toolbar from '@/layouts/Toolbar'
+
+import Drawer from '@/components/Drawer'
+import Content from '@/components/Content'
+import Toolbar from '@/components/Toolbar'
 export default {
   components: {
     Drawer,
     Content,
     Toolbar
+  },
+  data() {
+    return {
+    }
+  },
+  computed: {
+    
+  },
+  methods: {
   }
 }
 </script>

@@ -8,7 +8,7 @@
 <script>
 import Chess from 'chess.js'
 import { Chessground } from 'chessground'
-import { uniques } from './Util.js'
+import { uniques } from './Utils.js'
 
 export default {
   name: 'Chessboard',

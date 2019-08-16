@@ -6,32 +6,34 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     api: {
-      //user
-      login: 'http://cols-be.ml/oauth2/authorize/google',
-      getCurrentUserDetail: 'http://cols-be.ml/user/get-current-user-detail',
-      updateUserStatus: 'http://cols-be.ml/user/update-status'
+      login: 'http://cols-be.ml/oauth2/authorize/google'
     },
-    role: {
-      instructor: '1',
-      learner: '2',
-      admin: '3',
-      registrator: '4'
-    },
+    loader: 0,
     user: JSON.parse(localStorage.getItem('user')),
     currentLessonList: [],
     unreadNotifications: sessionStorage.getItem('unread-notification-counter') ? sessionStorage.getItem('unread-notification-counter') : 0,
-    notificationUpdatedId:0
+    notificationUpdatedId: 0
   },
   mutations: {
+    setUser(state, payload) {
+      state.user = payload
+    },
+    setUserToken(state, payload) {
+      state.userToken = payload
+    },
+    incrementLoader(state, payload) {
+      state.loader += payload
+    },
     changeUser(state, payload) {
       state.user = payload
     },
-    changeUnreadNotifications(state,unreadNotifications){
+    changeUnreadNotifications(state, unreadNotifications) {
       state.unreadNotifications = unreadNotifications
     },
-    changeNotificationUpdatedId(state,notificationUpdatedId){
+    changeNotificationUpdatedId(state, notificationUpdatedId) {
       state.notificationUpdatedId = notificationUpdatedId
     }
   },
-  actions: {}
+  actions: {},
+  getters: {}
 })

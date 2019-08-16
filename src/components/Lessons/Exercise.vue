@@ -143,8 +143,8 @@
 
 <script>
 import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
-import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
-import PreviewExercise from '@/components/preview/PreviewExercise.vue'
+import CreateChessPuzzle from './CreateChessPuzzle.vue'
+import PreviewExercise from './preview/PreviewExercise.vue'
 export default {
   name: 'CreateExercise',
   components: {

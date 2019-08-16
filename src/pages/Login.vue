@@ -24,7 +24,8 @@ export default {
         backgroundImage: `url(${this.backgroundImage})`,
         backgroundPosition: `center center`,
         backgroundSize: `cover`,
-        filter: `brightness(0.5)`
+        filter: `brightness(0.5)`,
+        minHeight: `100vh`
       }
     }
   }

@@ -6,24 +6,6 @@ export default Vue.mixin({
     async callAxios(method, url, params) {
       //get token from localStorage
       var token = this.getTokenFromLocalStorage()
-
-      // axios.interceptors.response.use(
-      //   function(response) {
-      //     return response
-      //   },
-      //   function(error) {
-      //     if (
-      //       error.response.status &&
-      //       (error.response.status === 403 || error.response.status === 401)
-      //     ) {
-      //       localStorage.removeItem('access-token')
-      //       localStorage.removeItem('user')
-      //       window.location.reload()
-      //     }
-      //   }
-      // )
-
-      //set config for axios
       let config = {
         method: method,
         url: url,
@@ -55,10 +37,10 @@ export default Vue.mixin({
         `square-${fromSquare}`
       )
       let toSquareArr = currentBoard.getElementsByClassName(`square-${toSquare}`)
-      Array.prototype.forEach.call(fromSquareArr, function(square) {
+      Array.prototype.forEach.call(fromSquareArr, function (square) {
         square.classList.add('highlight-white')
       })
-      Array.prototype.forEach.call(toSquareArr, function(square) {
+      Array.prototype.forEach.call(toSquareArr, function (square) {
         square.classList.add('highlight-white')
       })
     },
@@ -101,25 +83,11 @@ export default Vue.mixin({
         return 'Vô hiệu hóa'
       }
     },
-    getStatusRequestInstructor(active) {
-      if (active) {
-        return 'Kích hoạt'
-      } else {
-        return 'Chờ xét duyệt'
-      }
-    },
 
     formatListUser(users) {
       users.forEach(user => {
         user.roleName = this.getRoleName(user.roleId)
         user.status = this.getStatusUser(user.isActive)
-      })
-      return users
-    },
-    formatListRequestInstructor(users) {
-      users.forEach(user => {
-        user.roleName = this.getRoleName(user.roleId)
-        user.status = this.getStatusRequestInstructor(user.isActive)
       })
       return users
     },
@@ -138,14 +106,7 @@ export default Vue.mixin({
           return 'Từ chối'
       }
     },
-    getLessonTypeName(lessonTypeId) {
-      switch (lessonTypeId) {
-        case 2:
-          return 'Thực hành'
-        case 3:
-          return 'Lý thuyết'
-      }
-    },
+
     getDateTimeFormat(datetime) {
       const date = new Date(Date.parse(datetime))
       return date.toLocaleString()

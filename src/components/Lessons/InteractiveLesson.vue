@@ -235,9 +235,9 @@
 
 <script>
 import Chessboard from '@/components/plugins/cols-chessboard'
-import CreateChessPuzzle from '@/components/Instructor/CreateChessPuzzle.vue'
+import CreateChessPuzzle from './CreateChessPuzzle'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
-import PreviewInteractiveLesson from '@/components/preview/PreviewInteractiveLesson'
+import PreviewInteractiveLesson from './preview/PreviewInteractiveLesson'
 const lessonRepository = RepositoryFactory.get('lesson')
 import MoveHistory from '@/library/ChessHistory.js'
 

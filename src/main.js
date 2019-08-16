@@ -1,17 +1,19 @@
-import Vue from 'vue'
-import './plugins/vuetify'
-import Index from './pages/Index'
+import Vue from "vue";
+import App from "./App.vue";
 import router from './router'
-import store from './store'
-import mixin from './mixin'
-import './plugins/index'
-import firebase from 'firebase'
+import store from './store';
+import mixin from './mixin';
+import vuetify from './plugins/vuetify';
+import './assets/style/app.css'
 import './assets/style/vue-chessboard.css'
 import './assets/style/chessboard-0.3.0.css'
-import vuetify from './plugins/vuetify';
-Vue.config.productionTip = false
+import firebase from 'firebase'
+import Repository, { setAuthorizationHeader } from '@/repository/Repository.js'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+const userRepository = RepositoryFactory.get('user')
 
-//connect firebase
+Vue.config.productionTip = false;
+
 var firebaseConfig = {
   apiKey: 'AIzaSyDBz72G-L_nG1s2CgXHx0pPKc8tQLNyyS0',
   authDomain: 'cols-fpt.firebaseapp.com',
@@ -24,23 +26,33 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 
-function getParamsFromHeader() {
-  const url = new URL(window.location.href)
-  const token = url.searchParams.get('token')
-  const role = url.searchParams.get('role')
-  if (token && role) {
-    const originUri = url.origin + url.pathname
-    history.pushState(null, '', originUri)
-    localStorage.setItem('access-token', token)
+async function getParamsFromHeader(to) {
+  const token = to.query.token
+  const role = to.query.role
+  const acceptedRole = [1, 3]
+  if (token && role && acceptedRole.includes(parseInt(role))) {
+    localStorage.setItem('access-token', `Chess ${token}`)
     localStorage.setItem('role', role)
-    //reload to re-create axios
-    location.reload(true)
+    setAuthorizationHeader(Repository, localStorage.getItem('access-token').trim())
+    await getCurrentUserDetail()
   }
   
 }
-
-router.beforeEach((to, from, next) => {
-  getParamsFromHeader()
+async function getCurrentUserDetail() {
+  const { data } = await userRepository.getCurrentUserDetail()
+  let user = data.data
+  localStorage.setItem('user', JSON.stringify(user))
+  setUserState()
+}
+function setUserState() {
+  const user = localStorage.getItem('user')
+  const userToken = localStorage.getItem('access-token')
+  store.commit('setUser', JSON.parse(user))
+  store.commit('setUserToken', userToken)
+  console.log(store.state.user)
+}
+router.beforeEach(async (to, from, next) => {
+  await getParamsFromHeader(to)
   
   const publicPages = ['/']
   const roleAccepted = [1, 3]
@@ -60,21 +72,21 @@ router.beforeEach((to, from, next) => {
   if (authRequired && (!loggedIn || !roleRequired)) {
     return next('/') //chua login -> ve trang login
   } else if (!authRequired && loggedIn && roleRequired) {
+    store.state.user = JSON.parse(localStorage.getItem('user'))
     return next('/dashboard/profile') //login roi, nhung vao lai login -> qua dashboard
   } else if (loggedIn && !roleRequired) {
     localStorage.removeItem('access-token')
     localStorage.removeItem('role')
     return next('/')
   }
-
   next()
   
 })
 
 new Vue({
-  router,
+  vuetify,
   store,
   mixin,
-  vuetify,
-  render: h => h(Index)
-}).$mount('#app')
+  router,
+  render: h => h(App)
+}).$mount("#app");

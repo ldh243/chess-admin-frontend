@@ -42,6 +42,9 @@ export default {
       default: []
     }
   },
+  mounted() {
+    console.log(this.listCourses)
+  },
   data() {
     return {
       dialog: false,

@@ -15,7 +15,6 @@ export default {
         lessonId: lessonId
       }
     }
-<<<<<<< HEAD
     return Repository.get(`${resource}/get-by-id`,data)
   },
   updateUninteractiveLesson(data){
@@ -29,12 +28,5 @@ export default {
       lessonId: lessonId
     }
     return Repository.put(`${resource}/remove-lesson`, data)
-=======
-    return Repository.get(`${resource}/get-by-id`, data)
-  },
-  createInteractiveLesson(lessonViewModel) {
-    const data = lessonViewModel
-    return Repository.post(`${resource}/create-interactive-lesson`, data)
->>>>>>> 213ddd884bc54c7baed038a947b94fe079bfe66c
   }
 }
