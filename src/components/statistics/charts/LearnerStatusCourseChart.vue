@@ -1,15 +1,9 @@
 <template>
 <div>
-  <div v-if="isLoading">
-    <v-img height="50px" width="50px" :src="loadingImg"/>
+  <div v-if="isLoading" style="text-align: center;">
+    <img height="50px" width="50px" :src="loadingImg"/>
   </div>
   <div v-if="!isLoading">
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-flex xs2>
-        <v-select label="Số lượng dòng" :items="pageSizeOptions" v-model="pageSize"/>
-      </v-flex>
-    </v-card-title>
     <TableChart 
     :name="name" 
     :columnSettings="columnSettings" 
@@ -36,7 +30,12 @@ export default {
       require:false,
       type:String,
       default:""
-    }
+    },
+    pageSize:{
+      require:false,
+      type:Number,
+      default:10
+    },
   },
   data(){
       return {
@@ -52,8 +51,6 @@ export default {
         height:'100%',
         width:'100%',
         page:1,
-        pageSize:10,
-        pageSizeOptions:[10,20,50],
         totalPages:0,
         loadingImg: require('@/assets/images/loading.gif'),
         isLoading: false

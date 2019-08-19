@@ -16,9 +16,6 @@
       :search="search"
       :pagination.sync="pagination"
       class="elevation-1"
-      prev-icon="mdi-menu-left"
-      next-icon="mdi-menu-right"
-      sort-icon="mdi-menu-down"
     >
       <template v-slot:items="props">
         <td style="width: 30%">{{ props.item.courseName }}</td>

@@ -48,19 +48,12 @@ export default {
             this.dataRows = []
 
             this.dataRows.push(['This is header','header type'])
-            this.dataRows.push(['Cấp độ 1',this.calculateTotals(data,0)])
-            this.dataRows.push(['Cấp độ 2',this.calculateTotals(data,1)])
-            this.dataRows.push(['Cấp độ 3',this.calculateTotals(data,2)])
-            this.dataRows.push(['Cấp độ 4',this.calculateTotals(data,3)])
-            this.dataRows.push(['Cấp độ 5',this.calculateTotals(data,4)])
+            this.dataRows.push(['Cấp độ 1',data[0]])
+            this.dataRows.push(['Cấp độ 2',data[1]])
+            this.dataRows.push(['Cấp độ 3',data[2]])
+            this.dataRows.push(['Cấp độ 4',data[3]])
+            this.dataRows.push(['Cấp độ 5',data[4]])
         },
-        calculateTotals(data,level){
-            var total = 0
-            for(var i = 0; i < 5;i++){
-                total += data[i + 5 * level]
-            }
-            return total
-        }
     },
     mounted(){
         this.getData()

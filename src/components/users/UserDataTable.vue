@@ -4,12 +4,9 @@
       :headers="headers"
       :items="listUsers"
       :search="search"
-      :pagination.sync="pagination"
-      prev-icon="mdi-menu-left"
-      next-icon="mdi-menu-right"
-      sort-icon="mdi-menu-down"
       :items-per-page="5"
       hide-default-footer
+      :page="currentPage"
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.fullName }}</td>
@@ -19,7 +16,7 @@
         <!-- <td class="justify-center layout px-0">
           <v-btn
             icon
-            flat
+            text
             color="success"
             v-if="!props.item.isActive"
             class="btn-active-deactive"
@@ -29,7 +26,7 @@
           </v-btn>
           <v-btn
             icon
-            flat
+            text
             color="error"
             v-if="props.item.isActive"
             class="btn-active-deactive"
@@ -42,7 +39,7 @@
       <template v-slot:item.action="{ item }">
         <v-btn
             icon
-            flat
+            text
             color="success"
             v-if="!item.isActive"
             class="btn-active-deactive"
@@ -52,7 +49,7 @@
           </v-btn>
           <v-btn
             icon
-            flat
+            text
             color="error"
             v-if="item.isActive"
             class="btn-active-deactive"
@@ -67,7 +64,8 @@
     :pages="pages" 
     :rowDataLength="listUsers.length" 
     :isShowEmptyMessage="isShowEmptyMessage"
-    @triggerpaging="handlPaging($event)"/>
+    @triggerpaging="handlPaging($event)"
+    />
     <Loader v-if="loader"/>
     <v-dialog v-model="dialog" width="400">
       <v-card>
@@ -81,16 +79,14 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            class="font-weight-bold"
             color="red darken-1"
-            flat="flat"
             @click="dialog = false"
+            text
           >Hủy bỏ</v-btn>
           <v-btn
-            class="font-weight-bold"
             color="green darken-1"
-            flat="flat"
             @click="changeStatus(), dialog = false"
+            text
           >Đồng ý</v-btn>
         </v-card-actions>
       </v-card>
@@ -179,7 +175,7 @@ export default {
       this.dialog = true
     },
     handlPaging(e){
-      alert('page:' + e)
+      this.currentPage = e
     }
   }
 }

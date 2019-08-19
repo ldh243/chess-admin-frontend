@@ -11,38 +11,42 @@ export default class UploadImagePlugin {
       const loader = this.loader;
         return loader.file
         .then(file => new Promise( ( resolve, reject ) => {
-            var user = userRepository.getCurrentUserDetail()
-
-            if(!user){
-                return resolve('Cannot send if you are not login')
-            }
-            
-            let fileRef = firebase.storage()
-                        .ref("images/lessons/" + user.userId + "/" + file.name);
-
-            let uploadTask = fileRef.put(file);
-
-            uploadTask.on(
-              "state_changed",
-                _snapshot => {
-                  console.log(
-                    "snapshot progess " +
-                      (_snapshot.bytesTransferred / _snapshot.totalBytes) * 100
-                  );
-                },
-                _error => {
-                  console.log(_error);
-                  reject(_error);
-                },
-                () => {
-                  uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                    resolve(
-                      {default:downloadURL}
-                    )
-                  });
-                }
-              );
+            this.handleUpdate(file,resolve, reject)
         } )
         )
+    }
+
+    async handleUpdate(file,resolve,reject){
+      if(!this.user){
+        await userRepository.getCurrentUserDetail().then(res => {
+          this.user = res.data.data
+        })
+      }
+      
+      let fileRef = firebase.storage()
+                  .ref("images/lessons/" + this.user.userId + "/" + file.name);
+
+      let uploadTask = fileRef.put(file);
+
+      uploadTask.on(
+        "state_changed",
+          _snapshot => {
+            console.log(
+              "snapshot progess " +
+                (_snapshot.bytesTransferred / _snapshot.totalBytes) * 100
+            );
+          },
+          _error => {
+            console.log(_error);
+            reject(_error);
+          },
+          () => {
+            uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+              resolve(
+                {default:downloadURL}
+              )
+            });
+          }
+        );
     }
 }

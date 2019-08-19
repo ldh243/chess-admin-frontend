@@ -30,17 +30,17 @@
             @click="confirmDetailCategory(props.item), getCourseByCategoryId(categoryId = props.item.categoryId)"
             color="" icon small
           ><v-icon>fa-list</v-icon></v-btn>
-          <v-btn icon flat class="btn-active-deactive" @click="confirmEditCategory(props.item)">
+          <v-btn icon text class="btn-active-deactive" @click="confirmEditCategory(props.item)">
             <v-icon>fa-edit</v-icon>
           </v-btn>
-          <v-btn icon flat class="btn-active-deactive" @click="confirmRemoveCategory(props.item)">
+          <v-btn icon text class="btn-active-deactive" @click="confirmRemoveCategory(props.item)">
             <v-icon>fa-trash</v-icon>
           </v-btn> -->
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
       <v-layout justify-center>
-      <v-pagination v-model="page" :length="pages" circle></v-pagination>
+      <v-pagination v-model="page" :length="pages" color="amber accent-3" circle></v-pagination>
       </v-layout>
     </div>
 
@@ -53,11 +53,11 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="dialog = false">Hủy bỏ</v-btn>
+            <v-btn color="red darken-1" @click="dialog = false" text>Hủy bỏ</v-btn>
             <v-btn
-              flat
-              color="primary"
+              color="green darken-1"
               @click="createCategory()"
+              text
             >Đồng Ý</v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
@@ -94,11 +94,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="editDialog = false" color="blue darken-1" flat>Hủy</v-btn>
+          <v-btn @click="editDialog = false" color="red darken-1" text>Hủy</v-btn>
           <v-btn
             @click="updateCategory(), editDialog = false"
-            color="blue darken-1"
-            flat
+            color="green darken-1"
+            text
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>
@@ -119,11 +119,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="removeDialog = false" color="blue darken-1" flat>Hủy</v-btn>
+          <v-btn @click="removeDialog = false" color="red darken-1" text>Hủy</v-btn>
           <v-btn
             @click="removeCategory(removedCategory.categoryId), removeDialog = false"
-            color="blue darken-1"
-            flat
+            color="green darken-1"
+            text
           >Đồng Ý</v-btn>
         </v-card-actions>
       </v-card>

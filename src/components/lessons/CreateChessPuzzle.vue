@@ -1,7 +1,7 @@
 <template>
   <v-layout wrap>
     <v-flex xs1 style="align-self:center;">
-      <v-btn small @click="flipBoard" flat icon color="grey">
+      <v-btn small @click="flipBoard" text icon color="grey">
           <v-icon>fa-redo-alt</v-icon>
         </v-btn>
     </v-flex>
@@ -9,10 +9,10 @@
       <v-layout column>
         <chessboard :sparePieces="true" @onChangePiece="changePos" :fen="fen" :orientation="chessColor" :boardName="boardName"></chessboard>
         <v-card-actions class="justify-center py-0">
-      <v-btn small style="margin-top:auto;margin-bottom:auto" @click="startBoard" flat icon color="grey">
+      <v-btn small style="margin-top:auto;margin-bottom:auto" @click="startBoard" text icon color="grey">
           <v-icon>fa-play-circle</v-icon>
         </v-btn>
-          <v-btn small style="margin-top:auto;margin-bottom:auto" @click="clearBoard" flat icon color="grey">
+          <v-btn small style="margin-top:auto;margin-bottom:auto" @click="clearBoard" text icon color="grey">
           <v-icon>fa-eraser</v-icon>
         </v-btn>
         </v-card-actions>

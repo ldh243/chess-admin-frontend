@@ -36,7 +36,6 @@
           <v-card-actions class="pa-0 ma-auto" v-if="$store.state.user.roleId == 1">
             <v-spacer></v-spacer>
             <v-btn @click="goToCourseDetail()" color="orange darken-1" dark depressed>Chỉnh sửa</v-btn>
-            <v-btn color="orange darken-4" dark depressed>Xóa</v-btn>
             <v-spacer></v-spacer>
           </v-card-actions>
           <v-card-actions class="pa-0 ma-auto" v-if="$store.state.user.roleId == 3">

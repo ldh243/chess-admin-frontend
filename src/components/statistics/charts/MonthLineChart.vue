@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="isLoading">
-      <v-img height="50px" width="50px" :src="loadingImg"/>
+    <div v-if="isLoading" style="text-align: center;">
+      <img height="50px" width="50px" :src="loadingImg"/>
     </div>
     <div v-if="!isLoading">
       <v-card-title>
@@ -79,11 +79,14 @@ export default {
       }
     },
     async handleYearDisplay(){
-      const data = await userRepository.getCurrentUserDetail()
-      var userCreatedYear = (new Date(data.createdDate)).getFullYear()
-      for(var i = dt.getFullYear();i >= userCreatedYear; i--){
-        this.listYears.push(i)
-      }
+      userRepository.getCurrentUserDetail().then(
+        res => {
+          var userCreatedYear = (new Date(res.data.data.createdDate)).getFullYear()
+          for(var i = dt.getFullYear();i >= userCreatedYear; i--){
+            this.listYears.push(i)
+          }
+        }
+      )
     },
   },
   watch:{

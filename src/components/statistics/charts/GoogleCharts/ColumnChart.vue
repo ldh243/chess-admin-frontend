@@ -1,5 +1,5 @@
 <template>
-    <div id="column_chart"/>
+    
 </template>
 <script>
 import {GoogleCharts} from 'google-charts'
@@ -17,6 +17,10 @@ export default {
         columnSettings:{
             required:true,
             type:Array
+        },
+        id:{
+            required:true,
+            type:String
         }
     },
     methods:{
@@ -31,7 +35,7 @@ export default {
                 title: this.name,
             }
 
-            var chart = new GoogleCharts.api.visualization.ColumnChart(document.getElementById('column_chart'))
+            var chart = new GoogleCharts.api.visualization.ColumnChart(document.getElementById(this.id))
 
             chart.draw(data, options)
         }
