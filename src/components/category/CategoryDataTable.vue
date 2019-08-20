@@ -168,7 +168,7 @@ export default {
           align: 'left',
           sortable: false
         },
-        { text: 'Actions', value: 'action',align: 'right', sortable: false },
+        { text: 'Hành động', value: 'action',align: 'right', sortable: false },
       ],
       listCourses: [],
       listCategory: [],

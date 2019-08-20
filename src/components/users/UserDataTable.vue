@@ -4,9 +4,11 @@
       :headers="headers"
       :items="listUsers"
       :search="search"
-      :items-per-page="5"
+      :items-per-page="pagination.rowsPerPage"
       hide-default-footer
       :page="currentPage"
+      :loading="loader"
+      loading-text="Đang tải"
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.fullName }}</td>
@@ -66,7 +68,6 @@
     :isShowEmptyMessage="isShowEmptyMessage"
     @triggerpaging="handlPaging($event)"
     />
-    <Loader v-if="loader"/>
     <v-dialog v-model="dialog" width="400">
       <v-card>
         <v-card-title class="headline">Xác nhận</v-card-title>
@@ -100,12 +101,10 @@ export default {}
 
 <script>
 import Pagination from '@/components/kit/Pagination'
-import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const userRepository = RepositoryFactory.get('user')
 export default {
   components: {
-    Loader,
     Pagination
   },
   props: {
@@ -129,32 +128,34 @@ export default {
         { text: 'Email', value: 'email', align: 'center' },
         { text: 'Vai trò', value: 'roleName', align: 'center' },
         { text: 'Trạng thái', value: 'status', align: 'center' },
-        { text: 'Actions', value: 'action', sortable: false }
+        { text: 'Hành động', value: 'action', sortable: false }
       ],
       listUsers: [],
       isShowEmptyMessage:false,
-      currentPage:1
+      currentPage:1,
+      pages:1
     }
   },
   mounted() {
-    this.loader = true
     this.getUsersPagination()
-    this.loader = false
   },
-  computed: {
-    pages() {
-      const rowsPerPage = this.pagination.rowsPerPage
-      const totalItems = this.listUsers.length
-      if (rowsPerPage == null || totalItems == null) return 0
-      return Math.ceil(totalItems / rowsPerPage)
-    }
-  },
+  // computed: {
+  //   pages() {
+  //     const rowsPerPage = this.pagination.rowsPerPage
+  //     const totalItems = this.listUsers.length
+  //     if (rowsPerPage == null || totalItems == null) return 0
+  //     return Math.ceil(totalItems / rowsPerPage)
+  //   }
+  // },
   methods: {
     async getUsersPagination() {
-      const { data } = await userRepository.getUsersPagination(1, 500)
+      this.loader = true
+      const { data } = await userRepository.getUsersPagination(this.currentPage,this.pagination.rowsPerPage,this.search)
       if(data.data){
         this.listUsers = this.formatListUser(data.data.content)
+        this.pages = data.data.totalPages
       }
+      this.loader = false
     },
     async changeStatus() {
       this.loader++
@@ -176,6 +177,18 @@ export default {
     },
     handlPaging(e){
       this.currentPage = e
+    }
+  },
+  watch:{
+    currentPage:{
+      handler:function(){
+        this.getUsersPagination()
+      }
+    },
+    search:{
+      handler:function(){
+        this.getUsersPagination()
+      }
     }
   }
 }

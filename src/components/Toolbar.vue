@@ -67,21 +67,21 @@ export default {
     return {
       chessLogo: require('@/assets/images/chess.png'),
       items: [
-        {
-          text: 'Dashboard',
-          disabled: false,
-          href: 'breadcrumbs_dashboard'
-        },
-        {
-          text: 'Link 1',
-          disabled: false,
-          href: 'breadcrumbs_link_1'
-        },
-        {
-          text: 'Link 2',
-          disabled: true,
-          href: 'breadcrumbs_link_2'
-        }
+        // {
+        //   text: 'Dashboard',
+        //   disabled: false,
+        //   href: 'breadcrumbs_dashboard'
+        // },
+        // {
+        //   text: 'Link 1',
+        //   disabled: false,
+        //   href: 'breadcrumbs_link_1'
+        // },
+        // {
+        //   text: 'Link 2',
+        //   disabled: true,
+        //   href: 'breadcrumbs_link_2'
+        // }
       ],
       defaultLoadNotifications:5
     }
@@ -93,6 +93,13 @@ export default {
       this.$store.commit('changeUser', null)
       this.$router.push('/')
     },
+  },
+  watch:{
+    '$route.meta.breadcrumb':{
+      handler:function(){
+        this.items = this.$route.meta.breadcrumb
+      }
+    }
   }
 }
 </script>
