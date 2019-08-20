@@ -13,7 +13,7 @@ import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const userRepository = RepositoryFactory.get('user')
 
 Vue.config.productionTip = false;
-
+const vm = new Vue()
 var firebaseConfig = {
   apiKey: 'AIzaSyDBz72G-L_nG1s2CgXHx0pPKc8tQLNyyS0',
   authDomain: 'cols-fpt.firebaseapp.com',
@@ -34,13 +34,14 @@ async function getParamsFromHeader(to) {
     localStorage.setItem('access-token', `Chess ${token}`)
     localStorage.setItem('role', role)
     setAuthorizationHeader(Repository, localStorage.getItem('access-token').trim())
-    await getCurrentUserDetail()
   }
-  
 }
+
 async function getCurrentUserDetail() {
   const { data } = await userRepository.getCurrentUserDetail()
   let user = data.data
+  user.roleName = vm.getRoleName(user.roleId)
+  user.status = vm.getStatusUser(user.active)
   localStorage.setItem('user', JSON.stringify(user))
   setUserState()
 }
@@ -49,7 +50,6 @@ function setUserState() {
   const userToken = localStorage.getItem('access-token')
   store.commit('setUser', JSON.parse(user))
   store.commit('setUserToken', userToken)
-  console.log(store.state.user)
 }
 router.beforeEach(async (to, from, next) => {
   await getParamsFromHeader(to)
@@ -70,6 +70,7 @@ router.beforeEach(async (to, from, next) => {
   // if ((authRequired && !loggedIn) || (authRequired && !roleRequired)) {
 
   if (authRequired && (!loggedIn || !roleRequired)) {
+    console.log("not login yet")
     return next('/') //chua login -> ve trang login
   } else if (!authRequired && loggedIn && roleRequired) {
     store.state.user = JSON.parse(localStorage.getItem('user'))
@@ -78,6 +79,8 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem('access-token')
     localStorage.removeItem('role')
     return next('/')
+  } else if (loggedIn && roleRequired) {
+    await getCurrentUserDetail()
   }
   next()
   

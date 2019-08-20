@@ -9,6 +9,11 @@
               label="Tên Bài Học:"
               v-model="lessonName"
             ></v-text-field>
+            <v-textarea
+                  color="grey darken-2"
+                  class="mt-0"
+                  label="Mô tả:  "
+                ></v-textarea>
             <v-alert dense outlined type="error" v-if="errors.length > 0">{{errors}}</v-alert>
             <ckeditor5 :content="content" />
         </v-form>

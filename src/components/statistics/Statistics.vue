@@ -73,9 +73,10 @@ export default {
   methods:{
     async getCurrentUserDetail(){
       const user = await userRepository.getCurrentUserDetail()
-      if(user.roleId){
-        this.userRoleId = user.roleId
+      if(user.data.data.roleId){
+        this.userRoleId = user.data.data.roleId
       }
+      console.log(user)
     },
     async getUsersRegister(year){
       return await reportRepository.getUsersRegister(year)

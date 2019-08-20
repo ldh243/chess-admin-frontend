@@ -1,6 +1,16 @@
 import Vue from 'vue'
 import firebase from 'firebase'
 const axios = require('axios')
+const roles = {
+  INSTRUCTOR: "Người hướng dẫn",
+  LEARNER: "Người học",
+  ADMIN: "Quản trị viên",
+  REGISTRATION: "Thành viên mới"
+}
+const userStatus = {
+  ACTIVE: "Kích hoạt",
+  INACTIVE: "Vô hiệu hóa"
+}
 export default Vue.mixin({
   methods: {
     async callAxios(method, url, params) {
@@ -53,13 +63,13 @@ export default Vue.mixin({
     getRoleName(roleId) {
       switch (roleId) {
         case 1:
-          return 'Người hướng dẫn'
+          return roles.INSTRUCTOR
         case 2:
-          return 'Người học'
+          return roles.LEARNER
         case 3:
-          return 'Quản trị viên'
+          return roles.ADMIN
         case 4:
-          return 'Thành viên mới'
+          return roles.REGISTRATION
       }
     },
     getCourseRoleName(roleId) {
@@ -78,9 +88,9 @@ export default Vue.mixin({
     },
     getStatusUser(active) {
       if (active) {
-        return 'Kích hoạt'
+        return userStatus.ACTIVE
       } else {
-        return 'Vô hiệu hóa'
+        return userStatus.INACTIVE
       }
     },
 

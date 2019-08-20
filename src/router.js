@@ -13,7 +13,7 @@ import NewInstructorManagement from '@/components/instructor/NewInstructorManage
 import CourseDetailByInstructor from '@/components/instructor/CourseDetailByInstructor'
 import NewInstructor from '@/components/instructor/NewInstructor'
 import CreateCourse from '@/components/courses/CreateCourse'
-import DetailCourseById from '@/components/courses/courseComponents/DetailCourseById'
+import DetailCourseById from '@/components/courses/DetailCourseById'
 import Notification from '@/components/notifications/Notification'
 
 Vue.use(Router)

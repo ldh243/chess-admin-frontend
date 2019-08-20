@@ -1,77 +1,9 @@
 <template>
   <v-container class="pa-6">
     <v-card :elevation="8">
-      <CourseBackground
-        :title="course.name"
-        :point="course.point"
-        :requiredPoint="course.requiredPoint"
-        :statusId="course.statusId"
-      />
-      <v-form ref="form" lazy-validation>
-        <v-container class="pa-5" grid-list-xs>
-          <v-layout wrap>
-            <v-flex xs8>
-              <v-text-field
-                color="amber darken-1"
-                v-model="course.name"
-                label="Tên khóa học"
-                :rules="nameRules"
-                required
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs2>
-              <v-text-field
-                v-model="course.requiredPoint"
-                label="Điểm để học"
-                required
-                color="amber darken-1"
-                :rules="pointRules"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs2>
-              <v-text-field
-                v-model="course.point"
-                label="Điểm nhận được"
-                required
-                color="amber darken-1"
-                :rules="pointRules"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs12>
-              <v-textarea
-                v-model="course.description"
-                label="Mô tả: "
-                value
-                required
-                color="amber darken-1"
-                :rules="descriptionRules"
-              ></v-textarea>
-            </v-flex>
-            <v-flex xs12>
-              <v-select
-                v-model="course.listCategoryIds"
-                :items="listCategories"
-                item-text="name"
-                item-value="categoryId"
-                multiple
-                chips
-                label="Danh mục"
-                color="amber darken-1"
-                item-color="amber darken-1"
-              ></v-select>
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-form>
-      <v-form>
-        <v-container class="pa-5" grid-list-xs>
-          <v-layout wrap>
-            <v-flex xs12>
-              <v-textarea :value="course.description" disabled label="Mô tả: "></v-textarea>
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-form>
+      <course-form :editedCourse="course"></course-form>
+    </v-card>
+    <v-card :elevation="8" class="mt-5 pt-3"> 
       <v-container class="px-5 pb-5 pt-0">
         <h5 class="mb-3 grey--text text--darken-1 title text-uppercase">Danh sách bài học</h5>
         <v-alert
@@ -158,7 +90,7 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <v-btn fixed bottom right style="top:50%" @click="actionSheet = true" dark fab color="pink">
+        <v-btn fixed bottom right style="top:60%; right:10px;" @click="actionSheet = true" dark fab color="pink">
           <v-icon>settings</v-icon>
         </v-btn>
         <v-bottom-sheet v-model="actionSheet" inset :retain-focus="false">
@@ -266,6 +198,7 @@ import UninteractiveLesson from '@/components/lessons/UninteractiveLesson'
 import PreviewExercise from '@/components/lessons/preview/PreviewExercise'
 import PreviewInteractiveLesson from '@/components/lessons/preview/PreviewInteractiveLesson'
 import PreviewUninteractiveLesson from '@/components/lessons/preview/PreviewUninteractiveLesson'
+import CourseForm from './courseComponents/CourseForm'
 import Loader from '@/components/Loader'
 import CustomButton from '@/components/kit/CustomButton'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
@@ -282,7 +215,7 @@ export default {
     PreviewInteractiveLesson,
     PreviewUninteractiveLesson,
     Loader,
-    CourseBackground,
+    CourseForm,
     CustomButton,
     Chessboard
   },
@@ -319,7 +252,6 @@ export default {
     this.courseId = this.$route.params.courseId
     this.getCourseById()
     this.loader = false
-    console.log(this.$store.state.user)
   },
   methods: {
     showCreatingExercise() {

@@ -90,6 +90,7 @@ export default {
     signOut() {
       localStorage.removeItem('user')
       localStorage.removeItem('access-token')
+      localStorage.removeItem('role')
       this.$store.commit('changeUser', null)
       this.$router.push('/')
     },

@@ -13,6 +13,10 @@
                     v-model="lessonName"
                     label="Tên bài học"
                   ></v-text-field>
+                  <v-textarea
+                  color="grey darken-2"
+                  label="Mô tả:  "
+                ></v-textarea>
                 </v-form>
                 <div class="move-history-content">
                   <div v-for="(moved1, index) in moveHistory" :key="index">
@@ -119,7 +123,7 @@
                 <v-textarea
                   color="grey darken-2"
                   v-model="moveContent"
-                  class="mt-3"
+                  class="mt-0"
                   label="Nội dung:  "
                   @keyup="saveContent"
                   @keydown="isSavedContent = false"
@@ -167,7 +171,7 @@
         </v-window-item>
       </v-window>
       <v-flex xs11>
-        <v-card-actions class="mt-3">
+        <v-card-actions class="mt-1">
           <v-spacer></v-spacer>
           <v-btn
             depressed
@@ -570,6 +574,6 @@ export default {
 </style>
 <style scoped>
 .move-history-content {
-  height: 200px;
+  height: 120px;
 }
 </style>

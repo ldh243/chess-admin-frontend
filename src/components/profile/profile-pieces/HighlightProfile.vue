@@ -32,6 +32,7 @@ export default {
   created() {
     this.randomBg = Math.floor(Math.random() * Math.floor(5)) + 1
     this.backgroundImage = require(`@/assets/images/chess-user-bg${this.randomBg}.jpg`)
+    console.log(this.$store.state.user)
   }
 }
 </script>

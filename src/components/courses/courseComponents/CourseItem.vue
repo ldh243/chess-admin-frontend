@@ -9,13 +9,15 @@
         <p class="course-author body-2"><i class="fas fa-calendar-week"></i> {{ formatCreatedDate }} <v-chip label dark :color="courseStatusColor[content.statusId - 1]" small>{{formatCourseStatus}}</v-chip></p>
         <p class="mb-0 course-author body-1">{{content.courseDescription}}</p>
         <v-card-text class="px-0">
-          <v-chip class="mr-1" small color="amber lighten-1">Nghiệp dư</v-chip>
-          <v-chip class="mr-1" small color="amber lighten-1">Chiến lược</v-chip>
+          <v-chip v-for="(item) in content.listCategorys" :key="item.categoryId" class="mr-1" small color="amber lighten-1">{{item.name}}</v-chip>
         </v-card-text>
       </v-flex>
       <v-divider inset vertical></v-divider>
       <v-flex xs3 xl2 class="course-rating-container">
-        <p class="amber--text mb-2 text--darken-4 display-1 font-weight-bold">{{ content.point }}</p>
+        <p>
+        <span class="red--text mb-2 text--darken-4 display-1 font-weight-bold mr-3">-{{ content.requiredPoint }}</span>
+        <span class="green--text mb-2 text--darken-4 display-1 font-weight-bold">+{{ content.point }}</span>
+        </p>
           <v-card-actions>
             <v-spacer>
             <v-rating
@@ -36,7 +38,7 @@
           <v-card-actions class="pa-0 ma-auto" v-if="$store.state.user.roleId == 1">
             <v-spacer></v-spacer>
             <v-btn @click="goToCourseDetail()" color="orange darken-1" dark depressed>Chỉnh sửa</v-btn>
-            <v-btn color="orange darken-4" dark depressed>Xóa</v-btn>
+            <!-- <v-btn color="orange darken-4" dark depressed>Xóa</v-btn> -->
             <v-spacer></v-spacer>
           </v-card-actions>
           <v-card-actions class="pa-0 ma-auto" v-if="$store.state.user.roleId == 3">
