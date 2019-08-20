@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="isLoading">
-      <v-img height="50px" width="50px" :src="loadingImg"/>
+    <div v-if="isLoading" style="text-align: center;">
+        <img height="50px" width="50px" :src="loadingImg"/>
     </div>
     <div v-if="!isLoading">
         <v-card-title>
@@ -10,7 +10,17 @@
               <v-select label="Năm" :items="listYears" v-model="chartYear"/>
             </v-flex>
           </v-card-title>
-      <ColumnChart :name="columnChartName" :columnSettings="monthChartColumns" :dataRows="chartData"/>
+        <v-container>
+            <v-row no-gutters>
+                <v-col :cols="8">
+                    <ColumnChart :id="id" :name="columnChartName" :columnSettings="monthChartColumns" :dataRows="chartData"/>
+                    <div id="month_column_chart"/>
+                </v-col>
+                <v-col :cols="4">
+                    <div id="LevelChart"/>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
   </div>
 </template>
@@ -45,7 +55,8 @@ export default {
             chartYear:dt.getFullYear(),
             listYears:[],
             loadingImg: require('@/assets/images/loading.gif'),
-            isLoading: false
+            isLoading: false,
+            id:"month_column_chart"
         }
     },
     mounted(){
@@ -54,7 +65,7 @@ export default {
         this.handleYearDisplay()
     },
     methods:{
-        async getData(){
+        async getData(){    
             this.isLoading = true
             const data = await this.fnGetDataAPI(this.chartYear)
             if(data.data.data){
@@ -64,11 +75,14 @@ export default {
             }
         },
         async handleYearDisplay(){
-            const data = await userRepository.getCurrentUserDetail()
-            var userCreatedYear = (new Date(data.createdDate)).getFullYear()
-            for(var i = dt.getFullYear();i >= userCreatedYear; i--){
-                this.listYears.push(i)
-            }
+            userRepository.getCurrentUserDetail().then(
+                res => {
+                    var userCreatedYear = (new Date(res.data.data.createdDate)).getFullYear()
+                    for(var i = dt.getFullYear();i >= userCreatedYear; i--){
+                        this.listYears.push(i)
+                    }
+                }
+            )
         },
         handleData(data){
             var currentYear = dt.getFullYear()

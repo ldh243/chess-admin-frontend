@@ -198,7 +198,7 @@
           <v-btn
             @click="editBoard = false"
             class="btn-create-puzzle text-xs-center"
-            flat
+            text
             icon
             color="grey darken-3"
             dark

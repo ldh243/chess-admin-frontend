@@ -36,13 +36,18 @@ export default{
         }
         return Repository.get(`${resource}/get-rate-winnable-report`,data)
     },
-    getRateLevelWinnable(year,isWin){
+    getRateLevelWinnable(year){
         const data = {
             params: {
-                year : year ,
-                isWin : isWin
+                year : year 
             }
         }
         return Repository.get(`${resource}/get-rate-winnable-level-report`,data)
+    },
+    getPublishCourseReport(){
+        return Repository.get(`${resource}/get-publish-course-report`)
+    },
+    getCourseStatusReport(){
+        return Repository.get(`${resource}/get-course-status-report`)
     }
 }

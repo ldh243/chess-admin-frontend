@@ -4,12 +4,11 @@
       :headers="headers"
       :items="listUsers"
       :search="search"
-      :pagination.sync="pagination"
-      prev-icon="mdi-menu-left"
-      next-icon="mdi-menu-right"
-      sort-icon="mdi-menu-down"
-      :items-per-page="5"
+      :items-per-page="pagination.rowsPerPage"
       hide-default-footer
+      :page="currentPage"
+      :loading="loader"
+      loading-text="Đang tải"
     >
       <template v-slot:items="props">
         <td style="width: 25%">{{ props.item.fullName }}</td>
@@ -19,7 +18,7 @@
         <!-- <td class="justify-center layout px-0">
           <v-btn
             icon
-            flat
+            text
             color="success"
             v-if="!props.item.isActive"
             class="btn-active-deactive"
@@ -29,7 +28,7 @@
           </v-btn>
           <v-btn
             icon
-            flat
+            text
             color="error"
             v-if="props.item.isActive"
             class="btn-active-deactive"
@@ -42,7 +41,7 @@
       <template v-slot:item.action="{ item }">
         <v-btn
             icon
-            flat
+            text
             color="success"
             v-if="!item.isActive"
             class="btn-active-deactive"
@@ -52,7 +51,7 @@
           </v-btn>
           <v-btn
             icon
-            flat
+            text
             color="error"
             v-if="item.isActive"
             class="btn-active-deactive"
@@ -67,8 +66,8 @@
     :pages="pages" 
     :rowDataLength="listUsers.length" 
     :isShowEmptyMessage="isShowEmptyMessage"
-    @triggerpaging="handlPaging($event)"/>
-    <Loader v-if="loader"/>
+    @triggerpaging="handlPaging($event)"
+    />
     <v-dialog v-model="dialog" width="400">
       <v-card>
         <v-card-title class="headline">Xác nhận</v-card-title>
@@ -81,16 +80,14 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            class="font-weight-bold"
             color="red darken-1"
-            flat="flat"
             @click="dialog = false"
+            text
           >Hủy bỏ</v-btn>
           <v-btn
-            class="font-weight-bold"
             color="green darken-1"
-            flat="flat"
             @click="changeStatus(), dialog = false"
+            text
           >Đồng ý</v-btn>
         </v-card-actions>
       </v-card>
@@ -104,12 +101,10 @@ export default {}
 
 <script>
 import Pagination from '@/components/kit/Pagination'
-import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const userRepository = RepositoryFactory.get('user')
 export default {
   components: {
-    Loader,
     Pagination
   },
   props: {
@@ -133,32 +128,34 @@ export default {
         { text: 'Email', value: 'email', align: 'center' },
         { text: 'Vai trò', value: 'roleName', align: 'center' },
         { text: 'Trạng thái', value: 'status', align: 'center' },
-        { text: 'Actions', value: 'action', sortable: false }
+        { text: 'Hành động', value: 'action', sortable: false }
       ],
       listUsers: [],
       isShowEmptyMessage:false,
-      currentPage:1
+      currentPage:1,
+      pages:1
     }
   },
   mounted() {
-    this.loader = true
     this.getUsersPagination()
-    this.loader = false
   },
-  computed: {
-    pages() {
-      const rowsPerPage = this.pagination.rowsPerPage
-      const totalItems = this.listUsers.length
-      if (rowsPerPage == null || totalItems == null) return 0
-      return Math.ceil(totalItems / rowsPerPage)
-    }
-  },
+  // computed: {
+  //   pages() {
+  //     const rowsPerPage = this.pagination.rowsPerPage
+  //     const totalItems = this.listUsers.length
+  //     if (rowsPerPage == null || totalItems == null) return 0
+  //     return Math.ceil(totalItems / rowsPerPage)
+  //   }
+  // },
   methods: {
     async getUsersPagination() {
-      const { data } = await userRepository.getUsersPagination(1, 500)
+      this.loader = true
+      const { data } = await userRepository.getUsersPagination(this.currentPage,this.pagination.rowsPerPage,this.search)
       if(data.data){
         this.listUsers = this.formatListUser(data.data.content)
+        this.pages = data.data.totalPages
       }
+      this.loader = false
     },
     async changeStatus() {
       this.loader++
@@ -179,7 +176,19 @@ export default {
       this.dialog = true
     },
     handlPaging(e){
-      alert('page:' + e)
+      this.currentPage = e
+    }
+  },
+  watch:{
+    currentPage:{
+      handler:function(){
+        this.getUsersPagination()
+      }
+    },
+    search:{
+      handler:function(){
+        this.getUsersPagination()
+      }
     }
   }
 }

@@ -177,7 +177,7 @@
                 <v-btn depressed v-if="course.statusId != 5 && course.statusId == 2" @click="draftCourseStatus" dark color="red darken-3">Ngưng công khai</v-btn>
                 <v-btn depressed v-if="course.statusId == 4" @click="draftCourseStatus" dark color="yellow darken-4">Soạn thảo</v-btn>
               </div>
-              <div v-if="$store.state.user.roleId == 1">
+              <div v-if="$store.state.user.roleId == 1 && course.author.userId != $store.state.user.userId">
                 <v-card-text>Chỉ chủ khóa học mới thay đổi trạng thái khóa học</v-card-text>
               </div>
               <v-spacer></v-spacer>

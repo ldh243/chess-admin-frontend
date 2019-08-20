@@ -12,8 +12,8 @@
           </v-list-item>
           <v-divider></v-divider>
           </div>
-          <div v-if="isLoading">
-            <v-img height="50px" width="50px" :src="loadingImg"/>
+          <div v-if="isLoading" style="text-align: center;">
+              <img height="50px" width="50px" :src="loadingImg"/>
           </div>
           <div class="text-xs-center pt-2" v-if="!isLoadAll">
             <v-layout justify-center>

@@ -5,30 +5,33 @@
       :monthChartName="enrollmentMonthLineChartNmae" 
       :chartCaptions="enrollmentChartCaption" 
       :fnGetDataAPI="getEnrollment"/>
-      <v-text-field label="Search" v-model="courseNameSearch"/>
-      <LearnerStatusCourseChart :courseName="courseNameSearch"/>
+      <v-card-title>
+        <v-text-field label="Search" v-model="courseNameSearch"/>
+        <v-spacer></v-spacer>
+        <v-flex xs2>
+          <v-select label="Số lượng dòng" :items="pageSizeOptions" v-model="pageSize"/>
+        </v-flex>
+      </v-card-title>
+      <LearnerStatusCourseChart :courseName="courseNameSearch" :pageSize="pageSize"/>
     </div>
     <div v-if="userRoleId == 3">
       <MonthLineChart 
       :monthChartName="userRegisterMonthLineChartName" 
       :chartCaptions="userRegisterChartCaption" 
       :fnGetDataAPI="getUsersRegister"/>
+
       <MonthColumnChart 
-            :name="RateWinnableChartName" 
-            :monthChartColumns="RateWinnableColumnSettings"
-            :fnGetDataAPI="getRateWinnable" @newdata="handleYearTrigger($event)"/>
-      <table>
-        <tr>
-          <td>
-            <RateWinnableLevelChart
-            :nameChart="winRateLevelChartName"
-            :year="yearExchangeComponents"
-            :id="winLevelChartId"
-            />
-            <div id="LevelChart"/>
-          </td>
-        </tr>
-      </table>
+      :name="RateWinnableChartName" 
+      :monthChartColumns="RateWinnableColumnSettings"
+      :fnGetDataAPI="getRateWinnable" @newdata="handleYearTrigger($event)"/>
+
+      <RateWinnableLevelChart
+        :nameChart="winRateLevelChartName"
+        :year="yearExchangeComponents"
+        :id="winLevelChartId"
+      />
+
+      <CourseStatusChart/>
     </div>
   </v-container>
 </template>
@@ -38,6 +41,7 @@ import LearnerStatusCourseChart from './charts/LearnerStatusCourseChart'
 import MonthLineChart from './charts/MonthLineChart'
 import MonthColumnChart from './charts/MonthColumnChart'
 import RateWinnableLevelChart from './charts/RateWinnableLevelChart'
+import CourseStatusChart from './charts/CourseStatusChart'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const reportRepository = RepositoryFactory.get('report')
 const userRepository = RepositoryFactory.get('user')
@@ -53,28 +57,33 @@ export default {
         RateWinnableChartName:"Biểu đồ kết quả chơi cờ với bot",
         RateWinnableColumnSettings:[
           ["string","Tháng"],
-          ["number","bỏ cuộc"],
+          ["number","Bỏ cuộc"],
           ["number","Thua"],
           ["number","Hòa"],
           ["number","Thắng"],
         ],
-        winRateLevelChartName: "Biểu đồ kết quả chơi cờ với bot theo level",
+        winRateLevelChartName: "Biểu đồ tổng lượt chơi theo level bot",
         winLevelChartId:"LevelChart",
         yearExchangeComponents:dt.getFullYear(),
-        courseNameSearch:""
+        courseNameSearch:"",
+        pageSize:10,
+        pageSizeOptions:[10,20,50],
       }
   },
   components: {
     MonthLineChart,
     LearnerStatusCourseChart,
     MonthColumnChart,
-    RateWinnableLevelChart
+    RateWinnableLevelChart,
+    CourseStatusChart
   },
   methods:{
     async getCurrentUserDetail(){
-      const user = await userRepository.getCurrentUserDetail()
-      if(user.data.data.roleId){
-        this.userRoleId = user.data.data.roleId
+      // const user = await userRepository.getCurrentUserDetail()
+      // if(user.data.data.roleId){
+      //   this.userRoleId = user.data.data.roleId
+      if(this.$store.state.user.roleId){
+        this.userRoleId = this.$store.state.user.roleId
       }
       console.log(user)
     },

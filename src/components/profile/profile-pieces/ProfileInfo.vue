@@ -35,7 +35,7 @@
               :key="index"
               xs4
             >
-              <v-card flat tile>
+              <v-card text tile>
                 <v-img
                   :src="item.certificateLink"
                   height="180px"
