@@ -36,10 +36,10 @@ export default {
     )
   },
   createCourse(data) {
-    return Repository.post(`${resource}/create-course`, data).then(res => {
-      const courseId = res.data.data.savedId
-      router.push({path: `/dashboard/courses/${courseId}`})
-    })
+    return Repository.post(`${resource}/create-course`, data)
+  },
+  updateCourse(data) {
+    return Repository.put(`${resource}/update-course`, data)
   },
   removeCourse(courseId) {
     const data = {

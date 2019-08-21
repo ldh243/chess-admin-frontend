@@ -1,11 +1,11 @@
 <template>
   <v-container class="pa-6">
     <v-card :elevation="8">
-      <course-form :editedCourse="course"></course-form>
-    </v-card>
-    <v-card :elevation="8" class="mt-5 pt-3"> 
-      <v-container class="px-5 pb-5 pt-0">
-        <h5 class="mb-3 grey--text text--darken-1 title text-uppercase">Danh sách bài học</h5>
+      <course-background v-if="course !== null" :course="course"></course-background>
+      <v-container class="px-5 py-5">
+        <v-chip label dark :color="courseStatusColor[course.statusId - 1]">{{courseStatusName}}</v-chip>
+        <v-chip label class="ml-1" v-for="(item, index) in course.listCategorys" :key="index">{{item.name}}</v-chip>
+        <h5 class="my-3 grey--text text--darken-1 title text-uppercase">Danh sách bài học</h5>
         <v-alert
           border="right"
           colored-border
@@ -90,7 +90,7 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <v-btn fixed bottom right style="top:60%; right:10px;" @click="actionSheet = true" dark fab color="pink">
+        <v-btn fixed bottom right style="top:70%; right:10px;" @click="actionSheet = true" dark fab color="pink">
           <v-icon>settings</v-icon>
         </v-btn>
         <v-bottom-sheet v-model="actionSheet" inset :retain-focus="false">
@@ -198,6 +198,7 @@ import UninteractiveLesson from '@/components/lessons/UninteractiveLesson'
 import PreviewExercise from '@/components/lessons/preview/PreviewExercise'
 import PreviewInteractiveLesson from '@/components/lessons/preview/PreviewInteractiveLesson'
 import PreviewUninteractiveLesson from '@/components/lessons/preview/PreviewUninteractiveLesson'
+import CourseBackground from './courseComponents/CourseBackground'
 import CourseForm from './courseComponents/CourseForm'
 import Loader from '@/components/Loader'
 import CustomButton from '@/components/kit/CustomButton'
@@ -216,11 +217,14 @@ export default {
     PreviewUninteractiveLesson,
     Loader,
     CourseForm,
+    CourseBackground,
     CustomButton,
     Chessboard
   },
   data() {
     return {
+      courseStatusColor: ['yellow darken-4', 'green', 'red', 'orange darken-4', 'red darken-3'],
+      courseStatusName: '',
       dialogLessonInteractive: false,
       loader: false,
       course: {},
@@ -295,6 +299,7 @@ export default {
       console.log(this.course)
       this.listCategorys = data.data.listCategorys
       this.listLessons = data.data.lessonViewModels
+      this.courseStatusName = this.getCourseRoleName(this.course.statusId)
     },
     async addInteractiveLesson(course) {
       let newCourse = course

@@ -1,21 +1,10 @@
 <template>
-    <v-card elevation="8">
-      <CourseBackground :backgroundImage="backgroundImage" :title="'Tạo khóa học mới'" />
-      <v-card-actions class="px-5 py-3" v-if="editedCourse !== null">
-        <v-chip label dark :color="courseStatusColor[course.statusId - 1]">{{courseStatusName}}</v-chip>
-        <v-chip label class="ml-1" v-for="(item, index) in course.listCategorys" :key="index">{{item.name}}</v-chip>
-        <v-spacer></v-spacer>
-        <v-btn color="darken-3" fab small @click="isEditingCourse = !isEditingCourse">
-          <v-icon v-if="isEditingCourse">mdi-close</v-icon>
-          <v-icon v-else>mdi-pencil</v-icon>
-        </v-btn>
-      </v-card-actions>
+    <div>
       <v-form ref="form" lazy-validation>
         <v-container class="pa-5" grid-list-xs>
           <v-layout wrap>
             <v-flex xs8>
               <v-text-field
-              :disabled="editedCourse !== null && !isEditingCourse"
                 color="amber darken-1"
                 v-model="course.name"
                 label="Tên khóa học"
@@ -25,7 +14,6 @@
             </v-flex>
             <v-flex xs2>
               <v-text-field
-              :disabled="editedCourse !== null && !isEditingCourse"
                 v-model="course.requiredPoint"
                 label="Điểm để học"
                 required
@@ -35,7 +23,6 @@
             </v-flex>
             <v-flex xs2>
               <v-text-field
-              :disabled="editedCourse !== null && !isEditingCourse"
                 v-model="course.point"
                 label="Điểm nhận được"
                 required
@@ -45,7 +32,6 @@
             </v-flex>
             <v-flex xs12>
               <v-textarea
-              :disabled="editedCourse !== null && !isEditingCourse"
                 v-model="course.description"
                 label="Mô tả: "
                 value
@@ -71,28 +57,26 @@
         </v-container>
       </v-form>
       <v-divider class="my-2" v-if="editedCourse === null"></v-divider>
-      <v-card-actions class="px-5" v-if="editedCourse === null">
+      <v-card-actions class="px-5" >
         <v-spacer></v-spacer>
-        <v-btn depressed  dark @click="resetForm" color="amber darken-2">Xóa toàn bộ</v-btn>
+        <v-btn depressed dark @click="editedCourse === null ? resetForm() : close()"  color="amber darken-2">{{editedCourse === null ? 'Xóa toàn bộ' : 'Đóng'}}</v-btn>
         <v-btn @click="createCourse" depressed dark color="amber darken-4">Hoàn tất</v-btn>
       </v-card-actions>
-    </v-card>    
+    </div>    
 </template>
 <script>
-import CourseBackground from './CourseBackground'
 import { mapState } from 'vuex'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const categoryRepository = RepositoryFactory.get('category')
 const courseRepository = RepositoryFactory.get('course')
 export default {
   components: {
-    CourseBackground
   },
   props: {
-    courseImage: {
-      type: File,
-      default: null
-    },
+    // courseImage: {
+    //   type: File,
+    //   default: null
+    // },
     editedCourse: {
       type: Object,
       default: null
@@ -127,11 +111,10 @@ export default {
       },
       
       listCategories: [],
-      nameRules: [v => !!v || 'Tên khóa học không được để trống'],
+      nameRules: [v => !!v || 'Tên khóa học không được để trống', v => v.length > 6 || 'Tên khóa học không được ít hơn 6 kí tự'],
       pointRules: [v => /^\d+$/.test(v) || 'Điểm phải là giá trị số'],
       descriptionRules: [v => !!v || 'Mô tả khóa học không được để trống'],
       backgroundImage: '',
-      courseStatusColor: ['yellow darken-4', 'green', 'red', 'orange darken-4', 'red darken-3'],
       courseStatusName: '',
       isEditingCourse: false
     }
@@ -143,7 +126,6 @@ export default {
       this.course = this.editedCourse
       this.backgroundImage = this.course.image
       this.listCategories = this.course.listCategorys
-      this.courseStatusName = this.getCourseRoleName(this.course.statusId)
     }
     this.loader = false
   },
@@ -157,17 +139,19 @@ export default {
       const { data } = await categoryRepository.getCategories()
       this.listCategories = data.data
     },
-    async createCourse() {
+    createCourse() {
       if (this.$refs.form.validate()) {
-        let match = this.$store.state.user.email.match(/^([^@]*)/)
-        let courseSlug = this.course.name.toLowerCase().split(" ").join('-')
-        this.course.image = await this.uploadImageByFile(this.courseImage, courseSlug, `courses/${match[0]}`)
-        const {data} = await courseRepository.createCourse(this.course)
+        this.$emit('createdCourse', this.course)
+        // let match = this.$store.state.user.email.match(/^([^@]*)/)
+        // let courseSlug = this.course.name.toLowerCase().split(" ").join('-')
+        // this.course.image = await this.uploadImageByFile(this.courseImage, courseSlug, `courses/${match[0]}`)
+        // console.log(this.course)
+        // const {data} = await courseRepository.createCourse(this.course)
       }
     },
-    getCourseImage(file) {
-      this.image = file
-    }
+    close() {
+        this.$emit('closeForm', true)
+      }
   }
 }
 </script>

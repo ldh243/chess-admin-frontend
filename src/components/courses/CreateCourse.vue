@@ -1,55 +1,41 @@
 <template>
   <v-container class="pa-6">
-    <v-btn @click="chooseUpload" text icon absolute style="z-index:100; top:230px; left:30px">
-          <v-icon color="white">fa-camera</v-icon>
-        </v-btn>
-        <input ref="input" type="file" style="display:none;" accept="image/png, image/jpeg" @change="fileSelected" />
-        <v-snackbar
-      v-model="errorSnackbar" 
-    > 
-    <v-icon color="red">fa-exclamation-triangle</v-icon>
-      {{ errorSnackbarContent }}
-      <v-btn
-        text
-        icon
-        @click="errorSnackbar = false"
-      >
-        <v-icon>close</v-icon>
-      </v-btn>
-    </v-snackbar>
-    <course-form :courseImage="courseImage"></course-form>
+    <v-card :elevation="8">
+      <course-background @onBackground="getFile"></course-background>
+    <course-form @createdCourse="createCourse"></course-form>
+    </v-card>
   </v-container>
 </template>
 
 <script>
+import CourseBackground from './courseComponents/CourseBackground'
 import CourseForm from './courseComponents/CourseForm'
+import {RepositoryFactory} from '@/repository/RepositoryFactory'
 import Loader from '@/components/Loader'
+const courseRepository = RepositoryFactory.get('course')
 export default {
   components: {
-    CourseForm
+    CourseForm,
+    CourseBackground
   },
   data() {
     return {
-      courseImage: null,
-      errorSnackbar: false,
-      errorSnackbarContent: 'Hình ảnh không đúng định dạng'
+      courseImage: null
     }
   },
   methods: {
-    chooseUpload() {
-      this.$refs.input.click()
+    getFile(file) {
+      this.courseImage = file
     },
-    fileSelected(e) {
-      let files = e.target.files || e.dataTransfer.files
-      if (!files.length || files.length === 0) {
-        return
-      }
-      if (files[0].type !== 'image/png' && files[0].type !== 'image/jpeg') {
-        this.errorSnackbar = true
-        this.errorSnackbarContent = "Hình ảnh không đúng định dạng"
-      } else {
-        this.courseImage = files[0]
-      }
+    async createCourse(course) {
+      let match = this.$store.state.user.email.match(/^([^@]*)/)
+        let courseSlug = course.name.toLowerCase().split(" ").join('-')
+        course.image = await this.uploadImageByFile(this.courseImage, courseSlug, `courses/${match[0]}`)
+        console.log(course)
+        const data = await courseRepository.createCourse(course).then(res => {
+          const courseId = res.data.data.savedId
+          this.$router.push({path: `/dashboard/courses/${courseId}`})
+        })
     }
   }
 }
