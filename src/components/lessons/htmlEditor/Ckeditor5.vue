@@ -14,8 +14,12 @@ import CKEditor from '@ckeditor/ckeditor5-vue'
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document'
 import UploadImagePlugin from '@/assets/js/UploadImagePlugin'
 
+
 function CustomUploadAdapterPlugin(editor) {
   editor.plugins.get('FileRepository').createUploadAdapter = loader => {
+    return new UploadImagePlugin(loader)
+  }
+  editor.plugins.get('EasyImage').createUploadAdapter = loader => {
     return new UploadImagePlugin(loader)
   }
 }
@@ -58,16 +62,20 @@ export default {
     getVal() {
       var htmlContent = ''
       var ckContentDOM = document.getElementsByClassName('ck-content')[0]
-      for (var i = 0; i < ckContentDOM.childNodes.length; i++) {
-        htmlContent += ckContentDOM.childNodes[i].outerHTML
+      if(ckContentDOM){
+        for (var i = 0; i < ckContentDOM.childNodes.length; i++) {
+          htmlContent += ckContentDOM.childNodes[i].outerHTML
+        }
       }
       return htmlContent
     },
     getText() {
       var text = ''
       var ckContentDOM = document.getElementsByClassName('ck-content')[0]
-      for (var i = 0; i < ckContentDOM.childNodes.length; i++) {
-        text += ckContentDOM.childNodes[i].textContent.trim()
+      if(ckContentDOM){
+        for (var i = 0; i < ckContentDOM.childNodes.length; i++) {
+          text += ckContentDOM.childNodes[i].textContent.trim()
+        }
       }
       return text
     }
@@ -130,6 +138,11 @@ export default {
 
   /* Center the "page". */
   margin: 0 auto;
+}
+
+figcaption{
+  width: auto !important;
+  min-height: auto !important;
 }
 
 /* Set the default font for the "page" of the content. */
