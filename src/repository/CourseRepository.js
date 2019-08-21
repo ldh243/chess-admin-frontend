@@ -103,5 +103,23 @@ export default {
       courseId: courseId
     }
     return Repository.put(`${resource}/change-status-to-drafting`, data)
-  }
+  },
+  getReviewPagination(courseId, page, pageSize) {
+    const data = {
+      params: {
+        courseId: courseId,
+        page: page,
+        pageSize: pageSize
+      }
+    }
+    return Repository.get(`${resource}/get-review-pagination`, data)
+  },
+  getCourseOverview(courseId) {
+    const data = {
+      params: {
+        courseId: courseId
+      }
+    }
+    return Repository.get(`${resource}/get-course-overview`, data)
+  },
 }

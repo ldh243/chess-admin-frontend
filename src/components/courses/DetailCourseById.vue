@@ -90,6 +90,12 @@
             </v-card>
           </v-flex>
         </v-layout>
+        <v-layout wrap  mt-3>
+          <v-flex xs12>
+
+          <Review :courseId="$route.params.courseId" />
+          </v-flex>
+        </v-layout>
         <v-btn fixed bottom right style="top:70%; right:10px;" @click="actionSheet = true" dark fab color="pink">
           <v-icon>settings</v-icon>
         </v-btn>
@@ -109,7 +115,7 @@
                 <v-btn depressed v-if="course.statusId != 5 && course.statusId == 2" @click="draftCourseStatus" dark color="red darken-3">Ngưng công khai</v-btn>
                 <v-btn depressed v-if="course.statusId == 4" @click="draftCourseStatus" dark color="yellow darken-4">Soạn thảo</v-btn>
               </div>
-              <div v-if="$store.state.user.roleId == 1">
+              <div v-if="$store.state.user.roleId == 1 && $store.state.user.userId != course.author.userId">
                 <v-card-text>Chỉ chủ khóa học mới thay đổi trạng thái khóa học</v-card-text>
               </div>
               <v-spacer></v-spacer>
@@ -200,6 +206,7 @@ import PreviewInteractiveLesson from '@/components/lessons/preview/PreviewIntera
 import PreviewUninteractiveLesson from '@/components/lessons/preview/PreviewUninteractiveLesson'
 import CourseBackground from './courseComponents/CourseBackground'
 import CourseForm from './courseComponents/CourseForm'
+import Review from './courseComponents/Review'
 import Loader from '@/components/Loader'
 import CustomButton from '@/components/kit/CustomButton'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
@@ -219,7 +226,8 @@ export default {
     CourseForm,
     CourseBackground,
     CustomButton,
-    Chessboard
+    Chessboard,
+    Review
   },
   data() {
     return {
