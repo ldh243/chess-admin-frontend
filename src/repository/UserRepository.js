@@ -35,7 +35,10 @@ export default {
       userId: userId
     }
     return Repository.put(`${resource}/update-status`, data)
-  }
+  },
+  updateProfile(data) {
+    return Repository.put(`${resource}/update-profile`, data)
+  },
   // http://cols-be.ml/user/get-current-user-detail
 
   // bid(id, price) {
