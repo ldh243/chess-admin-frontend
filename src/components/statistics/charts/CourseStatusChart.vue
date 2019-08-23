@@ -73,5 +73,17 @@ export default {
             this.isLoading = false
         },
     },
+    watch:{
+        isLoading:{
+            handler:function(){
+                if(this.isLoading){
+                this.$store.commit('incrementLoader', 1)
+                }else{
+                this.$store.commit('incrementLoader', -1)
+                }
+            },
+            deep:true
+        }
+    }
 }
 </script>

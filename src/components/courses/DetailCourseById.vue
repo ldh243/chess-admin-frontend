@@ -212,7 +212,6 @@ import PreviewUninteractiveLesson from '@/components/lessons/preview/PreviewUnin
 import CourseBackground from './courseComponents/CourseBackground'
 import CourseForm from './courseComponents/CourseForm'
 import Review from './courseComponents/Review'
-import Loader from '@/components/Loader'
 import CustomButton from '@/components/kit/CustomButton'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import Chessboard from '@/components/plugins/cols-chessboard'
@@ -227,7 +226,6 @@ export default {
     PreviewExercise,
     PreviewInteractiveLesson,
     PreviewUninteractiveLesson,
-    Loader,
     CourseForm,
     CourseBackground,
     CustomButton,
@@ -266,10 +264,8 @@ export default {
     }
   },
   mounted() {
-    this.loader = true
     this.courseId = this.$route.params.courseId
     this.getCourseById()
-    this.loader = false
   },
   methods: {
     showCreatingExercise() {
@@ -293,6 +289,7 @@ export default {
       this.addLessonDialog = true
     },
     async removeLesson() {
+      this.loader = true
       const data = await lessonRepository
         .removeLesson(this.currentLessonId)
         .then(res => {
@@ -304,9 +301,11 @@ export default {
               this.isEditingLesson = 0
             }
           }
+          this.loader = false
         })
     },
     async getCourseById() {
+      this.loader = true
       const courseId = this.$route.params.courseId
       const { data } = await courseRepository.getById(courseId)
       this.course = data.data
@@ -314,8 +313,10 @@ export default {
       this.listCategorys = data.data.listCategorys
       this.listLessons = data.data.lessonViewModels
       this.courseStatusName = this.getCourseRoleName(this.course.statusId)
+      this.loader = false
     },
     async addExercise(exercise) {
+      this.loader = true
       let newExercise = exercise
       let courseId = this.$route.params.courseId
       newExercise['courseId'] = courseId
@@ -336,11 +337,13 @@ export default {
                   this.lessonListPanel = this.listLessons.length - 1
                   this.lessonType = 0
                 }
+                this.loader = false
               })
           }
       })
     },
     async addInteractiveLesson(course) {
+      this.loader = true
       let newCourse = course
       let courseId = this.$route.params.courseId
       newCourse['courseId'] = courseId
@@ -362,11 +365,13 @@ export default {
                   this.lessonListPanel = this.listLessons.length - 1
                   this.lessonType = 0
                 }
+                this.loader = false
               })
           }
         })
     },
     async addUninteractiveLesson(course) {
+      this.loader = true
       let newCourse = course
       let courseId = this.$route.params.courseId
       newCourse['courseId'] = courseId
@@ -387,11 +392,13 @@ export default {
                   this.lessonListPanel = this.listLessons.length - 1
                   this.lessonType = 0
                 }
+                this.loader = false
               })
           }
         })
     },
     async editUninteractiveLesson(lesson) {
+      this.loader = true
       //only get lesson infor from component and add lessonId in here
       lesson['lessonId'] = this.editingLessonId
       const data = await lessonRepository
@@ -405,9 +412,11 @@ export default {
             this.lessonType = 0
             this.editingLessonId = 0
           }
+          this.loader = false
         })
     },
     async editInteractiveLesson(lesson) {
+      this.loader = true
       lesson['lessonId'] = this.editingLessonId
       console.log(lesson)
       const data = await lessonRepository
@@ -421,6 +430,7 @@ export default {
             this.lessonType = 0
             this.editingLessonId = 0
           }
+          this.loader = false
         })
     },
     openLessonDialog(lessonType) {
@@ -437,6 +447,7 @@ export default {
       })
     },
     async publishCourse() {
+      this.loader = true
       const courseId = this.$route.params.courseId
       const data  = await courseRepository.publishCourse(courseId).then(res => {
         if (res.status === 200) {
@@ -447,6 +458,7 @@ export default {
           this.courseStatusName = this.getCourseRoleName(this.course.statusId)
           this.$forceUpdate()
         }
+        this.loader = false
       })
     },
     async rejectCourse(){
@@ -478,10 +490,13 @@ export default {
 
     },
     async publishCourseByAdmin(){
+      this.loader = true
       const courseId = this.$route.params.courseId
       await this.updateCourseStatus(courseId,2,'','Khóa học đã được công khai')
+      this.loader = false
     },
     async updateCourseStatus(courseId,statusId,rejectMessage,onSuccessMessage){
+        this.loader = true
         const data  = await courseRepository.updateCourseStatus(courseId,rejectMessage,statusId).then(res => {
           if (res.status === 200) {
             this.snackbarContent = onSuccessMessage 
@@ -490,6 +505,7 @@ export default {
             this.actionSheet = false
             this.$forceUpdate()
           }
+          this.loader = false
         })
     },
     async draftCourseStatus(){
@@ -519,6 +535,7 @@ export default {
       })
     },
     async approveCourse() {
+      this.loader = true
       const courseId = this.$route.params.courseId
       const data  = await courseRepository.updateCourseStatus(courseId, 2).then(res => {
         if (res.status === 200) {
@@ -526,9 +543,11 @@ export default {
           this.snackbar = true
           this.actionSheet = false
         }
+        this.loader = false
       })
     },
     async rejectCourse() {
+      this.loader = true
       const courseId = this.$route.params.courseId
       const data  = await courseRepository.updateCourseStatus(courseId, 5).then(res => {
         if (res.status === 200) {
@@ -536,7 +555,20 @@ export default {
           this.snackbar = true
           this.actionSheet = false
         }
+        this.loader = false
       })
+    }
+  },
+  watch:{
+    loader:{
+      handler:function(){
+        if(this.loader){
+          this.$store.commit('incrementLoader', 1)
+        }else{
+          this.$store.commit('incrementLoader', -1)
+        }
+    },
+    deep:true
     }
   }
 }

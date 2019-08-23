@@ -20,7 +20,8 @@ export default {
   },
   data() {
     return {
-      courseImage: null
+      courseImage: null,
+      loader:false
     }
   },
   methods: {
@@ -28,6 +29,7 @@ export default {
       this.courseImage = file
     },
     async createCourse(course) {
+      this.loader = true
       let match = this.$store.state.user.email.match(/^([^@]*)/)
         let courseSlug = course.name.toLowerCase().split(" ").join('-')
         course.image = await this.uploadImageByFile(this.courseImage, courseSlug, `courses/${match[0]}`)
@@ -35,7 +37,19 @@ export default {
         const data = await courseRepository.createCourse(course).then(res => {
           const courseId = res.data.data.savedId
           this.$router.push({path: `/dashboard/courses/${courseId}`})
+          this.loader = false
         })
+    }
+  },
+  watch:{
+    loader:{
+      handler:function(){
+        if(this.loader){
+          this.$store.commit('incrementLoader', 1)
+        }else{
+          this.$store.commit('incrementLoader', -1)
+        }
+      },deep:true
     }
   }
 }

@@ -139,14 +139,6 @@ export default {
   mounted() {
     this.getUsersPagination()
   },
-  // computed: {
-  //   pages() {
-  //     const rowsPerPage = this.pagination.rowsPerPage
-  //     const totalItems = this.listUsers.length
-  //     if (rowsPerPage == null || totalItems == null) return 0
-  //     return Math.ceil(totalItems / rowsPerPage)
-  //   }
-  // },
   methods: {
     async getUsersPagination() {
       this.loader = true
@@ -158,7 +150,7 @@ export default {
       this.loader = false
     },
     async changeStatus() {
-      this.loader++
+      this.loader = true
       const data = {
         userId: this.editedUser.userId,
         active: !this.editedUser.isActive
@@ -166,7 +158,7 @@ export default {
       const {result} = await userRepository.updateStatus(data)
       this.editedUser.isActive = !this.editedUser.isActive
       this.editedUser.isActive ? this.editedUser.status = 'Kích hoạt' : this.editedUser.status = 'Vô hiệu hóa'
-      this.loader--
+      this.loader = false
     },
     confirmChangeStatus(status, item) {
       this.editedUser = this.listUsers.find(user => user.userId === item.userId)
@@ -188,6 +180,15 @@ export default {
     search:{
       handler:function(){
         this.getUsersPagination()
+      }
+    },
+    loader:{
+      handler:function(){
+        if(this.loader){
+          this.$store.commit('incrementLoader', 1)
+        }else{
+          this.$store.commit('incrementLoader', -1)
+        }
       }
     }
   }

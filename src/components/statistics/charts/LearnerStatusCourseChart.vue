@@ -100,6 +100,16 @@ export default {
         this.page = 1
         this.getLeanerStatusCourse()
       }
+    },
+    isLoading:{
+      handler:function(){
+        if(this.isLoading){
+          this.$store.commit('incrementLoader', 1)
+        }else{
+          this.$store.commit('incrementLoader', -1)
+        }
+    },
+    deep:true
     }
   }
 }
