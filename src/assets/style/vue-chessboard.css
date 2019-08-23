@@ -4,10 +4,7 @@
  * You need to include the css files in themes folder in order to have the
  * board and pieces displayed!
  */
- 
-.blue {
-  background-color: transparent !important;
-}
+
  .cg-board-wrap {
     width: 320px;
     height: 320px;

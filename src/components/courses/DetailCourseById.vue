@@ -22,11 +22,16 @@
         >
           <v-expansion-panel v-for="(item,i) in listLessons" :key="i">
             <v-expansion-panel-header
-              class="grey--text text--darken-3 font-weight-medium"
-            >Bài {{i + 1}}: {{item.name}}</v-expansion-panel-header>
+              class="grey--text text--darken-3 font-weight-medium py-2"
+            >
+            <v-card-actions class="px-0">
+              <v-icon class="mr-3">{{item.lessonType == 5 ? 'fa-chess' : lessonIcon[item.lessonType - 1]}}</v-icon>
+            Bài {{i + 1}}: {{item.name}}</v-card-actions>
+            </v-expansion-panel-header>
             <v-expansion-panel-content align-center>
               <v-card-actions class="px-0">
-                <p>Loại: {{lessonTypeName[item.lessonType - 1]}}</p>
+                <p>
+                Giới thiệu: {{item.description}}</p>
                 <v-spacer></v-spacer>
                 <v-btn
                   @click="previewLesson(item.lessonId, item.lessonType)"
@@ -70,7 +75,7 @@
         >
           <v-flex xs4>
             <v-card color="amber" style="border-radius:4px;">
-              <a @click="openLessonDialog(1)">
+              <a @click="openLessonDialog(5)">
                 <CustomButton :name="'Thêm bài thực hành'" :icon="'fa-chess'" />
               </a>
             </v-card>
@@ -108,9 +113,7 @@
                 <v-btn depressed v-if="course.statusId != 2 && course.statusId == 1" @click="publishCourse" dark color="green">Công khai</v-btn>
                 <v-btn depressed v-if="course.statusId != 5 && course.statusId == 2" @click="draftCourseStatus" dark color="red darken-3">Ngưng công khai</v-btn>
                 <v-btn depressed v-if="course.statusId == 4" @click="draftCourseStatus" dark color="yellow darken-4">Soạn thảo</v-btn>
-              </div>
-              <div v-if="$store.state.user.roleId == 1">
-                <v-card-text>Chỉ chủ khóa học mới thay đổi trạng thái khóa học</v-card-text>
+                <v-btn depressed v-if="course.statusId == 5" @click="restoreCourse" dark color="red darken-3">Khôi phục</v-btn>
               </div>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -131,7 +134,9 @@
         <v-toolbar-title>{{lessonTypeName[lessonType - 1]}}</v-toolbar-title>
       </v-toolbar>
       <v-container fluid style="background-color:#fff;height:100%">
-        <Exercise v-if="addLessonDialog === true && lessonType === 1" />
+        <Exercise :editingLessonId="editingLessonId"
+         @onAddExercise="addExercise"        
+         v-if="addLessonDialog === true && lessonType === 5" />
         <InteractiveLesson
         :editingLessonId="editingLessonId"
           @onAddInteractiveLesson="addInteractiveLesson"
@@ -147,19 +152,19 @@
       </v-container>
     </v-dialog>
     <v-dialog
-      v-model="previewLessonDialog"
-      fullscreen
+      v-model="previewLessonDialog" :width="lessonType === 3 ? '900px' : '1200px'"
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <v-toolbar dark color="amber darken-2">
-        <v-btn icon dark @click="previewLessonDialog = false;lessonType = 0;">
-          <v-icon>close</v-icon>
+      <v-card :elevation="8">
+        <v-card-actions>
+          <v-card-title>{{previewLessonObj.name}}</v-card-title>
+          <v-spacer></v-spacer>
+          <v-btn icon dark @click="previewLessonDialog = false;lessonType = 0;">
+          <v-icon color="grey darken-3">close</v-icon>
         </v-btn>
-        <v-card-title>{{previewLessonObj.name}}</v-card-title>
-      </v-toolbar>
-      <v-container fluid style="background-color:#fff;height:100%">
-        <PreviewExercise v-if="previewLessonDialog === true && lessonType === 1" />
+        </v-card-actions>
+        <PreviewExercise :exercise="previewLessonObj.exercise.answer" v-if="previewLessonDialog === true && lessonType === 5" />
         <PreviewInteractiveLesson
           :steps="previewLessonObj.interactiveLesson.steps"
           :initFen="previewLessonObj.interactiveLesson.initCode"
@@ -169,7 +174,7 @@
           :content="previewLessonObj.uninteractiveLesson.content"
           v-if="previewLessonDialog === true && lessonType === 3"
         />
-      </v-container>
+      </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" top :timeout="5000">
       {{snackbarContent}}
@@ -248,7 +253,8 @@ export default {
       previewLessonDialog: false,
       lessonType: 0,
       previewLessonObj: {},
-      actionSheet: false
+      actionSheet: false,
+      lessonIcon: ['fa-chess', 'fa-chess-board', 'fa-book-open']
     }
   },
   mounted() {
@@ -300,6 +306,31 @@ export default {
       this.listCategorys = data.data.listCategorys
       this.listLessons = data.data.lessonViewModels
       this.courseStatusName = this.getCourseRoleName(this.course.statusId)
+    },
+    async addExercise(exercise) {
+      let newExercise = exercise
+      let courseId = this.$route.params.courseId
+      newExercise['courseId'] = courseId
+      const data = await lessonRepository.createExercise(newExercise).then(async res => {
+        console.log(res)
+        if (res.status === 200) {
+            const lesson = await courseRepository
+              .getById(courseId)
+              .then(res => {
+                console.log(res)
+                if (res.status === 200) {
+                  this.course = res.data.data
+                  this.listLessons = res.data.data.lessonViewModels
+                  this.addLessonDialog = false
+                  this.snackbarContent = 'Thêm bài tập thành công'
+                  this.snackbar = true
+                  this.isEditingLesson = 1
+                  this.lessonListPanel = this.listLessons.length - 1
+                  this.lessonType = 0
+                }
+              })
+          }
+      })
     },
     async addInteractiveLesson(course) {
       let newCourse = course
@@ -394,6 +425,7 @@ export default {
       const { data } = await lessonRepository.getById(lessonId).then(res => {
         this.previewLessonDialog = true
         this.previewLessonObj = res.data.data
+        console.log(this.previewLessonObj)
       })
     },
     async publishCourse() {
@@ -404,6 +436,7 @@ export default {
           this.snackbar = true
           this.actionSheet = false
           this.course.statusId = 4
+          this.courseStatusName = this.getCourseRoleName(this.course.statusId)
           this.$forceUpdate()
         }
       })
@@ -432,6 +465,9 @@ export default {
         },
         allowOutsideClick: () => !Swal.isLoading()
       })
+    },
+    async restoreCourse() {
+
     },
     async publishCourseByAdmin(){
       const courseId = this.$route.params.courseId

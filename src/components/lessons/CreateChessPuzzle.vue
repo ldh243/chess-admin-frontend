@@ -194,4 +194,7 @@ export default {
 .v-btn.v-item--active::before {
   background-color: grey;
 }
+.btn-castling-group .black, .btn-castling-group .white {
+  background-color: transparent !important;
+}
 </style>

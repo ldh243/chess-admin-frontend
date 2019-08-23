@@ -27,6 +27,10 @@ export default {
     reset: {
       type: Boolean,
       default: false
+    },
+    move: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -64,6 +68,9 @@ export default {
       console.log('change orientation')
       this.orientation = orientation
       this.board.orientation(this.orientation)
+    },
+    move: function() {
+      this.loadMove()
     }
   },
   methods: {
@@ -131,6 +138,14 @@ export default {
         onSnapEnd: this.performMove
       }
       this.board = ChessBoard(this.boardName, cfg)
+    },
+    loadMove() {
+      this.game.move({
+        from: this.move.substring(0, 2),
+        to: this.move.substring(2, 4),
+        promotion: this.move.charAt(4)
+      })
+      this.board.position(this.game.fen())
     }
   },
   mounted() {

@@ -54,13 +54,15 @@ export default {
   },
   watch: {
     fen: function(newFen) {
-      if (this.status !== 'new') {
-        this.fen = newFen
-      this.board.set({
-        fen: this.fen
-      })
-      this.game.load(this.fen)
+      // if (this.status !== 'new') {
+      //   this.fen = newFen
+      // this.board.set({
+      //   fen: this.fen
+      // })
+      if (this.fen !== this.game.fen()) {
+        this.game.load(this.fen)
       }
+      // }
     },
     orientation: function(orientation) {
       console.log('watch orientation________', orientation)
@@ -262,7 +264,6 @@ export default {
         to: this.move.substring(2, 4),
         promotion: this.move.charAt(4)
       })
-      console.log(this.game.fen())
       this.board.set({
         fen: this.game.fen(),
         turnColor: this.toColor(),
@@ -272,6 +273,7 @@ export default {
           // events: { after: this.changeTurn() }
         }
       })
+      this.fen = this.game.fen()
       this.calculatePromotions()
       this.afterMove()
     }

@@ -1,5 +1,6 @@
 <template>
-  <v-layout wrap>
+  <v-container>
+    <v-layout wrap>
     <v-flex xs5 pr-7 offset-xs1>
       <Chessboard :fen="currentFen" :move="move" @onMove="showInfo" />
     </v-flex>
@@ -46,9 +47,7 @@
                     :preFen="moved2.whiteMove.preFen"
                     :move="moved2.whiteMove.moveDirection"
                     :depth="moved2.depth"
-                    @click="
-                              loadFen(null, $event, moved2.whiteMove.content)
-                            "
+                    @click="loadFen(null, $event, moved2.whiteMove.content)"
                   >{{ moved2.whiteMove.move }}</div>
                   <div
                     v-if="moved2.blackMove"
@@ -59,9 +58,7 @@
                     :preFen="moved2.blackMove.preFen"
                     :move="moved2.blackMove.moveDirection"
                     :depth="moved2.depth"
-                    @click="
-                              loadFen(null, $event, moved2.blackMove.content)
-                            "
+                    @click="loadFen(null, $event, moved2.blackMove.content)"
                   >{{ moved2.blackMove.move }}</div>
                 </div>
                 <div v-if="moved2.depth === 3" :key="index2" class="depth-3">
@@ -77,9 +74,7 @@
                       :preFen="moved3.whiteMove.preFen"
                       :move="moved3.whiteMove.moveDirection"
                       :depth="moved3.depth"
-                      @click="
-                                loadFen(null, $event, moved3.whiteMove.content)
-                              "
+                      @click="loadFen(null, $event, moved3.whiteMove.content)"
                     >{{ moved3.whiteMove.move }}</div>
                     <div
                       v-if="moved3.blackMove"
@@ -91,9 +86,7 @@
                       :preFen="moved3.blackMove.preFen"
                       :move="moved3.blackMove.moveDirection"
                       :depth="moved3.depth"
-                      @click="
-                                loadFen(null, $event, moved3.blackMove.content)
-                              "
+                      @click="loadFen(null, $event, moved3.blackMove.content)"
                     >{{ moved3.blackMove.move }}</div>
                   </template>
                 </div>
@@ -119,6 +112,7 @@
       </v-card-text>
     </v-flex>
   </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -172,7 +166,6 @@ export default {
       return false
     }
   },
-  updated() {},
   mounted() {
     this.currentFen = this.initFen
     this.moveHistory = []
@@ -204,7 +197,7 @@ export default {
           this.stepContent = content
           this.currentId = divTarget.id.replace('pv-', '')
           console.log(this.currentId)
-          this.currentFen = divTarget.getAttribute('preFen')
+          this.currentFen = divTarget.getAttribute('prefen')
           this.move = divTarget.getAttribute('move')
           this.setCurrentMove()
         }
@@ -212,6 +205,7 @@ export default {
         this.currentFen = fen
         console.log(this.currentFen)
       }
+      console.log(this.currentFen)
     },
     setCurrentMove() {
       //set highlight div dựa trên this.current id hiện tại
@@ -313,3 +307,4 @@ export default {
 
 <style src="@/assets/style/chessboard.css">
 </style>
+

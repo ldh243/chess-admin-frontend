@@ -14,6 +14,8 @@
                     label="Tên bài học"
                   ></v-text-field>
                   <v-textarea
+                  v-model="lessonDes"
+                  :rules="descriptionRules"
                   color="grey darken-2"
                   label="Mô tả:  "
                 ></v-textarea>
@@ -184,7 +186,7 @@
             depressed
             class="white--text"
             color="amber darken-2"
-            :disabled="moveHistory.length === 0"
+            :disabled="!isValiated"
             @click="interactiveLessonStep === 1 ? preview() : addLesson()"
           >{{interactiveLessonStep === 1 ? 'Xem trước' : 'Lưu'}}</v-btn>
         </v-card-actions>
@@ -283,13 +285,18 @@ export default {
       interactiveLessonStep: 1,
       isSavedContent: false,
       lessonName: '',
+      lessonDes: '',
       nameRules: [
         v => !!v || 'Tên bài học không được để trống',
         v => (v && v.length > 6) || 'Tên bài học phải nhiều hơn 6 kí tự'
       ],
+      descriptionRules: [
+        v => !!v || 'Mô tả bài học không được để trống'
+      ],
       interactiveLessonForm: true,
       isEditing: false,
       interactiveLessonId: -1,
+      isValiated: false
     }
   },
   watch: {
@@ -300,6 +307,12 @@ export default {
         this.getById(this.editingLessonId)
         this.isEditing = true
       }
+    },
+    lessonName: function() {
+      this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+    },
+    lessonDes: function() {
+      this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
     }
   },
   created() {

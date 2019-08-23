@@ -3,19 +3,30 @@
     <v-layout align-center justify-center row wrap>
       <v-flex xs10>
         <v-form ref="form" lazy-validation>
-            <v-text-field
+            <v-layout wrap>
+              <v-flex xs6 pr-1>
+              <v-text-field
               :rules="lessonNameRules"
               color="blue-grey darken-1"
               label="Tên Bài Học:"
               v-model="lessonName"
             ></v-text-field>
-            <v-textarea
-                  color="grey darken-2"
-                  class="mt-0"
-                  label="Mô tả:  "
-                ></v-textarea>
-            <v-alert dense outlined type="error" v-if="errors.length > 0">{{errors}}</v-alert>
-            <ckeditor5 :content="content" />
+            </v-flex>
+            <v-flex xs6 pl-1>
+              <v-text-field
+              :rules="lessonDesRules"
+              color="blue-grey darken-1"
+              label="Mô tả:"
+              v-model="lessonDes"
+            ></v-text-field>
+            </v-flex>
+            <v-flex xs12>
+              <v-alert dense outlined type="error" v-if="errors.length > 0">{{errors}}</v-alert>
+            </v-flex>
+            <v-flex xs12>
+              <ckeditor5 :content="content" />
+            </v-flex>
+            </v-layout>
         </v-form>
         <v-card-actions>
       <v-spacer></v-spacer>
@@ -68,6 +79,7 @@ export default {
     return {
       content: '',
       lessonName: '',
+      lessonDes: '',
       editor: ckeditor5,
       errors: '',
       loader: false,
@@ -76,7 +88,10 @@ export default {
       lessonId: this.lessonIdInput,
       isUpdatedName: false,
       lessonNameRules: [v => !!v || 'Tên bài học không được bỏ trống',
-      v => (v && v.length >= 6 || 'Tên bài học phải có ít nhất 6 kí tự')]
+      v => (v && v.length >= 6 || 'Tên bài học phải có ít nhất 6 kí tự')],
+      lessonDesRules: [
+        v => !!v || 'Mô tả bài học không được bỏ trống'
+      ]
     }
   },
   watch: {

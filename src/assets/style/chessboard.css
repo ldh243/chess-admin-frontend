@@ -1,8 +1,3 @@
->>> piece,
-.blue,
->>> coords {
-  background-color: transparent !important;
-}
 @font-face {
   font-family: chessfont;
   src: url(../fonts/lichess.chess.woff2) format("woff2");
@@ -78,7 +73,7 @@
 .review-move-btn-group {
   height: 35px;
 }
-.move-information {
+.move-information, .game-information{
   height: 240px;
 }
 .review-move-btn-group .v-btn {

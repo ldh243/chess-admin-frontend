@@ -1,21 +1,33 @@
 <template>
   <div>
-    <v-container class="px-6 py-3">
+    <v-container class="px-6 py-0">
       <v-window v-model="step">
         <v-window-item :value="1">
+          <v-form ref="form" v-model="exerciseForm" lazy-validation>
           <v-layout wrap>
             <v-flex xs6 class="left-chess-info">
-              <v-card-text class="pr-5 pt-0 pb-0 pl-0" style="position:relative">
                 <v-text-field
                   color="blue-grey darken-1"
-                  v-model="lessonViewModel.name"
+                  v-model="exerciseName"
+                  :rules="nameRules"
                   label="Tên bài học"
                 ></v-text-field>
-                <v-text-field
+            </v-flex>
+            <v-flex xs5 pr-7 style="margin:auto">
+              <v-text-field
                   color="blue-grey darken-1"
-                  v-model="exercise.question"
+                  v-model="exerciseQues"
                   label="Câu hỏi"
+                  :rules="questionRules"
                 ></v-text-field>
+            </v-flex>
+            <v-flex xs6>
+              <v-textarea
+                  v-model="exerciseDes"
+                  :rules="descriptionRules"
+                  color="grey darken-2"
+                  label="Mô tả:  "
+                ></v-textarea>
                 <v-tabs vertical color="amber" v-model="answersTabModel">
                   <v-tab
                     :disabled="checkboxChessbot"
@@ -74,7 +86,6 @@
                   </v-tab-item>
                 </v-tabs>
                 <v-checkbox color="amber darken-2" v-model="checkboxChessbot" :label="'Sử dụng chế độ đánh tự động'"></v-checkbox>
-              </v-card-text>
             </v-flex>
             <v-flex xs5 pr-7 style="margin: auto; position:relative">
               <Chessboard :reset="isReset" :orientation="orientation" :fen="fen" :boardName="'exerciseBoard'" @onMove="showInfo" />
@@ -93,9 +104,10 @@
               </v-btn>
             </v-flex>
           </v-layout>
+          </v-form>
         </v-window-item>
         <v-window-item :value="2">
-          <PreviewExercise :orientation="orientation" :exercise="exercise" />
+          <PreviewExercise :specificAns="answersTab" :exercise="exerciseContent" />
         </v-window-item>
       </v-window>
       <v-layout wrap>
@@ -103,7 +115,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn :disabled="step === 1" @click="removeExercise">Trở về</v-btn>
-            <v-btn :disabled="step === 2 || (moveHistories[0].length === 0 && moveHistories[1].length === 0 && moveHistories[2].length === 0 && !checkboxChessbot)" @click="prepareExercise">Xem trước</v-btn>
+            <v-btn :disabled="!isValidated" @click="step === 1 ? prepareExercise() : saveExercise()">{{step === 1 ? 'Xem trước' : 'Lưu'}}</v-btn>
           </v-card-actions>
         </v-flex>
       </v-layout>
@@ -135,7 +147,7 @@
     <v-snackbar v-model="snackbar" top :timeout="3000">
       {{snackbarContent}}
       <v-btn icon fab @click="snackbar = false">
-        <v-icon>close</v-icon>
+        <v-icon>Đóng</v-icon>
       </v-btn>
     </v-snackbar>
   </div>
@@ -152,35 +164,25 @@ export default {
     CreateChessPuzzle,
     PreviewExercise
   },
+  props: {
+    editingLessonId: {
+      type: Number,
+      default: -1
+    }
+  },
   data() {
     return {
+      exerciseForm: true,
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       defaultFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       editFenDialog: false,
       initFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       emptyFen: '8/8/8/8/8/8/8/8',
-      currentStep: 0,
-      lessonViewModel: {
-        courseId: this.$route.params.courseId,
-        name: '',
-        interactiveLesson: {
-          initCode: '',
-          steps: []
-        }
-      },
-      whiteObj: [],
-      blackObj: [],
       snackbar: false,
       snackbarContent: '',
       window: 0,
       checkboxChessbot: false,
       step: 1,
-      exercise: {
-        question: '',
-        fen: '',
-        answers: []
-      },
-      answer: {},
       moveHistories: [[], [], []],
       currentMoveHistory: [],
       answersTabModel: 0,
@@ -196,7 +198,42 @@ export default {
       orientation: 'white',
       nextMoveTurn: 'white',
       currentClickedMoveTurn: '',
-      isReset: false
+      isReset: false,
+      isValidated: false,
+      exerciseName: '',
+      exerciseDes: '',
+      exerciseQues: '',
+      nameRules: [
+        v => !!v || 'Tên bài học không được để trống',
+        v => (v && v.length > 6) || 'Tên bài học phải nhiều hơn 6 kí tự'
+      ],
+      descriptionRules: [
+        v => !!v || 'Mô tả bài học không được để trống'
+      ],
+      questionRules: [
+        v => !!v || 'Câu hỏi không được để trống'
+      ],
+      isContainMove: false,
+      exerciseContent: {},
+      answerArr: [[], [], []],
+      preId: 0
+    }
+  },
+  watch: {
+    exerciseName: function() {
+      this.isValidated =  (this.moveHistories[this.answersTab].length > 0  || this.checkboxChessbot) && this.$refs.form.validate()
+    },
+    exerciseDes: function() {
+      this.isValidated =  (this.moveHistories[this.answersTab].length > 0  || this.checkboxChessbot) && this.$refs.form.validate()
+    },
+    exerciseQues: function() {
+      this.isValidated =  (this.moveHistories[this.answersTab].length > 0  || this.checkboxChessbot) && this.$refs.form.validate()
+    },
+    checkboxChessbot: function() {
+      this.isValidated =  (this.moveHistories[this.answersTab].length > 0  || this.checkboxChessbot) && this.$refs.form.validate()
+    },
+    moveHistories: function() {
+      this.isValidated =  (this.moveHistories[this.answersTab].length > 0  || this.checkboxChessbot) && this.$refs.form.validate()
     }
   },
   updated() {
@@ -217,17 +254,6 @@ export default {
         this.fen = this.chessboardData.fen
         this.initFen = this.chessboardData.fen
         this.orientation = this.chessboardData.orientation
-        let posKey = Object.keys(this.chessboardData.object) //position of chess pieces
-        this.whiteObj = []
-        this.blackObj = []
-        posKey.forEach(e => {
-          let piece = this.chessboardData.object[e]
-          if (piece.charAt(0) === 'w') {
-            this.whiteObj.push(piece.charAt(1) + e)
-          } else {
-            this.blackObj.push(piece.charAt(1) + e)
-          }
-        })
       } else {
         this.editFenDialog = false
         this.snackbarContent = 'Thế cờ không hợp lệ'
@@ -246,6 +272,16 @@ export default {
         this.isReset = false
       }
       const black = 'black'
+      let newHalfMove = {
+          id: this.totalMove,
+          fen: data.fen,
+          move: data.move,
+          moveDirection: data.moveDirection,
+          preId: this.preId,
+          content: ''
+      }
+      this.answerArr[this.answersTab].push(newHalfMove)
+      this.preId++
       let moveHistory = this.moveHistories[this.answersTab]
       //Lấy nước đi cuối cùng
       let lastMove
@@ -281,12 +317,10 @@ export default {
           moveDirection: data.moveDirection
         }
       }
-      console.log(data)
       this.currentMove = this.totalMove
     },
     setCurrentMove() {
       //set highlight div dựa trên this.current move hiện tại
-      console.log("call current-move")
       let arr = document.getElementsByClassName('move')
       if (arr != undefined && arr != null && arr.length !== 0) {
         Array.prototype.forEach.call(arr, function(move) {
@@ -310,11 +344,21 @@ export default {
     //   this.totalMove = 0
     // },
     prepareExercise() {
-      console.log(this.initFen)
-      this.exercise.fen = this.initFen
-      this.exercise.answers = this.moveHistories
-      console.log(this.exercise)
+      console.log("prepare")
+      if (this.checkboxChessbot) {
+        this.exerciseContent = {
+          fen: this.initFen,
+          answerType: 1
+        }
+      } else {
+        this.exerciseContent = {
+          fen: this.initFen,
+          answerType: 2,
+          answerArr: this.answerArr
+        }
+      }
       this.step++
+      console.log(this.exerciseContent)
     },
     removeExercise() {
       this.exercise = {
@@ -327,8 +371,6 @@ export default {
     saveRightRes() {
       let timeout = window.setTimeout(() => {
         if (this.orientation === 'white') {
-          console.log(this.moveHistories[this.answersTab][this.currentIndexMoveInArr])
-          console.log(this.currentIndexMoveInArr)
           this.moveHistories[this.answersTab][this.currentIndexMoveInArr].whiteMove['rightRes'] = this.moveRightRes
         } else {
           this.moveHistories[this.answersTab][this.currentIndexMoveInArr].blackMove['rightRes'] = this.moveRightRes
@@ -369,7 +411,6 @@ export default {
     },
     changeTab(index) {
       this.answersTab = index
-      console.log(this.moveHistories[this.answersTab].length)
       if (this.moveHistories[this.answersTab].length > 0) {
         let lastMove = this.moveHistories[this.answersTab][this.moveHistories[this.answersTab].length - 1]
         let moveDirection
@@ -385,6 +426,30 @@ export default {
       } else {
         this.fen = this.initFen
         this.removeHighlightForBoard('exerciseBoard')
+      }
+    },
+    saveExercise() {
+      if (this.$refs.form.validate()) {
+        // this.lessonContent = this.lessonContent.map(e => {
+        //   e.id = parseInt(e.id)
+        //   e.preId = parseInt(e.preId)
+        // })
+        
+        const exercise = {
+          name: this.exerciseName,
+          description: this.exerciseDes,
+          exercise: {
+            question: this.exerciseQues,
+            answer: this.exerciseContent
+          }
+        }
+        if (this.editingLessonId > 0) {
+          // lesson.interactiveLesson['interactiveLessonId'] = this.interactiveLessonId
+          // console.log(this.lessonContent)
+          this.$emit('onUpdateExercise', exercise)
+        } else {
+          this.$emit('onAddExercise', exercise)
+        }
       }
     }  
   }

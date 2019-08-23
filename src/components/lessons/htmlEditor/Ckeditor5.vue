@@ -219,6 +219,9 @@ export default {
   margin-left: calc(2 * var(--ck-spacing-large));
   margin-right: calc(2 * var(--ck-spacing-large));
 }
+.image.ck-widget img {
+  width: 100%;
+}
 </style>
 
 

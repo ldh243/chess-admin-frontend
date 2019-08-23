@@ -1,10 +1,8 @@
 <template>
-    <v-container>
+    <v-container class="py-0">
         <v-layout justify-center>
-            <v-flex xs10>
-            <v-card :elevation="8">
+            <v-flex xs12>
             <v-card-text id="preview-uninteractive-content">{{content}}</v-card-text>
-        </v-card>
         </v-flex>
         </v-layout>
     </v-container>

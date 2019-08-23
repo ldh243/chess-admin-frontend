@@ -3,6 +3,9 @@ import Repository from '@/repository/Repository'
 const resource = '/lesson'
 
 export default {
+  createExercise(data) {
+    return Repository.post(`${resource}/create-exercise-lesson`, data)
+  },
   createInteractiveLesson(data) {
     return Repository.post(`${resource}/create-interactive-lesson`, data)
   },
