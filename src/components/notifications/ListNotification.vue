@@ -7,7 +7,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="body-2"><strong>{{item.objectName}}</strong> {{item.content}}</v-list-item-title>
-                <v-list-item-subtitle>{{moment(item.createDate).add(VNTimeZone,'hours').fromNow()}}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{moment(item.createDate).fromNow()}}</v-list-item-subtitle>
               </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
@@ -26,6 +26,7 @@
 <script>
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import Moment from '@/assets/js/Moment'
+import firebase from 'firebase'
 const notificationRepository = RepositoryFactory.get('notification')
 const MomentSetting = new Moment()
 export default {
@@ -55,7 +56,6 @@ export default {
         notifications:[],
         unreadNotifications:0,
         page:1,
-        VNTimeZone:7,
         moment:MomentSetting.getInstance(),
         ObjectType:{
           User:0,
@@ -140,6 +140,24 @@ export default {
         if(this.isLoadAll){
           window.onscroll = this.onScrollAction
         }
+        const messaging = firebase.messaging();
+        var self = this
+        messaging.onMessage(function(payload) {
+          var notification = {
+            content: payload.data["gcm.notification.content"],
+            createDate: self.moment.utc().format(),
+            viewed: payload.data["gcm.notification.isViewed"] == "true" ? true : false,
+            notificationId: payload.data["gcm.notification.notificationId"],
+            objectAvatar: payload.data["gcm.notification.objectAvatar"],
+            objectId: payload.data["gcm.notification.objectId"],
+            objectName: payload.data["gcm.notification.objectName"],
+            objectTypeId: payload.data["gcm.notification.objectTypeId"],
+            roleTarget: payload.data["gcm.notification.roleTarget"],
+          }
+          self.notifications.unshift(notification)
+          self.unreadNotifications++
+          self.$store.commit('changeUnreadNotifications',self.unreadNotifications)
+        });
     },
     watch:{
         pageSize:{
@@ -156,7 +174,7 @@ export default {
             }
           },
           deep:true
-        }
+        },
     }
 }
 </script>

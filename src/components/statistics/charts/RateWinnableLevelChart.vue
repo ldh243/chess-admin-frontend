@@ -34,13 +34,16 @@ export default {
         return{
             dataRows:[],
             pieChartName:"",
+            isLoading:false
         }
     },
     methods:{
         async getData(){
+            this.isLoading = true
             const data = await reportRepository.getRateLevelWinnable(this.year,this.isWin)
             if(data.data.data){
                 this.handleData(data.data.data)
+                this.isLoading = false
             }
         },
         handleData(data){
@@ -62,6 +65,16 @@ export default {
         year:{
             handler:function(){
                 this.getData()
+            },
+            deep:true
+        },
+        isLoading:{
+            handler:function(){
+                if(this.isLoading){
+                this.$store.commit('incrementLoader', 1)
+                }else{
+                this.$store.commit('incrementLoader', -1)
+                }
             },
             deep:true
         }

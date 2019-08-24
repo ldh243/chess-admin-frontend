@@ -19,5 +19,11 @@ export default {
             notificationIds: notificationIds
         }
         return Repository.put(`${resource}/update-is-viewed`, data)
+    },
+    updateNotificationToken(token){
+        const data = {
+            token: token
+        }
+        return Repository.post(`${resource}/update-notification-token`, data)
     }
 }

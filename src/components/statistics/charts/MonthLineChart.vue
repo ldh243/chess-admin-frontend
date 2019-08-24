@@ -94,6 +94,16 @@ export default {
       handler:function(){
         this.getData()
       }
+    },
+    isLoading:{
+      handler:function(){
+        if(this.isLoading){
+          this.$store.commit('incrementLoader', 1)
+        }else{
+          this.$store.commit('incrementLoader', -1)
+        }
+    },
+    deep:true
     }
   }
 }

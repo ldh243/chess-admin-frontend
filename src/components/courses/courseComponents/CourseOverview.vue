@@ -24,14 +24,12 @@
         <Pagination :currentPage="currentPage" :pages="totalPages" :rowDataLength="listCourses.length" @triggerpaging="handlPaging($event)"/>
         </v-card>
     </v-container>
-    <Loader v-if="loader"/>
   </div>
 </template>
 
 
 <script>
 import CourseItem from './CourseItem'
-import Loader from '@/components/Loader'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 import Pagination from '@/components/kit/Pagination'
 const courseRepository = RepositoryFactory.get('course')
@@ -49,7 +47,6 @@ export default {
   },
   components: {
     CourseItem,
-    Loader,
     Pagination
   },
   data() {
@@ -74,22 +71,22 @@ export default {
     }
   },
   mounted() {
-    this.loader = true
     if(this.$route.query.status){
       this.filterStatusItem = this.$route.query.status
     }else{
       this.getCoursesPagination()
     }
-    this.loader = false
   },
   methods: {
     async getCoursesPagination() {
+      this.loader = true
       const {
         data
       } = await this.fnGetDataAPI(this.currentPage, 
       this.pageSize,this.search,this.filterStatusItem == 0 ? '' : this.filterStatusItem)
       this.listCourses = this.formatListCourse(data.data.content)
       this.totalPages = data.data.totalPages
+      this.loader = false
       console.log(data)
     },
     async removeCourse() {
@@ -125,6 +122,16 @@ export default {
         this.currentPage = 0
         this.currentPage = 1
       }
+    },
+    loader:{
+      handler:function(){
+        if(this.loader){
+          this.$store.commit('incrementLoader', 1)
+        }else{
+          this.$store.commit('incrementLoader', -1)
+        }
+      },
+      deep:true
     }
   }
 }

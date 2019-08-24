@@ -112,6 +112,7 @@ export default {
   },
   methods: {
     save() {
+      this.$store.commit('incrementLoader', 1)
       this.isEditing = !this.isEditing
       let match = this.user.email.match(/^([^@]*)/)
       this.certificates.forEach(el => {
@@ -148,10 +149,12 @@ export default {
           userRepository.updateProfile(this.user).then(res => {
             self.hasSaved = true
             self.listUpload = []
+            this.$store.commit('incrementLoader', -1)
           })
           clearInterval(checkUploadImgProgress)
         }
       }, 1000)
+      
     },
     handleUserData(user){
       if(user){

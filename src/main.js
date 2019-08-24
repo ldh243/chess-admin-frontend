@@ -11,6 +11,7 @@ import firebase from 'firebase'
 import Repository, { setAuthorizationHeader } from '@/repository/Repository.js'
 import { RepositoryFactory } from '@/repository/RepositoryFactory'
 const userRepository = RepositoryFactory.get('user')
+const notificationRepository = RepositoryFactory.get('notification')
 
 Vue.config.productionTip = false;
 const vm = new Vue()
@@ -25,6 +26,8 @@ var firebaseConfig = {
 }
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
+
+const messaging = firebase.messaging();
 
 async function getParamsFromHeader(to) {
   const token = to.query.token
@@ -83,7 +86,26 @@ router.beforeEach(async (to, from, next) => {
     await getCurrentUserDetail()
   }
   next()
-  
+
+  if(loggedIn){
+    messaging
+      .requestPermission()
+      .then(function () {
+        console.log("Notification permission granted.");
+
+        // get the token in the form of promise
+        return messaging.getToken()
+      })
+      .then(function(token) {
+        notificationRepository.updateNotificationToken(token).then(res => {
+          console.log(res)
+        })
+        console.log('token:' + token)
+      })
+      .catch(function (err) {
+        console.log("Unable to get permission to notify.", err);
+      });
+  }
 })
 
 new Vue({
