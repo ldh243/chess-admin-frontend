@@ -135,7 +135,8 @@ export default {
         if (this.$refs.form.validate()) {
         const lesson = {
           content: this.editor.methods.getVal(),
-          name: this.lessonName
+          name: this.lessonName,
+          description: this.lessonDes
         }
         this.$emit('onAddUninteractiveLesson', lesson)
       }

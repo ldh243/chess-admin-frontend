@@ -88,6 +88,10 @@ export default {
     exercise: {
       type: Object,
       default: {}
+    },
+    question: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -148,7 +152,7 @@ export default {
     this.setCurrentMove()
   },
   created() {
-    this.gameHistory.push('Tìm nước đi thích hợp để bên trắng thắng?')
+    this.gameHistory.push(this.question)
     this.engine = new Worker('../stockfish.js')
     this.sendUCI('uci')
     this.currentFen = this.exercise.fen
@@ -160,18 +164,12 @@ export default {
       this.answerArr = this.exercise.answerArr
     }
     this.gameStatus = 'new'
+    console.log(this.currentMoveInArr)
     // this.lastFen = this.currentFen
   },
   methods: {
     performWrongMove() {
       this.gameHistory.push('Câu trả lời sai, hãy thực hiện lại')
-    },
-    resetBoard() {
-      this.moveHistory = []
-      this.moves = ''
-      this.currentFen = this.defaultFen
-      this.currentMove = 0
-      this.totalMove = 0
     },
     showInfo(data) {
       console.log(data)
@@ -179,25 +177,26 @@ export default {
       this.moveData = data
       let fen = data.fen
       this.turn = data.turn
-      this.newMove = data.history[data.history.length - 1]
+      this.newMove = data.move
       if (this.answerType === 2) {
         if (data.turn !== this.userColor) {
           let ableMoveArr = this.answerArr.filter(moveArr => {
+            console.log(moveArr[0])
             return moveArr[this.currentMoveInArr].move === this.newMove
           })
           if (ableMoveArr.length === 0) {
             this.currentGameStatus = 'wrong_ans'
             let wrongResArr = this.answerArr.filter(moveArr => {
-              return moveArr[this.currentMoveInArr].wrongRes.length !== 0
+              return moveArr[this.currentMoveInArr].wrongResponse.length !== 0
             })
             if (wrongResArr.length === 1) {
               this.gameHistory.push(
-                wrongResArr[0][this.currentMoveInArr].wrongRes
+                wrongResArr[0][this.currentMoveInArr].wrongResponse
               )
             } else if (wrongResArr.length > 1) {
               let randomArr = this.getRandomInt(wrongResArr.length)
               this.gameHistory.push(
-                wrongResArr[randomArr][this.currentMoveInArr].wrongRes
+                wrongResArr[randomArr][this.currentMoveInArr].wrongResponse
               )
             }
             return
@@ -209,13 +208,13 @@ export default {
               })
             }
             this.createNewMoveInMoveHistory()
-            if (ableMoveArr[0][this.currentMoveInArr].rightRes.length !== 0) {
+            if (ableMoveArr[0][this.currentMoveInArr].rightResponse.length !== 0) {
               this.gameHistory.push(
-                ableMoveArr[0][this.currentMoveInArr].rightRes
+                ableMoveArr[0][this.currentMoveInArr].rightResponse
               )
             }
             if (this.currentMoveInArr === ableMoveArr[0].length - 1) {
-              this.$swal('Kết quả', `Hoàn thành`, 'success')
+              this.gameHistory.push("Hoàn thành")
             } else {
               this.currentMoveInArr++
               this.move = ableMoveArr[0][this.currentMoveInArr].moveDirection
@@ -258,7 +257,7 @@ export default {
         const newTurn = {
           index: moveHistory.length + 1,
           whiteMove: {
-            move: this.moveData.history[this.moveData.history.length - 1],
+            move: this.moveData.move,
             fen: this.moveData.fen,
             moveCount: 'move-' + this.totalMove
           },
@@ -268,7 +267,7 @@ export default {
       } else {
         //nước đi tiếp theo của turn cũ
         lastMove.blackMove = {
-          move: this.moveData.history[this.moveData.history.length - 1],
+          move: this.moveData.move,
           fen: this.moveData.fen,
           moveCount: 'move-' + this.totalMove
         }

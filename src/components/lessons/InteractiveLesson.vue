@@ -313,6 +313,9 @@ export default {
     },
     lessonDes: function() {
       this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+    },
+    moveHistory: function() {
+      this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
     }
   },
   created() {
@@ -542,6 +545,7 @@ export default {
         })
         const lesson = {
           name: this.lessonName,
+          description: this.lessonDes,
           interactiveLesson: {
             steps: this.lessonContent,
             initCode: this.initFen

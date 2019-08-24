@@ -38,7 +38,7 @@
                   fab
                   dark
                   small
-                  color="orange darken-3"
+                  color="yellow darken-3"
                 >
                   <v-icon dark>play_arrow</v-icon>
                 </v-btn>
@@ -49,7 +49,7 @@
                   fab
                   dark
                   small
-                  color="yellow darken-3"
+                  color="amber darken-3"
                 >
                   <v-icon dark>edit</v-icon>
                 </v-btn>
@@ -137,7 +137,7 @@
         <v-btn icon dark @click="addLessonDialog = false;lessonType = 0;editingLessonId = 0">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>{{lessonTypeName[lessonType - 1]}}</v-toolbar-title>
+        <v-toolbar-title>{{lessonType === 5 ? 'Thêm bài tập' : lessonTypeName[lessonType - 1]}}</v-toolbar-title>
       </v-toolbar>
       <v-container fluid style="background-color:#fff;height:100%">
         <Exercise :editingLessonId="editingLessonId"
@@ -163,14 +163,14 @@
       transition="dialog-bottom-transition"
     >
       <v-card :elevation="8">
-        <v-card-actions>
+          <v-card-actions>
           <v-card-title>{{previewLessonObj.name}}</v-card-title>
           <v-spacer></v-spacer>
           <v-btn icon dark @click="previewLessonDialog = false;lessonType = 0;">
           <v-icon color="grey darken-3">close</v-icon>
         </v-btn>
         </v-card-actions>
-        <PreviewExercise :exercise="previewLessonObj.exercise.answer" v-if="previewLessonDialog === true && lessonType === 5" />
+        <PreviewExercise :question="previewLessonObj.exercise.question" :exercise="previewLessonObj.exercise.answer" v-if="previewLessonDialog === true && lessonType === 5" />
         <PreviewInteractiveLesson
           :steps="previewLessonObj.interactiveLesson.steps"
           :initFen="previewLessonObj.interactiveLesson.initCode"
@@ -266,10 +266,10 @@ export default {
     }
   },
   mounted() {
-    this.loader = true
+    this.loader++
     this.courseId = this.$route.params.courseId
     this.getCourseById()
-    this.loader = false
+    this.loader--
   },
   methods: {
     showCreatingExercise() {
@@ -282,13 +282,6 @@ export default {
     },
     showEditingLesson(lesson) {
       this.lessonType = lesson.lessonType
-      // switch (lesson.lessonType) {
-      //   case 1:
-      //   case 2:
-      //   case 3:
-      //     this.editingUninteractiveLessonId = lesson.lessonId
-      //     this.addLessonDialog = true
-      // }
       this.editingLessonId = lesson.lessonId
       this.addLessonDialog = true
     },
@@ -424,13 +417,12 @@ export default {
         })
     },
     openLessonDialog(lessonType) {
-      this.editingUninteractiveLessonId = 0
       this.addLessonDialog = true
       this.lessonType = lessonType
     },
     async previewLesson(lessonId, lessonType) {
       this.lessonType = lessonType
-      const { data } = await lessonRepository.getById(lessonId).then(res => {
+      const data = await lessonRepository.getById(lessonId).then(res => {
         this.previewLessonDialog = true
         this.previewLessonObj = res.data.data
         console.log(this.previewLessonObj)
