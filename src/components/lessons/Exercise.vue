@@ -263,7 +263,7 @@ export default {
       this.isEditing = true
     }
     this.baywatch(
-      ['moveHistories', 'exerciseDes', 'exerciseQues', 'exerciseName'],
+      ['moveHistories', 'exerciseDes', 'exerciseQues', 'exerciseName', 'checkboxChessbot'],
       this.checkPreviewButton.bind(this)
     )
   },

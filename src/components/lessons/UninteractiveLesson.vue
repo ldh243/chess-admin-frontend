@@ -145,6 +145,7 @@ export default {
     async getById(lessonId) {
       const data = await lessonRepository.getById(lessonId)
       this.lessonName = data.data.data.name
+      this.lessonDes = data.data.data.description
       this.content = data.data.data.uninteractiveLesson.content 
       this.uninteractiveLessonId =
         data.data.data.uninteractiveLesson.uninteractiveLessonId
