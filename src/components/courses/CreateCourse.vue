@@ -32,7 +32,8 @@ export default {
       this.loader = true
       let match = this.$store.state.user.email.match(/^([^@]*)/)
         let courseSlug = course.name.toLowerCase().split(" ").join('-')
-        course.image = await this.uploadImageByFile(this.courseImage, courseSlug, `courses/${match[0]}`)
+        course.image = this.courseImage === null ? 'https://firebasestorage.googleapis.com/v0/b/cols-fpt.appspot.com/o/images%2Fcourses%2Ftuyetnganphamhoang%2Fnh%E1%BA%ADp-m%C3%B4n?alt=media&token=c4cef16e-19ce-48db-8702-4d8f4f8412e7' : 
+                        await this.uploadImageByFile(this.courseImage, courseSlug, `courses/${match[0]}`)  
         console.log(course)
         const data = await courseRepository.createCourse(course).then(res => {
           const courseId = res.data.data.savedId
