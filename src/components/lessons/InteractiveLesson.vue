@@ -337,7 +337,7 @@ export default {
         })
         currentHalfMove.content = this.moveContent
         this.isSavedContent = true
-      }, 2000)
+      }, 500)
     },
     getFen(data) {
       this.chessboardData = data
@@ -476,9 +476,12 @@ export default {
       if (event != undefined) {
         const divTarget = event.srcElement
         if (divTarget.id) {
-          this.stepContent = content
           this.currentId = divTarget.id.replace('il-', '')
           this.currentMove = this.currentId
+          let currentHalfMove = this.lessonContent.find(move => {
+            return move.id == this.currentMove
+          })
+          this.moveContent = currentHalfMove.content
           // let afterMove = this.lessonContent.find(move => {
           //   move.preId == this.currentMove
           // })
@@ -551,6 +554,7 @@ export default {
             initCode: this.initFen
           }
         }
+        console.log(lesson)
         if (this.editingLessonId > 0) {
           lesson.interactiveLesson['interactiveLessonId'] = this.interactiveLessonId
           console.log(this.lessonContent)

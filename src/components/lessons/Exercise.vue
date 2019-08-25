@@ -113,16 +113,28 @@
               </v-flex>
               <v-flex xs1 style="display:flex">
                 <v-layout justify-center column>
-                  <v-btn style="margin:auto" @click="editFenDialog = true" fab icon text small color="grey darken-3">
-                  <v-icon>fa-pen</v-icon>
-                </v-btn>
+                  <v-btn
+                    style="margin:auto"
+                    @click="editFenDialog = true"
+                    fab
+                    icon
+                    text
+                    small
+                    color="grey darken-3"
+                  >
+                    <v-icon>fa-pen</v-icon>
+                  </v-btn>
                 </v-layout>
               </v-flex>
             </v-layout>
           </v-form>
         </v-window-item>
         <v-window-item :value="2">
-          <PreviewExercise :question="exerciseQues" :specificAns="answersTab" :exercise="exerciseContent" />
+          <PreviewExercise
+            :question="exerciseQues"
+            :specificAns="answersTab"
+            :exercise="exerciseContent"
+          />
         </v-window-item>
       </v-window>
       <v-layout wrap>
@@ -179,6 +191,8 @@
 import Chessboard from '@/components/plugins/cols-chessboard/index.vue'
 import CreateChessPuzzle from './CreateChessPuzzle.vue'
 import PreviewExercise from './preview/PreviewExercise.vue'
+import { RepositoryFactory } from '@/repository/RepositoryFactory'
+const lessonRepository = RepositoryFactory.get('lesson')
 export default {
   name: 'CreateExercise',
   components: {
@@ -206,7 +220,6 @@ export default {
       checkboxChessbot: false,
       step: 1,
       moveHistories: [[], [], []],
-      currentMoveHistory: [],
       answersTabModel: 0,
       answersTab: 0,
       totalMove: 0,
@@ -234,48 +247,41 @@ export default {
       isContainMove: false,
       exerciseContent: {},
       answerArr: [[], [], []],
-      preId: 0
+      preId: 0,
+      exerciseId: -1,
+      isEditing: false
     }
   },
-  watch: {
-    exerciseName: function() {
-      this.isValidated =
-        (this.moveHistories[this.answersTab].length > 0 ||
-          this.checkboxChessbot) &&
-        this.$refs.form.validate()
-    },
-    exerciseDes: function() {
-      this.isValidated =
-        (this.moveHistories[this.answersTab].length > 0 ||
-          this.checkboxChessbot) &&
-        this.$refs.form.validate()
-    },
-    exerciseQues: function() {
-      this.isValidated =
-        (this.moveHistories[this.answersTab].length > 0 ||
-          this.checkboxChessbot) &&
-        this.$refs.form.validate()
-    },
-    checkboxChessbot: function() {
-      this.isValidated =
-        (this.moveHistories[this.answersTab].length > 0 ||
-          this.checkboxChessbot) &&
-        this.$refs.form.validate()
-    },
-    moveHistories: function() {
-      this.isValidated =
-        (this.moveHistories[this.answersTab].length > 0 ||
-          this.checkboxChessbot) &&
-        this.$refs.form.validate()
-    }
-  },
+  watch: {},
   updated() {
     this.setCurrentMove()
   },
   created() {
     this.answersTab = 0
+    if (this.editingLessonId > 0) {
+      this.getById(this.editingLessonId)
+      this.isEditing = true
+    }
+    this.baywatch(
+      ['moveHistories', 'exerciseDes', 'exerciseQues', 'exerciseName'],
+      this.checkPreviewButton.bind(this)
+    )
   },
   methods: {
+    baywatch: function(props, watcher) {
+      var iterator = function(prop) {
+        this.$watch(prop, watcher)
+      }
+      props.forEach(iterator, this)
+    },
+    checkPreviewButton() {
+      let ableArr = this.moveHistories.filter(moveArr => {
+        return moveArr.length > 0
+      })
+      this.isValidated =
+        (ableArr.length > 0 || this.checkboxChessbot) &&
+        this.$refs.form.validate()
+    },
     getFen(data) {
       if (
         data['fen'] !== undefined &&
@@ -296,6 +302,8 @@ export default {
     loadFen(fen, moveId, indexMove, color) {
       this.fen = fen
       this.currentMove = moveId
+      this.moveRightRes = this.answerArr[this.answersTab][this.currentMove].rightResponse
+      this.moveWrongRes = this.answerArr[this.answersTab][this.currentMove].wrongResponse
       this.currentIndexMoveInArr = indexMove
       this.currentClickedMoveTurn = color
       this.setCurrentMove()
@@ -312,6 +320,8 @@ export default {
         rightResponse: '',
         wrongResponse: ''
       }
+      this.moveWrongRes = ''
+      this.moveRightRes = ''
       this.answerArr[this.answersTab].push(newHalfMove)
       this.preId++
       let moveHistory = this.moveHistories[this.answersTab]
@@ -324,7 +334,6 @@ export default {
       this.nextMoveTurn = data.turn
       this.currentClickedMoveTurn =
         this.nextMoveTurn === black ? 'white' : 'black'
-      this.totalMove++
       this.fen = data.fen
       if (turn === black) {
         //tạo thêm turn mới
@@ -351,6 +360,7 @@ export default {
         }
       }
       this.currentMove = this.totalMove
+      this.totalMove++
     },
     setCurrentMove() {
       //set highlight div dựa trên this.current move hiện tại
@@ -370,12 +380,6 @@ export default {
     getMoveByIdNumber() {
       return document.getElementById('move-' + this.currentMove)
     },
-    // resetBoardAndResetHistory() {
-    //   this.currentFen = ''
-    //   this.moveHistory = []
-    //   this.currentMove = 0
-    //   this.totalMove = 0
-    // },
     prepareExercise() {
       console.log('prepare')
       if (this.checkboxChessbot) {
@@ -406,6 +410,11 @@ export default {
     },
     saveRightRes() {
       let timeout = window.setTimeout(() => {
+        console.log(this.answerArr)
+        console.log(this.currentMove)
+        this.answerArr[this.answersTab][
+          this.currentMove
+        ].rightResponse = this.moveRightRes
         if (this.orientation === 'white') {
           this.moveHistories[this.answersTab][
             this.currentIndexMoveInArr
@@ -416,10 +425,13 @@ export default {
           ].blackMove['rightRes'] = this.moveRightRes
         }
         this.isSavedRightRes = true
-      }, 2000)
+      }, 500)
     },
     saveWrongRes() {
       let timeout = window.setTimeout(() => {
+        this.answerArr[this.answersTab][
+          this.currentMove
+        ].wrongResponse = this.moveWrongRes
         if (this.orientation === 'white') {
           this.moveHistories[this.answersTab][
             this.currentIndexMoveInArr
@@ -430,13 +442,12 @@ export default {
           ].blackMove['wrongRes'] = this.moveWrongRes
         }
         this.isSavedWrongRes = true
-      }, 2000)
+      }, 500)
     },
     resetBoard() {
-      this.isReset = false //active clearBoard
       this.isReset = true
       this.fen = this.defaultFen
-      this.moveHistories = []
+      this.moveHistories = [[], [], []]
       this.orientation = this.nextMoveTurn = 'white'
       this.totalMove = this.currentMove = 0
       this.currentIndexMoveInArr = -1
@@ -447,11 +458,6 @@ export default {
       this.answersTab = 0
       this.moveRightRes = this.moveWrongRes = ''
       this.currentClickedMoveTurn = ''
-      this.exercise = {
-        question: '',
-        fen: '',
-        answers: []
-      }
     },
     changeTab(index) {
       this.answersTab = index
@@ -490,13 +496,38 @@ export default {
           }
         }
         if (this.editingLessonId > 0) {
-          // lesson.interactiveLesson['interactiveLessonId'] = this.interactiveLessonId
+          exercise.exercise['exerciseId'] = this.exerciseId
           // console.log(this.lessonContent)
           this.$emit('onUpdateExercise', exercise)
         } else {
           this.$emit('onAddExercise', exercise)
         }
       }
+    },
+    convertMoveHistory(answerArr) {},
+    async getById(lessonId) {
+      const data = await lessonRepository.getById(lessonId).then(res => {
+        console.log(res)
+        // this.lessonName = res.data.data.name
+        // this.lessonContent = res.data.data.interactiveLesson.steps
+        // this.lessonContent = this.lessonContent.map(e => {
+        //   let obj = e
+        //   obj['id'] = parseInt(e.id)
+        //   obj['preId'] = parseInt(e.preId)
+        //   return obj
+        // })
+        // this.initFen = res.data.data.interactiveLesson.initCode
+        // this.interactiveLessonId =
+        //   res.data.data.interactiveLesson.interactiveLessonId
+        // this.totalMove =
+        //   this.lessonContent.length > 0
+        //     ? parseInt(this.lessonContent[this.lessonContent.length - 1].id)
+        //     : 0
+        // console.log(this.totalMove)
+        // this.lastMove = this.totalMove
+        // console.log(this.lessonContent)
+        // this.loadMoveHistory(this.lessonContent)
+      })
     }
   }
 }

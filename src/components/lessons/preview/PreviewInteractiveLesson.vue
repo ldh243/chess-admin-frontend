@@ -108,7 +108,7 @@
             <v-icon>fast_forward</v-icon>
           </v-btn>
         </div>
-        <div class="move-information mt-3 content-area"></div>
+        <div class="move-information mt-3 content-area">{{moveContent}}</div>
       </v-card-text>
     </v-flex>
   </v-layout>
@@ -149,7 +149,8 @@ export default {
       moveHistory: [],
       currentId: 0,
       fakeSteps: [],
-      status: ''
+      status: '',
+      moveContent: ''
     }
   },
   computed: {
@@ -194,7 +195,7 @@ export default {
       if (event != undefined) {
         const divTarget = event.srcElement
         if (divTarget.id) {
-          this.stepContent = content
+          this.moveContent = content
           this.currentId = divTarget.id.replace('pv-', '')
           console.log(this.currentId)
           this.currentFen = divTarget.getAttribute('prefen')
