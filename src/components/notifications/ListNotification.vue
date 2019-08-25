@@ -151,7 +151,7 @@ export default {
             objectAvatar: payload.data["gcm.notification.objectAvatar"],
             objectId: parseFloat(payload.data["gcm.notification.objectId"]),
             objectName: payload.data["gcm.notification.objectName"],
-            objectTypeId: payload.data["gcm.notification.objectTypeId"],
+            objectTypeId: parseFloat(payload.data["gcm.notification.objectTypeId"]),
             roleTarget: payload.data["gcm.notification.roleTarget"],
           }
           self.notifications.unshift(notification)
