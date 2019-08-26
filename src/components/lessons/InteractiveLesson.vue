@@ -296,7 +296,8 @@ export default {
       interactiveLessonForm: true,
       isEditing: false,
       interactiveLessonId: -1,
-      isValiated: false
+      isValiated: false,
+      lastMoves: [0]
     }
   },
   watch: {
@@ -377,7 +378,10 @@ export default {
     showInfo(data) {
       this.moveData = data
       this.fen = data.fen
-      if (parseInt(this.currentMove) === this.lastMove) {
+      let nextMoveArr = this.lessonContent.filter(move => {
+        return move.preId == this.currentMove
+      })
+      if (parseInt(this.currentMove) === this.lastMove || nextMoveArr.length == 0) {
         console.log("add new for edit")
         this.totalMove++
         let newHalfMove = {
