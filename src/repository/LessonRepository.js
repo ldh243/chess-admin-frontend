@@ -1,35 +1,30 @@
 import Repository from '@/repository/Repository'
 
-const resource = '/lesson'
+const resource = '/lessons'
 
 export default {
   createExercise(data) {
-    return Repository.post(`${resource}/create-exercise-lesson`, data)
+    return Repository.post(`${resource}/exercise-lesson`, data)
   },
   createInteractiveLesson(data) {
-    return Repository.post(`${resource}/create-interactive-lesson`, data)
+    return Repository.post(`${resource}/interactive-lesson`, data)
   },
   createUninteractiveLesson(data){
-    return Repository.post(`${resource}/create-uninteractive-lesson`,data)
+    return Repository.post(`${resource}/uninteractive-lesson`,data)
   },
   getById(lessonId){
-    const data = {
-      params: {
-        lessonId: lessonId
-      }
-    }
-    return Repository.get(`${resource}/get-by-id`,data)
+    return Repository.get(`${resource}/`+lessonId)
   },
   updateUninteractiveLesson(data){
-    return Repository.put(`${resource}/update-uninteractive-lesson`,data)
+    return Repository.put(`${resource}/uninteractive-lesson`,data)
   },
   updateInteractiveLesson(data) {
-    return Repository.put(`${resource}/update-interactive-lesson`, data)
+    return Repository.put(`${resource}/interactive-lesson`, data)
   },
   removeLesson(lessonId) {
     const data = {
       lessonId: lessonId
     }
-    return Repository.put(`${resource}/remove-lesson`, data)
+    return Repository.delete(`${resource}/`+lessonId)
   }
 }

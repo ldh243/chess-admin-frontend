@@ -1,5 +1,5 @@
 import Repository from '@/repository/Repository'
-const resource = '/report'
+const resource = '/reports'
 
 export default{
     getEnrollment(year){
@@ -8,7 +8,7 @@ export default{
                 year : year 
             }
         }
-        return Repository.get(`${resource}/get-enrollment-report`,data)
+        return Repository.get(`${resource}/enrollment-report`,data)
     },
     getLeanerStatusCourse(page,pageSize,courseName){
         const data = {
@@ -18,7 +18,7 @@ export default{
                 courseName: courseName
             }
         }
-        return Repository.get(`${resource}/get-learner-status-course`,data)
+        return Repository.get(`${resource}/learner-status-course`,data)
     },
     getUsersRegister(year){
         const data = {
@@ -26,7 +26,7 @@ export default{
                 year : year 
             }
         }
-        return Repository.get(`${resource}/get-users-register-report`,data)
+        return Repository.get(`${resource}/users-register-report`,data)
     },
     getRateWinnable(year){
         const data = {
@@ -34,7 +34,7 @@ export default{
                 year : year 
             }
         }
-        return Repository.get(`${resource}/get-rate-winnable-report`,data)
+        return Repository.get(`${resource}/rate-winnable-report`,data)
     },
     getRateLevelWinnable(year){
         const data = {
@@ -42,12 +42,12 @@ export default{
                 year : year 
             }
         }
-        return Repository.get(`${resource}/get-rate-winnable-level-report`,data)
+        return Repository.get(`${resource}/rate-winnable-level-report`,data)
     },
     getPublishCourseReport(){
-        return Repository.get(`${resource}/get-publish-course-report`)
+        return Repository.get(`${resource}/publish-course-report`)
     },
     getCourseStatusReport(){
-        return Repository.get(`${resource}/get-course-status-report`)
+        return Repository.get(`${resource}/course-status-report`)
     }
 }

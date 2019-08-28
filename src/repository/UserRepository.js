@@ -1,6 +1,6 @@
 import Repository from '@/repository/Repository'
 
-const resource = '/user'
+const resource = '/users'
 
 export default {
   getUsersPagination(page, pageSize,email,isActive,isReview,role) {
@@ -13,31 +13,26 @@ export default {
         isReview: isReview ? isReview : '',
         role: role ? role : ''
       } }
-    return Repository.get(`${resource}/get-users-pagination`, data)
+    return Repository.get(`${resource}`, data)
   },
   updateStatus(data) {
-    return Repository.put(`${resource}/update-status`, data)
+    return Repository.put(`${resource}/status`, data)
   },
   getCurrentUserDetail() {
-    return Repository.get(`${resource}/get-current-user-detail`)
+    return Repository.get(`${resource}/current-user-detail`)
   },
   getUserById(userId){
-    const data = {
-      params:{
-        userId: userId
-      }
-    }
-    return Repository.get(`${resource}/get-by-id`, data)
+    return Repository.get(`${resource}/`+userId)
   },
   updateUserStatus(userId,isActive){
     const data = {
       active: isActive,
       userId: userId
     }
-    return Repository.put(`${resource}/update-status`, data)
+    return Repository.put(`${resource}/status`, data)
   },
   updateProfile(data) {
-    return Repository.put(`${resource}/update-profile`, data)
+    return Repository.put(`${resource}/profile`, data)
   },
   // http://cols-be.ml/user/get-current-user-detail
 

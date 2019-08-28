@@ -1,38 +1,29 @@
 import Repository from '@/repository/Repository'
 
-const resource = '/category'
+const resource = '/categories'
 
 export default {
   getCategories() {
-    return Repository.get(`${resource}/get-categories`)
+    return Repository.get(`${resource}`)
   },
   getCategoryDetail(categoryId) {
-    const data = {
-      params: {
-        categoryId: categoryId
-      }
-    }
-    return Repository.get(`${resource}/get-by-id`, data)
+    return Repository.get(`${resource}/`+ categoryId)
   },
   createCategory(name) {
     const data = {
       name: name
     }
-    return Repository.post(`${resource}/create-category`, data)
+    return Repository.post(`${resource}`, data)
   },
   updateCategory(categoryId, name) {
     const data = {
       categoryId: categoryId,
       name: name
     }
-    return Repository.post(`${resource}/update-category`, data)
+    return Repository.put(`${resource}`, data)
   },
-  removeCategory(categoryId, name) {
-    const data = {
-      categoryId: categoryId,
-      name: name
-    }
-    return Repository.put(`${resource}/remove-category`, data)
+  removeCategory(categoryId) {
+    return Repository.delete(`${resource}/`+categoryId)
   }
 
   // bid(id, price) {

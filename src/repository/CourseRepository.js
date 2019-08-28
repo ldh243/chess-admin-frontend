@@ -1,7 +1,7 @@
 import Repository from '@/repository/Repository'
 import router from '../router'
 
-const resource = '/course'
+const resource = '/courses'
 
 export default {
   getCoursesPagination(page, pageSize) {
@@ -12,15 +12,10 @@ export default {
       }
     }
 
-    return Repository.get(`${resource}/get-course-pagination`, data)
+    return Repository.get(`${resource}`, data)
   },
   getById(courseId) {
-    const data = {
-      params: {
-        courseId: courseId
-      }
-    }
-    return Repository.get(`${resource}/get-by-id`, data)
+    return Repository.get(`${resource}/`+courseId)
   },
   getCourseByCategoryId(categoryId, page, pageSize) {
     const data = {
@@ -31,29 +26,22 @@ export default {
       }
     }
     return Repository.get(
-      `${resource}/get-course-paginations-by-category-id`,
+      `${resource}/category-id`,
       data
     )
   },
   createCourse(data) {
-    return Repository.post(`${resource}/create-course`, data)
+    return Repository.post(`${resource}/course`, data)
   },
   updateCourse(data) {
-    return Repository.put(`${resource}/update-course`, data)
+    return Repository.put(`${resource}/course`, data)
   },
-  removeCourse(courseId) {
-    const data = {
-      courseId: courseId
-    }
-    return Repository.put(`${resource}/remove-course`, data)
-  },
-
   updateCourseStatus(courseId, statusId) {
     const data = {
       courseId: courseId,
       statusId: statusId
     }
-    return Repository.put(`${resource}/update-course-status`, data)
+    return Repository.put(`${resource}/status`, data)
   },
   getCoursesPagination(page, pageSize,nameCourse,statusId) {
     const data = {
@@ -65,7 +53,7 @@ export default {
       }
     }
     return Repository.get(
-      `${resource}/get-course-pagination`,
+      `${resource}`,
       data
     )
   },
@@ -80,7 +68,7 @@ export default {
       }
     }
     return Repository.get(
-      `${resource}/get-course-paginations-by-userid`,
+      `${resource}/userid`,
       data
     )
   },
@@ -88,7 +76,7 @@ export default {
     const data = {
       courseId: courseId
     }
-    return Repository.put(`${resource}/publish-course`, data)
+    return Repository.put(`${resource}/publish`, data)
   },
   updateCourseStatus(courseId,reasonReject,statusId){
     const data = {
@@ -96,7 +84,7 @@ export default {
       reasonReject: reasonReject,
       statusId: statusId
     }
-    return Repository.put(`${resource}/update-course-status`, data)
+    return Repository.put(`${resource}/status`, data)
   },
   changeStatusCourseToDrafting(courseId){
     const data = {
@@ -112,7 +100,7 @@ export default {
         pageSize: pageSize
       }
     }
-    return Repository.get(`${resource}/get-review-pagination`, data)
+    return Repository.get(`${resource}/reviews`, data)
   },
   getCourseOverview(courseId) {
     const data = {
@@ -120,6 +108,6 @@ export default {
         courseId: courseId
       }
     }
-    return Repository.get(`${resource}/get-course-overview`, data)
+    return Repository.get(`${resource}/overview`, data)
   },
 }

@@ -1,6 +1,6 @@
 import Repository from '@/repository/Repository'
 
-const resource = '/notification'
+const resource = '/notifications'
 
 export default {
     getNotificationPagination(page, pageSize,sortBy,sortDirection) {
@@ -12,18 +12,18 @@ export default {
                 sortDirection: sortDirection
             } 
         }
-        return Repository.get(`${resource}/get-current-user-notifications-pagination`, data)
+        return Repository.get(`${resource}/current-user`, data)
     },
     updateIsViewed(notificationIds){
         const data = {
             notificationIds: notificationIds
         }
-        return Repository.put(`${resource}/update-is-viewed`, data)
+        return Repository.put(`${resource}/is-viewed`, data)
     },
     updateNotificationToken(token){
         const data = {
             token: token
         }
-        return Repository.post(`${resource}/update-notification-token`, data)
+        return Repository.post(`${resource}/token`, data)
     }
 }
