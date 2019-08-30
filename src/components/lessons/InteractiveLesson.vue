@@ -268,8 +268,6 @@ export default {
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       orientation: '',
       chessboardData: {},
-      whiteObj: [],
-      blackObj: [],
       totalMove: 0, //total of move
       currentMove: 0, // move index is clicked,
       lastMove: 0,
@@ -363,16 +361,6 @@ export default {
       this.initFen = this.chessboardData.fen
       this.orientation = this.chessboardData.orientation
       let posKey = Object.keys(this.chessboardData.object) //position of chess pieces
-      this.whiteObj = []
-      this.blackObj = []
-      posKey.forEach(e => {
-        let piece = this.chessboardData.object[e]
-        if (piece.charAt(0) === 'w') {
-          this.whiteObj.push(piece.charAt(1) + e)
-        } else {
-          this.blackObj.push(piece.charAt(1) + e)
-        }
-      })
       this.editBoard = false
     },
     showInfo(data) {
@@ -382,6 +370,7 @@ export default {
         return move.preId == this.currentMove
       })
       if (parseInt(this.currentMove) === this.lastMove || nextMoveArr.length == 0) {
+        //check lastmove in current moveHistory
         console.log("add new for edit")
         this.totalMove++
         let newHalfMove = {
