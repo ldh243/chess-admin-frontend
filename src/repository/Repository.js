@@ -9,24 +9,9 @@ const instance = axios.create({
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
     'Content-Type': 'application/json',
-    Authorization: localStorage.getItem('access-token'),
-    'X-Auth-Token': sessionStorage.getItem('session-id')
+    Authorization: localStorage.getItem('access-token')
   }
 })
-
-const errorHandler = (error) => {
-  return Promise.reject({ error })
-}
-
-const successHandler = (response) => {
-  sessionStorage.setItem('session-id',response.headers["x-auth-token"])
-  return response
-}
-
-instance.interceptors.response.use(
-  response => successHandler(response),
-  error => errorHandler(error)
-);
 
 export default instance
 
