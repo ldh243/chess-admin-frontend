@@ -21,6 +21,10 @@ export default {
   updateInteractiveLesson(data) {
     return Repository.put(`${resource}/interactive-lesson`, data)
   },
+  updateExerciseLesson(data) {
+    console.log(data)
+    return Repository.put(`${resource}/exercise-lesson`, data)
+  },
   removeLesson(lessonId) {
     const data = {
       lessonId: lessonId

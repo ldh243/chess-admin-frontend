@@ -4,7 +4,12 @@
       <course-background v-if="course !== null" :course="course"></course-background>
       <v-container class="px-5 py-5">
         <v-chip label dark :color="courseStatusColor[course.statusId - 1]">{{courseStatusName}}</v-chip>
-        <v-chip label class="ml-1" v-for="(item, index) in course.listCategorys" :key="index">{{item.name}}</v-chip>
+        <v-chip
+          label
+          class="ml-1"
+          v-for="(item, index) in course.listCategorys"
+          :key="index"
+        >{{item.name}}</v-chip>
         <h5 class="my-3 grey--text text--darken-1 title text-uppercase">Danh sách bài học</h5>
         <v-alert
           border="right"
@@ -21,17 +26,17 @@
           v-if="listLessons.length > 0"
         >
           <v-expansion-panel v-for="(item,i) in listLessons" :key="i">
-            <v-expansion-panel-header
-              class="grey--text text--darken-3 font-weight-medium py-2"
-            >
-            <v-card-actions class="px-0">
-              <v-icon class="mr-3">{{item.lessonType == 5 ? 'fa-chess' : lessonIcon[item.lessonType - 1]}}</v-icon>
-            Bài {{i + 1}}: {{item.name}}</v-card-actions>
+            <v-expansion-panel-header class="grey--text text--darken-3 font-weight-medium py-2">
+              <v-card-actions class="px-0">
+                <v-icon
+                  class="mr-3"
+                >{{item.lessonType == 5 ? 'fa-chess' : lessonIcon[item.lessonType - 1]}}</v-icon>
+                Bài {{i + 1}}: {{item.name}}
+              </v-card-actions>
             </v-expansion-panel-header>
             <v-expansion-panel-content align-center>
               <v-card-actions class="px-0">
-                <p>
-                Giới thiệu: {{item.description}}</p>
+                <p>Giới thiệu: {{item.description}}</p>
                 <v-spacer></v-spacer>
                 <v-btn
                   @click="previewLesson(item.lessonId, item.lessonType)"
@@ -95,31 +100,87 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <v-layout wrap  mt-3>
+        <v-layout wrap mt-3>
           <v-flex xs12>
-
-          <Review :courseId="$route.params.courseId" />
+            <Review :courseId="$route.params.courseId" />
           </v-flex>
         </v-layout>
-        <v-btn fixed bottom right style="top:70%; right:10px;" @click="actionSheet = true" dark fab color="pink">
+        <v-btn
+          fixed
+          bottom
+          right
+          style="top:70%; right:10px;"
+          @click="actionSheet = true"
+          dark
+          fab
+          color="pink"
+        >
           <v-icon>settings</v-icon>
         </v-btn>
         <v-bottom-sheet v-model="actionSheet" inset :retain-focus="false">
-          <v-sheet class="text-center pt-6" height="200px" >
+          <v-sheet class="text-center pt-6" height="200px">
             <div class="mt-6 title">Thay đổi trạng thái khóa học</div>
             <v-card-actions>
               <v-spacer></v-spacer>
               <div v-if="$store.state.user.roleId == 3">
-                <v-btn depressed dark v-if="course.statusId == 4" color="error" @click="rejectCourse">Từ chối</v-btn>
-                <v-btn depressed dark v-if="course.statusId == 4" color="success" @click="publishCourseByAdmin">Đồng ý</v-btn>
-                <v-btn depressed v-if="course.statusId != 4 && course.statusId != 2" @click="publishCourseByAdmin" dark color="green">Công khai</v-btn>
-                <v-btn depressed v-if="course.statusId != 4 && course.statusId != 5" @click="rejectCourse" dark color="red darken-3">Ngưng công khai</v-btn>
+                <v-btn
+                  depressed
+                  dark
+                  v-if="course.statusId == 4"
+                  color="error"
+                  @click="rejectCourse"
+                >Từ chối</v-btn>
+                <v-btn
+                  depressed
+                  dark
+                  v-if="course.statusId == 4"
+                  color="success"
+                  @click="publishCourseByAdmin"
+                >Đồng ý</v-btn>
+                <v-btn
+                  depressed
+                  v-if="course.statusId != 4 && course.statusId != 2"
+                  @click="publishCourseByAdmin"
+                  dark
+                  color="green"
+                >Công khai</v-btn>
+                <v-btn
+                  depressed
+                  v-if="course.statusId != 4 && course.statusId != 5"
+                  @click="rejectCourse"
+                  dark
+                  color="red darken-3"
+                >Ngưng công khai</v-btn>
               </div>
               <div v-if="$store.state.user.roleId == 1">
-                <v-btn depressed v-if="course.statusId != 2 && course.statusId == 1" @click="publishCourse" dark color="green">Công khai</v-btn>
-                <v-btn depressed v-if="course.statusId != 5 && course.statusId == 2" @click="draftCourseStatus" dark color="red darken-3">Ngưng công khai</v-btn>
-                <v-btn depressed v-if="course.statusId == 4" @click="draftCourseStatus" dark color="yellow darken-4">Soạn thảo</v-btn>
-                <v-btn depressed v-if="course.statusId == 5" @click="restoreCourse" dark color="red darken-3">Khôi phục</v-btn>
+                <v-btn
+                  depressed
+                  v-if="course.statusId != 2 && course.statusId == 1"
+                  @click="publishCourse"
+                  dark
+                  color="green"
+                >Công khai</v-btn>
+                <v-btn
+                  depressed
+                  v-if="course.statusId != 5 && course.statusId == 2"
+                  @click="draftCourseStatus"
+                  dark
+                  color="red darken-3"
+                >Ngưng công khai</v-btn>
+                <v-btn
+                  depressed
+                  v-if="course.statusId == 4"
+                  @click="draftCourseStatus"
+                  dark
+                  color="yellow darken-4"
+                >Soạn thảo</v-btn>
+                <v-btn
+                  depressed
+                  v-if="course.statusId == 5"
+                  @click="restoreCourse"
+                  dark
+                  color="red darken-3"
+                >Khôi phục</v-btn>
               </div>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -140,11 +201,14 @@
         <v-toolbar-title>{{lessonType === 5 ? 'Thêm bài tập' : lessonTypeName[lessonType - 1]}}</v-toolbar-title>
       </v-toolbar>
       <v-container fluid style="background-color:#fff;height:100%">
-        <Exercise :editingLessonId="editingLessonId"
-         @onAddExercise="addExercise"        
-         v-if="addLessonDialog === true && lessonType === 5" />
+        <Exercise
+          :editingLessonId="editingLessonId"
+          @onAddExercise="addExercise"
+          @onUpdateExercise="editExercise"
+          v-if="addLessonDialog === true && lessonType === 5"
+        />
         <InteractiveLesson
-        :editingLessonId="editingLessonId"
+          :editingLessonId="editingLessonId"
           @onAddInteractiveLesson="addInteractiveLesson"
           @onUpdateInteractiveLesson="editInteractiveLesson"
           v-if="addLessonDialog === true && lessonType === 2"
@@ -158,19 +222,24 @@
       </v-container>
     </v-dialog>
     <v-dialog
-      v-model="previewLessonDialog" :width="lessonType === 3 ? '900px' : '1200px'"
+      v-model="previewLessonDialog"
+      :width="lessonType === 3 ? '900px' : '1200px'"
       hide-overlay
       transition="dialog-bottom-transition"
     >
       <v-card :elevation="8">
-          <v-card-actions>
+        <v-card-actions>
           <v-card-title>{{previewLessonObj.name}}</v-card-title>
           <v-spacer></v-spacer>
           <v-btn icon dark @click="previewLessonDialog = false;lessonType = 0;">
-          <v-icon color="grey darken-3">close</v-icon>
-        </v-btn>
+            <v-icon color="grey darken-3">close</v-icon>
+          </v-btn>
         </v-card-actions>
-        <PreviewExercise :question="previewLessonObj.exercise.question" :exercise="previewLessonObj.exercise.answer" v-if="previewLessonDialog === true && lessonType === 5" />
+        <PreviewExercise
+          :question="previewLessonObj.exercise.question"
+          :exercise="previewLessonObj.exercise.answer"
+          v-if="previewLessonDialog === true && lessonType === 5"
+        />
         <PreviewInteractiveLesson
           :steps="previewLessonObj.interactiveLesson.steps"
           :initFen="previewLessonObj.interactiveLesson.initCode"
@@ -234,7 +303,13 @@ export default {
   },
   data() {
     return {
-      courseStatusColor: ['yellow darken-4', 'green', 'red', 'orange darken-4', 'red darken-3'],
+      courseStatusColor: [
+        'yellow darken-4',
+        'green',
+        'red',
+        'orange darken-4',
+        'red darken-3'
+      ],
       courseStatusName: '',
       dialogLessonInteractive: false,
       loader: false,
@@ -309,13 +384,16 @@ export default {
       this.loader = false
     },
     async addExercise(exercise) {
+      console.log('add exercise')
       this.loader = true
       let newExercise = exercise
       let courseId = this.$route.params.courseId
       newExercise['courseId'] = courseId
-      const data = await lessonRepository.createExercise(newExercise).then(async res => {
-        console.log(res)
-        if (res.status === 200) {
+      const data = await lessonRepository
+        .createExercise(newExercise)
+        .then(async res => {
+          console.log(res)
+          if (res.status === 200) {
             const lesson = await courseRepository
               .getById(courseId)
               .then(res => {
@@ -333,7 +411,7 @@ export default {
                 this.loader = false
               })
           }
-      })
+        })
     },
     async addInteractiveLesson(course) {
       this.loader = true
@@ -426,6 +504,24 @@ export default {
           this.loader = false
         })
     },
+    async editExercise(lesson) {
+      this.loader = true
+      lesson['exerciseId'] = this.editingLessonId
+      console.log(lesson)
+      const data = await lessonRepository
+        .updateExerciseLesson(lesson)
+        .then(res => {
+          if (res.status === 200) {
+            this.getCourseById()
+            this.addLessonDialog = false
+            this.snackbarContent = 'Sửa bài học thành công'
+            this.snackbar = true
+            this.lessonType = 0
+            this.editingLessonId = 0
+          }
+          this.loader = false
+        })
+    },
     openLessonDialog(lessonType) {
       this.addLessonDialog = true
       this.lessonType = lessonType
@@ -441,9 +537,10 @@ export default {
     async publishCourse() {
       this.loader = true
       const courseId = this.$route.params.courseId
-      const data  = await courseRepository.publishCourse(courseId).then(res => {
+      const data = await courseRepository.publishCourse(courseId).then(res => {
         if (res.status === 200) {
-          this.snackbarContent = 'Khóa học đang được xét duyệt, xin vui lòng chờ.'
+          this.snackbarContent =
+            'Khóa học đang được xét duyệt, xin vui lòng chờ.'
           this.snackbar = true
           this.actionSheet = false
           this.course.statusId = 4
@@ -453,7 +550,7 @@ export default {
         this.loader = false
       })
     },
-    async rejectCourse(){
+    async rejectCourse() {
       const courseId = this.$route.params.courseId
       Swal.fire({
         text: 'Nhập lí do từ chối',
@@ -461,7 +558,7 @@ export default {
         inputAttributes: {
           autocapitalize: 'off'
         },
-        inputValidator: (value) => {
+        inputValidator: value => {
           if (!value && value.length < 6) {
             return 'Lí do phải từ 6 kí tự trở lên'
           }
@@ -472,26 +569,41 @@ export default {
         confirmButtonText: 'Xác nhận',
         cancelButtonText: 'Hủy',
         showLoaderOnConfirm: true,
-        preConfirm: async(rejectMessage) => {
-          await this.updateCourseStatus(courseId,5,rejectMessage,'Khóa học đã được từ chối')
+        preConfirm: async rejectMessage => {
+          await this.updateCourseStatus(
+            courseId,
+            5,
+            rejectMessage,
+            'Khóa học đã được từ chối'
+          )
         },
         allowOutsideClick: () => !Swal.isLoading()
       })
     },
-    async restoreCourse() {
-
-    },
-    async publishCourseByAdmin(){
+    async restoreCourse() {},
+    async publishCourseByAdmin() {
       this.loader = true
       const courseId = this.$route.params.courseId
-      await this.updateCourseStatus(courseId,2,'','Khóa học đã được công khai')
+      await this.updateCourseStatus(
+        courseId,
+        2,
+        '',
+        'Khóa học đã được công khai'
+      )
       this.loader = false
     },
-    async updateCourseStatus(courseId,statusId,rejectMessage,onSuccessMessage){
-        this.loader = true
-        const data  = await courseRepository.updateCourseStatus(courseId,rejectMessage,statusId).then(res => {
+    async updateCourseStatus(
+      courseId,
+      statusId,
+      rejectMessage,
+      onSuccessMessage
+    ) {
+      this.loader = true
+      const data = await courseRepository
+        .updateCourseStatus(courseId, rejectMessage, statusId)
+        .then(res => {
           if (res.status === 200) {
-            this.snackbarContent = onSuccessMessage 
+            this.snackbarContent = onSuccessMessage
             this.snackbar = true
             this.course.statusId = statusId
             this.actionSheet = false
@@ -500,67 +612,76 @@ export default {
           this.loader = false
         })
     },
-    async draftCourseStatus(){
+    async draftCourseStatus() {
       Swal.fire({
         title: 'Cảnh báo',
-        text: this.course.statusId == 4 ? "Điều này có thể khiến Admin không nhìn thấy request của bạn nữa!" 
-        : "Điều này có thể khiến học viên không thể nhìn thấy khóa học này nữa!",
+        text:
+          this.course.statusId == 4
+            ? 'Điều này có thể khiến Admin không nhìn thấy request của bạn nữa!'
+            : 'Điều này có thể khiến học viên không thể nhìn thấy khóa học này nữa!',
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Chấp nhận',
         cancelButtonText: 'Hủy bỏ'
-      }).then(async (result) => {
+      }).then(async result => {
         if (result.value) {
           const courseId = this.$route.params.courseId
-          await courseRepository.changeStatusCourseToDrafting(courseId).then(res => {
-            if (res.status === 200) {
-              this.snackbarContent = 'Khóa học đã được chuyển sang trạng thái soạn thảo.'
-              this.snackbar = true
-              this.actionSheet = false
-              this.course.statusId = 1
-              this.$forceUpdate()
-            }
-          })
+          await courseRepository
+            .changeStatusCourseToDrafting(courseId)
+            .then(res => {
+              if (res.status === 200) {
+                this.snackbarContent =
+                  'Khóa học đã được chuyển sang trạng thái soạn thảo.'
+                this.snackbar = true
+                this.actionSheet = false
+                this.course.statusId = 1
+                this.$forceUpdate()
+              }
+            })
         }
       })
     },
     async approveCourse() {
       this.loader = true
       const courseId = this.$route.params.courseId
-      const data  = await courseRepository.updateCourseStatus(courseId, 2).then(res => {
-        if (res.status === 200) {
-          this.snackbarContent = 'Khóa học đã được công khai.'
-          this.snackbar = true
-          this.actionSheet = false
-        }
-        this.loader = false
-      })
+      const data = await courseRepository
+        .updateCourseStatus(courseId, 2)
+        .then(res => {
+          if (res.status === 200) {
+            this.snackbarContent = 'Khóa học đã được công khai.'
+            this.snackbar = true
+            this.actionSheet = false
+          }
+          this.loader = false
+        })
     },
     async rejectCourse() {
       this.loader = true
       const courseId = this.$route.params.courseId
-      const data  = await courseRepository.updateCourseStatus(courseId, 5).then(res => {
-        if (res.status === 200) {
-          this.snackbarContent = 'Khóa học đã bị từ chối.'
-          this.snackbar = true
-          this.actionSheet = false
-        }
-        this.loader = false
-      })
+      const data = await courseRepository
+        .updateCourseStatus(courseId, 5)
+        .then(res => {
+          if (res.status === 200) {
+            this.snackbarContent = 'Khóa học đã bị từ chối.'
+            this.snackbar = true
+            this.actionSheet = false
+          }
+          this.loader = false
+        })
     }
   },
-  watch:{
-    loader:{
-      handler:function(){
-        if(this.loader){
+  watch: {
+    loader: {
+      handler: function() {
+        if (this.loader) {
           this.$store.commit('incrementLoader', 1)
-        }else{
+        } else {
           this.$store.commit('incrementLoader', -1)
         }
-    },
-    deep:true
+      },
+      deep: true
     }
   }
 }
