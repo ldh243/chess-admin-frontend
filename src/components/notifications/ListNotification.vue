@@ -144,15 +144,15 @@ export default {
         var self = this
         messaging.onMessage(function(payload) {
           var notification = {
-            content: payload.data["gcm.notification.content"],
+            content: payload.data.content,
             createDate: self.moment.utc().format(),
-            viewed: payload.data["gcm.notification.isViewed"] == "true" ? true : false,
-            notificationId: parseFloat(payload.data["gcm.notification.notificationId"]),
-            objectAvatar: payload.data["gcm.notification.objectAvatar"],
-            objectId: parseFloat(payload.data["gcm.notification.objectId"]),
-            objectName: payload.data["gcm.notification.objectName"],
-            objectTypeId: parseFloat(payload.data["gcm.notification.objectTypeId"]),
-            roleTarget: payload.data["gcm.notification.roleTarget"],
+            viewed: payload.data.isViewed == "true" ? true : false,
+            notificationId: parseFloat(payload.data.notificationId),
+            objectAvatar: payload.data.objectAvatar,
+            objectId: parseFloat(payload.data.objectId),
+            objectName: payload.data.objectName,
+            objectTypeId: parseFloat(payload.data.objectTypeId),
+            roleTarget: payload.data.roleTarget,
           }
           self.notifications.unshift(notification)
           self.unreadNotifications++
