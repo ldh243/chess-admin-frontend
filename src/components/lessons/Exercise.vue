@@ -543,6 +543,7 @@ export default {
           }
         }
         if (this.editingLessonId > 0) {
+          exercise.exercise['exerciseId'] = this.exerciseId
           this.$emit('onUpdateExercise', exercise)
         } else {
           this.$emit('onAddExercise', exercise)
@@ -556,6 +557,7 @@ export default {
         this.exerciseName = res.data.data.name
         this.exerciseDes = res.data.data.description
         this.exerciseQues = res.data.data.exercise.question
+        this.exerciseId = res.data.data.exercise.exerciseId
         this.answerType = res.data.data.exercise.answer.answerType
         if (this.answerType == 2) {
           this.answerArr = res.data.data.exercise.answer.answerArr

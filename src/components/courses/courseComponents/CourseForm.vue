@@ -3,7 +3,7 @@
       <v-form ref="form" lazy-validation>
         <v-container class="pa-5" grid-list-xs>
           <v-layout wrap>
-            <v-flex xs8>
+            <v-flex xs6>
               <v-text-field
                 color="amber darken-1"
                 v-model="course.name"
@@ -12,16 +12,7 @@
                 required
               ></v-text-field>
             </v-flex>
-            <v-flex xs2>
-              <v-text-field
-                v-model="course.requiredPoint"
-                label="Điểm để học"
-                required
-                color="amber darken-1"
-                :rules="pointRules"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs2>
+            <v-flex xs3>
               <v-text-field
                 v-model="course.point"
                 label="Điểm nhận được"
@@ -29,6 +20,17 @@
                 color="amber darken-1"
                 :rules="pointRules"
               ></v-text-field>
+            </v-flex>
+            <v-flex xs3>
+              <v-select
+                v-model="course.requiredElo"
+                :items="listLevel"
+                item-text="levelName"
+                item-value="levelId"
+                label="Yêu cầu"
+                color="amber darken-1"
+                item-color="amber darken-1"
+              ></v-select>
             </v-flex>
             <v-flex xs12>
               <v-textarea
@@ -103,13 +105,19 @@ export default {
       loader: false,
       course: {
         name: '',
-        requiredPoint: 0,
-        point: 0,
+        requiredElo: 1,
+        rewardPoint: 0,
         description: '',
         listCategoryIds: [],
         image: ''
       },
-      
+      listLevel: [
+        {levelId: 1,levelName: 'Người mới'},
+        {levelId: 2,levelName: 'Mới tập chơi'},
+        {levelId: 3,levelName: 'Nghiệp dư'},
+        {levelId: 4,levelName: 'Chuyên nghiệp'},
+        {levelId: 5,levelName: 'Cao thủ'},
+      ],
       listCategories: [],
       nameRules: [v => !!v || 'Tên khóa học không được để trống', v => v.length > 6 || 'Tên khóa học không được ít hơn 6 kí tự'],
       pointRules: [v => /^\d+$/.test(v) || 'Điểm phải là giá trị số'],

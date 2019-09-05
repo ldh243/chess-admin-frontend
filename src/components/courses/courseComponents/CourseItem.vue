@@ -6,7 +6,7 @@
       </v-flex>
       <v-flex xs6 xl7 ml-3>
         <p class="mb-0 course-title font-weight-medium headline">{{ content.courseName }}</p>
-        <p class="course-author body-2"><i class="fas fa-calendar-week"></i> {{ formatCreatedDate }} <v-chip label dark :color="courseStatusColor[content.statusId - 1]" small>{{formatCourseStatus}}</v-chip></p>
+        <p class="course-author body-2"><i class="fas fa-calendar-week"></i> {{ formatCreatedDate }} <i class="fas fa-user"></i> {{formatLevel}} <v-chip label dark :color="courseStatusColor[content.statusId - 1]" small>{{formatCourseStatus}}</v-chip></p>
         <p class="mb-0 course-author body-1">{{content.courseDescription}}</p>
         <v-card-text class="px-0">
           <v-chip v-for="(item) in content.listCategorys" :key="item.categoryId" class="mr-1" small color="amber lighten-1">{{item.name}}</v-chip>
@@ -15,8 +15,7 @@
       <v-divider inset vertical></v-divider>
       <v-flex xs3 xl2 class="course-rating-container">
         <p>
-        <span class="red--text mb-2 text--darken-4 display-1 font-weight-bold mr-3">-{{ content.requiredPoint }}</span>
-        <span class="green--text mb-2 text--darken-4 display-1 font-weight-bold">+{{ content.point }}</span>
+        <span class="green--text mb-2 text--darken-4 display-1 font-weight-bold">+{{ content.rewardPoint }}</span>
         </p>
           <v-card-actions>
             <v-spacer>
@@ -81,7 +80,10 @@ export default {
     },
     formatCourseStatus: function() {
       return this.getCourseRoleName(this.content.statusId)
-    }
+    },
+    formatLevel: function() {
+      return this.getLevelById(this.content.requiredElo)
+    }    
   },
   created() {
     this.content.rating = this.content.rating === undefined ? 5 : this.content.rating
