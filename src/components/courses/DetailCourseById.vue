@@ -506,7 +506,7 @@ export default {
     },
     async editExercise(lesson) {
       this.loader = true
-      lesson['exerciseId'] = this.editingLessonId
+      lesson['lessonId'] = this.editingLessonId
       console.log(lesson)
       const data = await lessonRepository
         .updateExerciseLesson(lesson)

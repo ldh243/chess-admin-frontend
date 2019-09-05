@@ -4,10 +4,10 @@
       <p v-if="course !== null" class="text-uppercase text-center headline font-weight-bold mt-8">{{course.name}}</p>
       <p v-if="course !== null" class="text-center">{{course.description}}</p>
       <p v-if="course !== null" class="text-center">
-        {{course.requiredPoint}}
-        <v-icon color="red">fa-caret-down</v-icon>
         <v-icon color="green">fa-caret-up</v-icon>
-        {{course.point}}
+        {{course.rewardPoint}} 
+        <v-icon color="white" class="ml-1" small>fa-user</v-icon>
+        {{formatLevel}}
       </p>
       <v-spacer></v-spacer>
       <v-card-actions class="py-0">
@@ -94,6 +94,11 @@ export default {
       editedCourseDialog: false,
       backgroundImage: ''
     }
+  },
+    computed: {
+    formatLevel: function() {
+      return this.getLevelById(this.course.requiredElo)
+    }    
   },
   mounted() {
   },
