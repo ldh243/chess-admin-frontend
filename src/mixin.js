@@ -116,19 +116,15 @@ export default Vue.mixin({
           return 'Từ chối'
       }
     },
-    getLevelById(levelId) {
-      switch (levelId) {
-        case 1:
-          return 'Người mới'
-        case 2:
-          return 'Mới tập chơi'
-        case 3:
-          return 'Nghiệp dư'
-        case 4:
-          return 'Chuyên nghiệp'
-        case 5:
-          return 'Cao thủ'
-      }
+    getLevelById(eloId) {
+      const eloEnum = [
+        'Mới bắt đầu',
+        'Sơ cấp',
+        'Nghiệp dư',
+        'Chuyên nghiệp',
+        'Cao thủ'
+      ]
+      return eloEnum[eloId - 1]
     },
     getDateTimeFormat(datetime) {
       const date = new Date(Date.parse(datetime))

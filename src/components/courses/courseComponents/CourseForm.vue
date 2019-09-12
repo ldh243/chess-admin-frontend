@@ -3,22 +3,13 @@
       <v-form ref="form" lazy-validation>
         <v-container class="pa-5" grid-list-xs>
           <v-layout wrap>
-            <v-flex xs6>
+            <v-flex xs9>
               <v-text-field
                 color="amber darken-1"
                 v-model="course.name"
                 label="Tên khóa học"
                 :rules="nameRules"
                 required
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs3>
-              <v-text-field
-                v-model="course.point"
-                label="Điểm nhận được"
-                required
-                color="amber darken-1"
-                :rules="pointRules"
               ></v-text-field>
             </v-flex>
             <v-flex xs3>
@@ -112,8 +103,8 @@ export default {
         image: ''
       },
       listLevel: [
-        {levelId: 1,levelName: 'Người mới'},
-        {levelId: 2,levelName: 'Mới tập chơi'},
+        {levelId: 1,levelName: 'Mới bắt đầu'},
+        {levelId: 2,levelName: 'Sơ cấp'},
         {levelId: 3,levelName: 'Nghiệp dư'},
         {levelId: 4,levelName: 'Chuyên nghiệp'},
         {levelId: 5,levelName: 'Cao thủ'},

@@ -3,7 +3,6 @@
     <v-card :elevation="8">
       <course-background v-if="course !== null" :course="course"></course-background>
       <v-container class="px-5 py-5">
-        <v-chip label dark :color="courseStatusColor[course.statusId - 1]">{{courseStatusName}}</v-chip>
         <v-chip
           label
           class="ml-1"

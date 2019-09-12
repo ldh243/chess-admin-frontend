@@ -3,11 +3,15 @@
     <v-layout pa-5 column fill-height class="white--text">
       <p v-if="course !== null" class="text-uppercase text-center headline font-weight-bold mt-8">{{course.name}}</p>
       <p v-if="course !== null" class="text-center">{{course.description}}</p>
-      <p v-if="course !== null" class="text-center">
-        <v-icon color="green">fa-caret-up</v-icon>
-        {{course.rewardPoint}} 
-        <v-icon color="white" class="ml-1" small>fa-user</v-icon>
-        {{formatLevel}}
+      <p v-if="course !== null" class="text-center ">
+        <v-chip
+        class="pa-3"
+      color="amber lighten-1" label
+    >
+    <v-icon left small>fa-crown</v-icon>
+      {{formatLevel}}
+    </v-chip>
+    <v-chip class="ml-2" label dark :color="courseStatusColor[course.statusId - 1]">{{formatCourseStatus}}</v-chip>
       </p>
       <v-spacer></v-spacer>
       <v-card-actions class="py-0">
@@ -98,7 +102,11 @@ export default {
     computed: {
     formatLevel: function() {
       return this.getLevelById(this.course.requiredElo)
-    }    
+    },
+    formatCourseStatus: function() {
+      return this.getCourseRoleName(this.course.statusId)
+    }
+
   },
   mounted() {
   },
