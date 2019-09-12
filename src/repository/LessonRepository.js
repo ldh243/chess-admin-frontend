@@ -9,14 +9,14 @@ export default {
   createInteractiveLesson(data) {
     return Repository.post(`${resource}/interactive-lesson`, data)
   },
-  createUninteractiveLesson(data){
-    return Repository.post(`${resource}/uninteractive-lesson`,data)
+  createUninteractiveLesson(data) {
+    return Repository.post(`${resource}/uninteractive-lesson`, data)
   },
-  getById(lessonId){
-    return Repository.get(`${resource}/`+lessonId)
+  getById(lessonId) {
+    return Repository.get(`${resource}/` + lessonId)
   },
-  updateUninteractiveLesson(data){
-    return Repository.put(`${resource}/uninteractive-lesson`,data)
+  updateUninteractiveLesson(data) {
+    return Repository.put(`${resource}/uninteractive-lesson`, data)
   },
   updateInteractiveLesson(data) {
     return Repository.put(`${resource}/interactive-lesson`, data)
@@ -26,9 +26,6 @@ export default {
     return Repository.put(`${resource}/exercise-lesson`, data)
   },
   removeLesson(lessonId) {
-    const data = {
-      lessonId: lessonId
-    }
-    return Repository.delete(`${resource}/`+lessonId)
+    return Repository.delete(`${resource}/` + lessonId)
   }
 }
