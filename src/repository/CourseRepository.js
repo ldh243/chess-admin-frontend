@@ -31,10 +31,10 @@ export default {
     )
   },
   createCourse(data) {
-    return Repository.post(`${resource}/course`, data)
+    return Repository.post(`${resource}`, data)
   },
   updateCourse(data) {
-    return Repository.put(`${resource}/course`, data)
+    return Repository.put(`${resource}`, data)
   },
   updateCourseStatus(courseId, statusId) {
     const data = {

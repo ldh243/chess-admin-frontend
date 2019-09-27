@@ -13,9 +13,10 @@ export default {
     return Repository.post(`${resource}/uninteractive-lesson`, data)
   },
   getById(lessonId) {
-    return Repository.get(`${resource}/` + lessonId)
+    return Repository.get(`${resource}/${lessonId}`)
   },
   updateUninteractiveLesson(data) {
+    console.log(data)
     return Repository.put(`${resource}/uninteractive-lesson`, data)
   },
   updateInteractiveLesson(data) {

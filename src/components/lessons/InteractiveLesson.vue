@@ -293,7 +293,6 @@ export default {
       ],
       interactiveLessonForm: true,
       isEditing: false,
-      interactiveLessonId: -1,
       isValiated: false,
       lastMoves: [0]
     }
@@ -308,13 +307,19 @@ export default {
       }
     },
     lessonName: function() {
-      this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+      if (!this.isEditing) {
+        this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+      }
     },
     lessonDes: function() {
-      this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+      if (!this.isEditing) {
+        this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+      }
     },
     moveHistory: function() {
-      this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+      if (!this.isEditing) {
+        this.isValiated = this.moveHistory.length > 0 && this.$refs.form.validate()
+      }
     }
   },
   created() {
@@ -411,11 +416,9 @@ export default {
           steps: lessonContent.map(e => ({ ...e }))
         }
       }
-      console.log(lessonDetails)
       this.moveHistoryObj = new MoveHistory(lessonDetails)
       this.moveHistoryObj.formatMoveHistory()
       this.moveHistory = this.moveHistoryObj.getMoveHistory
-      console.log(this.moveHistory)
     },
     editMove() {
       this.totalMove++
@@ -549,7 +552,6 @@ export default {
         }
         console.log(lesson)
         if (this.editingLessonId > 0) {
-          lesson.interactiveLesson['interactiveLessonId'] = this.interactiveLessonId
           console.log(this.lessonContent)
           this.$emit('onUpdateInteractiveLesson', lesson)
         } else {
@@ -563,16 +565,18 @@ export default {
     async getById(lessonId) {
       const data = await lessonRepository.getById(lessonId).then(res => {
         console.log(res)
+        this.isValiated = true
+        console.log(this.isValiated)
         this.lessonName = res.data.data.name
-        this.lessonContent = res.data.data.interactiveLesson.steps
+        this.lessonDes = res.data.data.description
+        this.lessonContent = res.data.data.lessonContent.steps
         this.lessonContent = this.lessonContent.map(e => {
           let obj = e
           obj['id'] = parseInt(e.id)
           obj['preId'] = parseInt(e.preId)
           return obj
         })
-        this.initFen = res.data.data.interactiveLesson.initCode
-        this.interactiveLessonId = res.data.data.interactiveLesson.interactiveLessonId
+        this.initFen = res.data.data.lessonContent.initCode
         this.totalMove = this.lessonContent.length > 0 ? parseInt(this.lessonContent[this.lessonContent.length - 1].id) : 0
         console.log(this.totalMove)
         this.lastMove = this.totalMove

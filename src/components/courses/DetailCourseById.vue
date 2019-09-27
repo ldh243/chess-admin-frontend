@@ -235,17 +235,17 @@
           </v-btn>
         </v-card-actions>
         <PreviewExercise
-          :question="previewLessonObj.exercise.question"
-          :exercise="previewLessonObj.exercise.answer"
+          :question="previewLessonObj.lessonContent.question"
+          :exercise="previewLessonObj.lessonContent.answer"
           v-if="previewLessonDialog === true && lessonType === 5"
         />
         <PreviewInteractiveLesson
-          :steps="previewLessonObj.interactiveLesson.steps"
-          :initFen="previewLessonObj.interactiveLesson.initCode"
+          :steps="previewLessonObj.lessonContent.steps"
+          :initFen="previewLessonObj.lessonContent.initCode"
           v-if="previewLessonDialog === true && lessonType === 2"
         />
         <PreviewUninteractiveLesson
-          :content="previewLessonObj.uninteractiveLesson.content"
+          :content="previewLessonObj.lessonContent.content"
           v-if="previewLessonDialog === true && lessonType === 3"
         />
       </v-card>
@@ -474,6 +474,7 @@ export default {
       const data = await lessonRepository
         .updateUninteractiveLesson(lesson)
         .then(res => {
+          console.log(res)
           if (res.status === 200) {
             this.getCourseById()
             this.addLessonDialog = false
@@ -528,6 +529,7 @@ export default {
     async previewLesson(lessonId, lessonType) {
       this.lessonType = lessonType
       const data = await lessonRepository.getById(lessonId).then(res => {
+        console.log(res)
         this.previewLessonDialog = true
         this.previewLessonObj = res.data.data
         console.log(this.previewLessonObj)
@@ -579,7 +581,20 @@ export default {
         allowOutsideClick: () => !Swal.isLoading()
       })
     },
-    async restoreCourse() {},
+    async restoreCourse() {
+      this.loader = true
+      const courseId = this.$route.params.courseId
+      const data = await courseRepository
+        .updateCourseStatus(courseId, '', 1)
+        .then(res => {
+          if (res.status === 200) {
+            this.snackbarContent = 'Khóa học đã được khôi phục.'
+            this.snackbar = true
+            this.actionSheet = false
+          }
+          this.loader = false
+        })
+    },
     async publishCourseByAdmin() {
       this.loader = true
       const courseId = this.$route.params.courseId

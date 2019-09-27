@@ -321,9 +321,11 @@ export default {
       let ableArr = this.answerArr.filter(moveArr => {
         return moveArr.length > 0
       })
-      this.isValidated =
+      if (!this.isEditing) {
+        this.isValidated =
         (ableArr.length > 0 || this.checkboxChessbot) &&
         this.$refs.form.validate()
+      }
     },
     getFen(data) {
       if (
@@ -554,14 +556,15 @@ export default {
     async getById(lessonId) {
       const data = await lessonRepository.getById(lessonId).then(res => {
         console.log(res)
+        this.isValidated = true
         this.exerciseName = res.data.data.name
         this.exerciseDes = res.data.data.description
-        this.exerciseQues = res.data.data.exercise.question
-        this.exerciseId = res.data.data.exercise.exerciseId
-        this.answerType = res.data.data.exercise.answer.answerType
+        this.exerciseQues = res.data.data.lessonContent.question
+        this.exerciseId = res.data.data.lessonContent.exerciseId
+        this.answerType = res.data.data.lessonContent.answer.answerType
         if (this.answerType == 2) {
-          this.answerArr = res.data.data.exercise.answer.answerArr
-          this.fen = this.initFen = res.data.data.exercise.answer.fen
+          this.answerArr = res.data.data.lessonContent.answer.answerArr
+          this.fen = this.initFen = res.data.data.lessonContent.answer.fen
           this.moveHistory = this.loadMoveHistory(this.answerArr[this.answersTab])
           this.lastMove = this.answerArr[this.answersTab][this.answerArr[this.answersTab].length - 1].id
           console.log(this.lastMove)

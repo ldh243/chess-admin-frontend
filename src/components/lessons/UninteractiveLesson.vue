@@ -148,9 +148,8 @@ export default {
       const data = await lessonRepository.getById(lessonId)
       this.lessonName = data.data.data.name
       this.lessonDes = data.data.data.description
-      this.content = data.data.data.uninteractiveLesson.content
-      this.uninteractiveLessonId =
-        data.data.data.uninteractiveLesson.uninteractiveLessonId
+      console.log(data)
+      this.content = data.data.data.lessonContent.content
     },
     updateUninteractiveLesson() {
       if (this.editor.methods.getText().length === 0) {
@@ -159,10 +158,10 @@ export default {
       if (this.$refs.form.validate()) {
         const lesson = {
           name: this.lessonName,
+          lessonId: this.editingLessonId,
           description: this.lessonDes,
           uninteractiveLesson: {
-            content: this.editor.methods.getVal(),
-            uninteractiveLessonId: this.uninteractiveLessonId
+            content: this.editor.methods.getVal()
           }
         }
         this.$emit('onEditUninteractiveLesson', lesson)
